@@ -11,10 +11,9 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>QtWidgetsApplication1</string>
+   <string>ZoneMaster Tracer</string>
   </property>
-
-	 <widget class="QWidget" name="ZSTraceWindow">
+  <widget class="QWidget" name="ZSTraceWindow">
 		 <property name="geometry">
 			 <rect>
 				 <x>0</x>
@@ -199,8 +198,7 @@
 				 </widget>
 			 </item>
 		 </layout>
-	 </widget>	 
-	 
+	 </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>

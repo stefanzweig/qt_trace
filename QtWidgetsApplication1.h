@@ -2,6 +2,7 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_QtWidgetsApplication1.h"
+#include <QTimer>
 
 class QtWidgetsApplication1 : public QMainWindow
 {
@@ -12,5 +13,11 @@ public:
     ~QtWidgetsApplication1();
 
 private:
+    void init();
+
     Ui::QtWidgetsApplication1Class ui;
+    QTimer* timer = nullptr;
+
+private slots:
+    void updateCurrentState();
 };
