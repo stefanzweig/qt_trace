@@ -40,9 +40,42 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="HelloWorld\HelloWorld.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HelloWorld\HelloWorldPublisher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HelloWorld\HelloWorldPubSubTypes.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HelloWorld\HelloWorldSubscriber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HelloWorld\HelloWorldv1.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HelloWorld\HelloWorldCdrAux.ipp" />
+    <ClInclude Include="HelloWorld\HelloWorld.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HelloWorld\HelloWorldCdrAux.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HelloWorld\HelloWorldPublisher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HelloWorld\HelloWorldPubSubTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HelloWorld\HelloWorldSubscriber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HelloWorld\HelloWorldv1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="HelloWorld\CMakeLists.txt" />
