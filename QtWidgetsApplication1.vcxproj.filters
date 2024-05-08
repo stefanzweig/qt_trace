@@ -58,24 +58,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HelloWorld\HelloWorldCdrAux.ipp" />
-    <ClInclude Include="HelloWorld\HelloWorld.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HelloWorld\HelloWorldCdrAux.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HelloWorld\HelloWorldPublisher.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HelloWorld\HelloWorldPubSubTypes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HelloWorld\HelloWorldSubscriber.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HelloWorld\HelloWorldv1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="HelloWorld\CMakeLists.txt" />
