@@ -29,6 +29,7 @@
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <QDebug>
 
 using namespace eprosima::fastdds::dds;
 
@@ -140,17 +141,17 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
     if (info.current_count_change == 1)
     {
         matched_ = info.total_count;
-        std::cout << "Subscriber matched." << std::endl;
+        qDebug() << "Subscriber matched." ;
     }
     else if (info.current_count_change == -1)
     {
         matched_ = info.total_count;
-        std::cout << "Subscriber unmatched." << std::endl;
+        qDebug() << "Subscriber unmatched." ;
     }
     else
     {
-        std::cout << info.current_count_change
-                  << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
+        qDebug() << info.current_count_change
+                  << " is not a valid value for SubscriptionMatchedStatus current count change" ;
     }
 }
 
@@ -164,21 +165,21 @@ void HelloWorldSubscriber::SubListener::on_data_available(
         {
             samples_++;
             // Print your structure data here.
-            std::cout << "Message " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
+            qDebug() << "Message " ;
         }
     }
 }
 
 void HelloWorldSubscriber::run()
 {
-    std::cout << "Subscriber running. Please press enter to stop the Subscriber" << std::endl;
-    std::cin.ignore();
+    qDebug() << "Subscriber running. Please press enter to stop the Subscriber" ;
+    //std::cin.ignore();
 }
 
 void HelloWorldSubscriber::run(
         uint32_t number)
 {
-    std::cout << "Subscriber running until " << number << "samples have been received" << std::endl;
+    qDebug() << "Subscriber running until " << number << "samples have been received" ;
     while (number > listener_.samples_)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));

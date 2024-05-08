@@ -12,6 +12,9 @@ public:
     QtWidgetsApplication1(QWidget *parent = nullptr);
     ~QtWidgetsApplication1();
 
+protected:
+    void createActions();
+
 private:
     void init();
 
@@ -20,4 +23,8 @@ private:
 
 private slots:
     void updateCurrentState();
+    void onActionTriggered();
+
+signals:
+    void resetLayout();
 };
