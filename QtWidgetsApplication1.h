@@ -25,6 +25,11 @@ private slots:
     void updateCurrentState();
     void onActionTriggered();
 
+    void startTrace();
+    void stopTrace();
+    void pauseTrace();
+
+
 signals:
     void resetLayout();
 };
