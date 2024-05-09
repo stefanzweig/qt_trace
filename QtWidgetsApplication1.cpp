@@ -30,18 +30,30 @@ void QtWidgetsApplication1::init()
 
     // 定义定时器
     timer = new QTimer();
-    connect(timer, SIGNAL(timeout()), this, SLOT(updateCurrentState()));
+    connect(timer, &QTimer::timeout, this, &QtWidgetsApplication1::updateState);
+
+    // 重置布局 todo
+    resetLayout();
 
     // 更新状态 todo
     updateCurrentState();
 
-    // 重置布局 todo
-    resetLayout();
 }
 
 void QtWidgetsApplication1::updateCurrentState() 
 {
     qDebug() << "Updating...";
+
+    // the following lines don't work.
+    foreach(QAction * action, ui.toolbar->actions()) {
+        bool checked = false;
+        action->setChecked(checked);
+    }
+}
+
+void QtWidgetsApplication1::updateState()
+{
+    qDebug() << "State...";
 }
 
 void QtWidgetsApplication1::createActions()
@@ -62,6 +74,8 @@ void QtWidgetsApplication1::resetLayout()
     connect(action, &QAction::triggered, this, &QtWidgetsApplication1::onActionTriggered);
 
     // icons
+    ui.menu->setIcon(QIcon(":/QtWidgetsApplication1/res/sqlitestudio.ico"));
+
     ui.actionpause->setIcon(QIcon(":/QtWidgetsApplication1/res/pauseTrace.png"));
     ui.actionstart->setIcon(QIcon(":/QtWidgetsApplication1/res/startTrace.png"));
     ui.actionstop->setIcon(QIcon(":/QtWidgetsApplication1/res/stopTrace.png"));
@@ -87,14 +101,17 @@ void QtWidgetsApplication1::onActionTriggered()
 void QtWidgetsApplication1::startTrace()
 {
     qDebug() << "startTrace...";
+    timer->start(5);
 }
 
 void QtWidgetsApplication1::stopTrace()
 {
     qDebug() << "stopTrace...";
+    timer->stop();
 }
 
 void QtWidgetsApplication1::pauseTrace()
 {
     qDebug() << "pauseTrace...";
+    timer->stop();
 }

@@ -22,6 +22,7 @@ private:
     QTimer* timer = nullptr;
 
 private slots:
+    void updateState();
     void updateCurrentState();
     void onActionTriggered();
 
