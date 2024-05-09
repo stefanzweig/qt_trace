@@ -13,6 +13,10 @@ QtWidgetsApplication1::QtWidgetsApplication1(QWidget *parent)
 
 QtWidgetsApplication1::~QtWidgetsApplication1()
 {
+    if (this->timer) {
+        delete timer;
+        timer = nullptr;
+    }
 }
 
 void QtWidgetsApplication1::init()
@@ -101,7 +105,7 @@ void QtWidgetsApplication1::onActionTriggered()
 void QtWidgetsApplication1::startTrace()
 {
     qDebug() << "startTrace...";
-    timer->start(5);
+    timer->start(1000);
 }
 
 void QtWidgetsApplication1::stopTrace()
