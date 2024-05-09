@@ -14,6 +14,8 @@ QtWidgetsApplication1::QtWidgetsApplication1(QWidget *parent)
 QtWidgetsApplication1::~QtWidgetsApplication1()
 {
     if (this->timer) {
+        if (timer->isActive())
+            timer->stop();
         delete timer;
         timer = nullptr;
     }
