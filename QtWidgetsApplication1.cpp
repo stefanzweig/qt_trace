@@ -61,6 +61,11 @@ void QtWidgetsApplication1::resetLayout()
     ui.menu->addAction(action);
     connect(action, &QAction::triggered, this, &QtWidgetsApplication1::onActionTriggered);
 
+    // icons
+    ui.actionpause->setIcon(QIcon(":/QtWidgetsApplication1/res/pauseTrace.png"));
+    ui.actionstart->setIcon(QIcon(":/QtWidgetsApplication1/res/startTrace.png"));
+    ui.actionstop->setIcon(QIcon(":/QtWidgetsApplication1/res/stopTrace.png"));
+
     // toolbar actions
     ui.toolbar->addAction(ui.actionstart);
     ui.toolbar->addAction(ui.actionstop);
@@ -69,7 +74,7 @@ void QtWidgetsApplication1::resetLayout()
 
 void QtWidgetsApplication1::onActionTriggered()
 {
-    qDebug() << "菜单项已触发！";
+    qDebug() << tr("菜单项已触发！");
     // 下面的部分会有core dump问题
     //HelloWorldSubscriber mysub;
     //bool use_environment_qos = false;

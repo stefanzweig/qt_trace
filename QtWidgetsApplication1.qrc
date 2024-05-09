@@ -1,4 +1,8 @@
 <RCC>
-    <qresource prefix="QtWidgetsApplication1">
+    <qresource prefix="/QtWidgetsApplication1">
+        <file>res/pauseTrace.png</file>
+        <file>res/startTrace.png</file>
+        <file>res/stopTrace.png</file>
+        <file>res/sqlitestudio.ico</file>
     </qresource>
 </RCC>
