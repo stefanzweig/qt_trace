@@ -56,9 +56,15 @@ void QtWidgetsApplication1::resetLayout()
 {
     qDebug() << "resetLayout...";
 
+    // will be removed later.
     QAction* action = new QAction("Temp Action");
     ui.menu->addAction(action);
     connect(action, &QAction::triggered, this, &QtWidgetsApplication1::onActionTriggered);
+
+    // toolbar actions
+    ui.toolbar->addAction(ui.actionstart);
+    ui.toolbar->addAction(ui.actionstop);
+    ui.toolbar->addAction(ui.actionpause);
 }
 
 void QtWidgetsApplication1::onActionTriggered()
