@@ -107,7 +107,7 @@ public:
         , subscriber_(nullptr)
         , topic_(nullptr)
         , reader_(nullptr)
-        , type_(new canMessagePubSubType())
+        , type_(new canMessagesPubSubType()) // this should be matched.
     {
     }
 
@@ -144,7 +144,7 @@ public:
         type_.register_type(participant_);
 
         // Create the subscriptions Topic
-        topic_ = participant_->create_topic("CanMessageDataTopic", "CanMessageData", TOPIC_QOS_DEFAULT);
+        topic_ = participant_->create_topic("CanMessageDataTopic", type_.get_type_name(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
 
         if (topic_ == nullptr)
         {
