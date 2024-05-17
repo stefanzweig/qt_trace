@@ -1,7 +1,7 @@
 #include "QtWidgetsApplication1.h"
 #include <QTimer>
 #include <QDebug>
-#include "HelloWorld/HelloWorldSubscriber.h"
+//#include "HelloWorld/HelloWorldSubscriber.h"
 
 
 QtWidgetsApplication1::QtWidgetsApplication1(QWidget *parent)
@@ -18,6 +18,10 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
             timer->stop();
         delete timer;
         timer = nullptr;
+    }
+    if (mysub_ != nullptr) {
+        delete mysub_;
+        mysub_ = nullptr;
     }
 }
 
@@ -107,6 +111,16 @@ void QtWidgetsApplication1::onActionTriggered()
 void QtWidgetsApplication1::startTrace()
 {
     qDebug() << "startTrace...";
+    std::cout << "Starting subscriber." << std::endl;
+    uint32_t samples = 10;
+
+    if (mysub_ == nullptr) { // 2024-05-17: in fact != should be == 
+        CanMessageDataWorkerSubscriber* mysub = new CanMessageDataWorkerSubscriber();
+        if (mysub->init())
+        {
+            mysub->run(samples);
+        }
+    }
     timer->start(1000);
 }
 

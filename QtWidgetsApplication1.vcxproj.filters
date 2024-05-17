@@ -55,6 +55,15 @@
     <ClCompile Include="HelloWorld\HelloWorldv1.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="topicData\CanMessageData.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="topicData\CanMessageDataPubSubTypes.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="topicData\CanMessageDataWorkerSubscriber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HelloWorld\HelloWorldCdrAux.ipp" />
@@ -62,6 +71,16 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="core_global.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="topicData\CanMessageData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="topicData\CanMessageDataCdrAux.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="topicData\CanMessageDataCdrAux.ipp" />
+    <ClInclude Include="topicData\CanMessageDataPubSubTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

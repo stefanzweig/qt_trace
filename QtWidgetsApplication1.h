@@ -3,6 +3,7 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_QtWidgetsApplication1.h"
 #include <QTimer>
+#include "topicData/CanMessageDataWorkerSubscriber.h"
 
 class QtWidgetsApplication1 : public QMainWindow
 {
@@ -20,6 +21,7 @@ private:
 
     Ui::QtWidgetsApplication1Class ui;
     QTimer* timer = nullptr;
+    CanMessageDataWorkerSubscriber* mysub_ = nullptr;
 
 private slots:
     void updateState();
