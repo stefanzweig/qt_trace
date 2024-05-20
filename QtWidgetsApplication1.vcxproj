@@ -105,6 +105,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="multiThread.cpp" />
     <ClCompile Include="topicData\CanMessageData.cxx" />
     <ClCompile Include="topicData\CanMessageDataPubSubTypes.cxx" />
     <ClCompile Include="topicData\CanMessageDataWorkerSubscriber.cpp" />
@@ -123,6 +124,7 @@
     <ClInclude Include="core_global.h" />
     <ClInclude Include="gui_global.h" />
     <ClInclude Include="HelloWorld\HelloWorldCdrAux.ipp" />
+    <QtMoc Include="multiThread.h" />
     <ClInclude Include="topicData\CanMessageData.h" />
     <ClInclude Include="topicData\CanMessageDataCdrAux.hpp" />
     <ClInclude Include="topicData\CanMessageDataCdrAux.ipp" />

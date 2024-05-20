@@ -64,6 +64,9 @@
     <ClCompile Include="topicData\CanMessageDataWorkerSubscriber.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="multiThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HelloWorld\HelloWorldCdrAux.ipp" />
@@ -86,5 +89,10 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="HelloWorld\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="multiThread.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
 </Project>
