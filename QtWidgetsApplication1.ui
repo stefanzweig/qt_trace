@@ -65,9 +65,6 @@
      <widget class="QToolBar" name="toolbar"/>
     </item>
     <item>
-     <widget class="QToolBar" name="toolbar_search"/>
-    </item>
-    <item>
      <widget class="QWidget" name="mainWidgt" native="true">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <property name="leftMargin">
@@ -109,6 +106,12 @@
            </property>
            <item>
             <widget class="QWidget" name="widget" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <layout class="QVBoxLayout" name="gridLayout_2">
               <property name="leftMargin">
                <number>0</number>
@@ -122,7 +125,7 @@
               <item>
                <widget class="QWidget" name="Upper" native="true">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>1</verstretch>
                  </sizepolicy>
@@ -142,13 +145,13 @@
                    <property name="minimumSize">
                     <size>
                      <width>256</width>
-                     <height>192</height>
+                     <height>40</height>
                     </size>
                    </property>
                    <property name="maximumSize">
                     <size>
                      <width>16777215</width>
-                     <height>192</height>
+                     <height>40</height>
                     </size>
                    </property>
                   </widget>
@@ -172,9 +175,9 @@
               <item>
                <widget class="QWidget" name="Lower" native="true">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                   <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
+                  <verstretch>15</verstretch>
                  </sizepolicy>
                 </property>
                 <layout class="QHBoxLayout" name="hLayout_2">

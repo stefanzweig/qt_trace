@@ -20,7 +20,9 @@ void multiThread::run() {
     from_t = get_timestamp();
     while (true) {
         if (!is_stop) {
-            internalUpdateMongoData();
+            //internalUpdateMongoData();
+            qDebug() << "running...";
+            msleep(2500);
         }
         else {
             break;

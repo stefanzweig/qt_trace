@@ -24,6 +24,10 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
         delete mysub_;
         mysub_ = nullptr;
     }
+    if (calc_thread != nullptr) {
+        delete calc_thread;
+        calc_thread = nullptr;
+    }
 }
 
 void QtWidgetsApplication1::init()
@@ -34,7 +38,7 @@ void QtWidgetsApplication1::init()
     sizePolicy.setVerticalStretch(0);
     sizePolicy.setHeightForWidth(ui.widget->sizePolicy().hasHeightForWidth());
     ui.Lower->setSizePolicy(sizePolicy);
-    ui.toolbar_search->setVisible(true);
+    //ui.toolbar_search->setVisible(true);
     
     // 定义动作，菜单和工具栏
     createActions();
@@ -116,6 +120,8 @@ void QtWidgetsApplication1::startTrace()
 {
     qDebug() << "startTrace...";
     std::cout << "Starting subscriber." << std::endl;
+
+    /*
     uint32_t samples = 10;
 
     if (mysub_ == nullptr) { // 2024-05-17: in fact != should be == 
@@ -125,19 +131,23 @@ void QtWidgetsApplication1::startTrace()
             mysub->run(samples);
         }
     }
-    timer->start(1000);
+    */
+    calc_thread->restartThread();
+    calc_thread->start();
+    //timer->start(1000);
 }
 
 void QtWidgetsApplication1::stopTrace()
 {
     qDebug() << "stopTrace...";
-    timer->stop();
+    calc_thread->stopThread();
+    //timer->stop();
 }
 
 void QtWidgetsApplication1::pauseTrace()
 {
     qDebug() << "pauseTrace...";
-    timer->stop();
+    //timer->stop();
 }
 
 
