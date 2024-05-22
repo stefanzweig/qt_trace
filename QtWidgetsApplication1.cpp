@@ -2,6 +2,7 @@
 #include <QTimer>
 #include <QDebug>
 //#include "HelloWorld/HelloWorldSubscriber.h"
+#include "multiThread.h"
 
 
 QtWidgetsApplication1::QtWidgetsApplication1(QWidget *parent)
@@ -41,6 +42,9 @@ void QtWidgetsApplication1::init()
     // 定义定时器
     timer = new QTimer();
     connect(timer, &QTimer::timeout, this, &QtWidgetsApplication1::updateState);
+    
+    calc_thread = new multiThread();
+    connect(calc_thread, SIGNAL(traceItemUpdate()), this, SLOT(formatRow()));
 
     // 重置布局 todo
     resetLayout();
@@ -134,4 +138,10 @@ void QtWidgetsApplication1::pauseTrace()
 {
     qDebug() << "pauseTrace...";
     timer->stop();
+}
+
+
+void QtWidgetsApplication1::formatRow()
+{
+    qDebug() << "formatRow...";
 }

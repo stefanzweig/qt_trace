@@ -4,6 +4,7 @@
 #include "ui_QtWidgetsApplication1.h"
 #include <QTimer>
 #include "topicData/CanMessageDataWorkerSubscriber.h"
+#include "multiThread.h"
 
 class QtWidgetsApplication1 : public QMainWindow
 {
@@ -22,11 +23,13 @@ private:
     Ui::QtWidgetsApplication1Class ui;
     QTimer* timer = nullptr;
     CanMessageDataWorkerSubscriber* mysub_ = nullptr;
+    multiThread* calc_thread = nullptr;
 
 private slots:
     void updateState();
     void updateCurrentState();
     void onActionTriggered();
+    void formatRow();
 
     void startTrace();
     void stopTrace();

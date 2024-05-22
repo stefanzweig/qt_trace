@@ -32,7 +32,7 @@ private:
 
     TypeSupport type_;
 
-    class SubListener : public DataReaderListener
+    class SubListener : public DataReaderListener, public QObject
     {
     public:
 
@@ -79,7 +79,7 @@ private:
                     //std::cout << " with Length: " << can_messages_.len()
                     //    << " RECEIVED." << std::endl;
                     qDebug() << " with Length: " << can_messages_.len() << " RECEIVED.";
-                    // emit function
+                    emit traceItemUpdate();
 
                 }
             }
@@ -88,6 +88,10 @@ private:
         canMessages can_messages_;
 
         std::atomic_int samples_;
+
+    signals:
+        void traceItemUpdate() { qDebug() << "itemupdate"; };
+
 
     } listener_;
 
