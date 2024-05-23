@@ -2,7 +2,7 @@
 #include <QDebug>
 
 multiThread::multiThread()
-    :is_stop(false)
+    :is_stop(false),is_paused(false)
 {
 }
 
@@ -10,19 +10,29 @@ multiThread::~multiThread() {}
 
 void multiThread::stopThread() {
     is_stop = true;
+    is_paused = false;
+}
+
+void multiThread::pauseThread() {
+    is_stop = false;
+    is_paused = true;
 }
 
 void multiThread::restartThread() {
     is_stop = false;
+    is_paused = false;
 }
 
 void multiThread::run() {
     from_t = get_timestamp();
+    if (mysub_->init())
+        mysub_->run(10);
+
     while (true) {
         if (!is_stop) {
             //internalUpdateMongoData();
             qDebug() << "running...";
-            msleep(2500);
+            msleep(2000); // every 2 seconds
         }
         else {
             break;
@@ -80,4 +90,9 @@ void multiThread::bindMongoDataToTraceTree()
 void multiThread::setQueryString(QString str)
 {
     this->query_string = str;
+}
+
+void multiThread::setSubscriber(CanMessageDataWorkerSubscriber* subscriber)
+{
+    this->mysub_ = subscriber;
 }

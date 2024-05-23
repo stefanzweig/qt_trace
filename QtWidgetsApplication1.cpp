@@ -121,19 +121,19 @@ void QtWidgetsApplication1::startTrace()
     qDebug() << "startTrace...";
     std::cout << "Starting subscriber." << std::endl;
 
-    /*
     uint32_t samples = 10;
 
     if (mysub_ == nullptr) { // 2024-05-17: in fact != should be == 
-        CanMessageDataWorkerSubscriber* mysub = new CanMessageDataWorkerSubscriber();
-        if (mysub->init())
-        {
-            mysub->run(samples);
-        }
+        // CanMessageDataWorkerSubscriber* mysub = new CanMessageDataWorkerSubscriber();
+        mysub_ = new CanMessageDataWorkerSubscriber();
+        //if (mysub->init())
+        //{
+        //    mysub->run(samples);
+        //}
     }
-    */
     calc_thread->restartThread();
-    calc_thread->start();
+    calc_thread->setSubscriber(mysub_);
+    calc_thread->start(); // the real algorithm lies in calc_thread::run() function.
     //timer->start(1000);
 }
 
@@ -147,6 +147,7 @@ void QtWidgetsApplication1::stopTrace()
 void QtWidgetsApplication1::pauseTrace()
 {
     qDebug() << "pauseTrace...";
+    calc_thread->pauseThread();
     //timer->stop();
 }
 

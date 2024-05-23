@@ -3,6 +3,7 @@
 #define MULTITHREAD_H
 #include <QThread>
 #include <QMutex>
+#include "topicData/CanMessageDataWorkerSubscriber.h"
 
 class multiThread :
     public QThread
@@ -11,10 +12,12 @@ class multiThread :
 public:
     multiThread();
     ~multiThread();
+    void setSubscriber(CanMessageDataWorkerSubscriber* subscriber);
 
 public slots:
     void stopThread();
     void restartThread();
+    void pauseThread();
     void setQueryString(QString str);
     static std::time_t get_timestamp();
 
@@ -26,6 +29,7 @@ signals:
 
 private:
     bool is_stop;
+    bool is_paused;
     QMutex m_lock;
     //    TraceItemObject * traceItem;
     std::string m_last_realtime_id = "-1";
@@ -34,6 +38,7 @@ private:
     time_t to_t = 0;
     std::string to_id = "-1";
     QString query_string;
+    CanMessageDataWorkerSubscriber* mysub_ = nullptr;
 
     void internalUpdateMongoData();
     void bindMongoDataToTraceTree();
