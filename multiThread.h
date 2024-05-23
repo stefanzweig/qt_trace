@@ -40,7 +40,6 @@ private:
     QString query_string;
     CanMessageDataWorkerSubscriber* mysub_ = nullptr;
 
-    void internalUpdateMongoData();
     void bindMongoDataToTraceTree();
 };
 
