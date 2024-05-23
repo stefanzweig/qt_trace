@@ -132,7 +132,7 @@ void QtWidgetsApplication1::startTrace()
         //}
     }
     calc_thread->restartThread();
-    calc_thread->setSubscriber(mysub_);
+    calc_thread->setSubscriber(mysub_, samples);
     calc_thread->start(); // the real algorithm lies in calc_thread::run() function.
     //timer->start(1000);
 }
@@ -141,6 +141,11 @@ void QtWidgetsApplication1::stopTrace()
 {
     qDebug() << "stopTrace...";
     calc_thread->stopThread();
+    mysub_ = nullptr;
+    //if (mysub_ != nullptr) { 
+    //    delete mysub_; 
+    //    mysub_ = nullptr; 
+    //}
     //timer->stop();
 }
 

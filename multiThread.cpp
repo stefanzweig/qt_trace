@@ -11,6 +11,11 @@ multiThread::~multiThread() {}
 void multiThread::stopThread() {
     is_stop = true;
     is_paused = false;
+
+    if (mysub_ != nullptr) {
+        delete mysub_;
+        mysub_ = nullptr;
+    }
 }
 
 void multiThread::pauseThread() {
@@ -26,8 +31,9 @@ void multiThread::restartThread() {
 void multiThread::run() {
     // from_t = get_timestamp();
 
-    if (mysub_->init())
-        mysub_->run(10);
+    if (mysub_ != nullptr) 
+        if (mysub_->init())
+            mysub_->run(samples_);
 
     while (true) {
         if (!is_stop) {
@@ -49,7 +55,7 @@ std::time_t multiThread::get_timestamp()
     return timestamp;
 }
 
-void multiThread::bindMongoDataToTraceTree()
+void multiThread::bindDataToTraceTree()
 {
 
     try {
@@ -75,7 +81,8 @@ void multiThread::setQueryString(QString str)
     this->query_string = str;
 }
 
-void multiThread::setSubscriber(CanMessageDataWorkerSubscriber* subscriber)
+void multiThread::setSubscriber(CanMessageDataWorkerSubscriber* subscriber, int samples)
 {
-    this->mysub_ = subscriber;
+    mysub_ = subscriber;
+    samples_ = samples;
 }

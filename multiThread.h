@@ -12,7 +12,7 @@ class multiThread :
 public:
     multiThread();
     ~multiThread();
-    void setSubscriber(CanMessageDataWorkerSubscriber* subscriber);
+    void setSubscriber(CanMessageDataWorkerSubscriber* subscriber, int samples);
 
 public slots:
     void stopThread();
@@ -38,9 +38,11 @@ private:
     time_t to_t = 0;
     std::string to_id = "-1";
     QString query_string;
+    int samples_ = 10;
     CanMessageDataWorkerSubscriber* mysub_ = nullptr;
+    CanMessageDataWorkerSubscriber* mysub_backup = nullptr;
 
-    void bindMongoDataToTraceTree();
+    void bindDataToTraceTree();
 };
 
 #endif // MULTITHREAD_H
