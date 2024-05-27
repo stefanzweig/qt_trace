@@ -18,6 +18,12 @@ void multiThread::stopThread() {
     }
 }
 
+void multiThread::stopFlag()
+{
+    is_stop = true;
+    is_paused = false;
+}
+
 void multiThread::pauseThread() {
     if (!is_stop) {
         is_paused = true;
@@ -30,6 +36,8 @@ void multiThread::restartThread() {
 }
 
 void multiThread::run() {
+    // key function
+    
     // from_t = get_timestamp();
 
     if (mysub_ != nullptr) 
@@ -86,4 +94,5 @@ void multiThread::setSubscriber(CanMessageDataWorkerSubscriber* subscriber, int 
 {
     mysub_ = subscriber;
     samples_ = samples;
+    subscriber->setOuterThread(this);
 }

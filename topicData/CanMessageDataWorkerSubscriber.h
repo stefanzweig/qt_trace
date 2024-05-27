@@ -15,6 +15,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include <QDebug>
+#include <QThread>
 
 using namespace eprosima::fastdds::dds;
 
@@ -32,6 +33,7 @@ private:
 
     TypeSupport type_;
 
+
     class SubListener : public DataReaderListener, public QObject
     {
     public:
@@ -39,6 +41,7 @@ private:
         SubListener()
             : samples_(0)
         {
+            /*connect(this, SIGNAL(traceItemUpdate()), outerThread, SIGNAL(traceItemUpdate()));*/
         }
 
         ~SubListener() override
@@ -80,17 +83,19 @@ private:
                     //    << " RECEIVED." << std::endl;
                     qDebug() << " with Length: " << can_messages_.len() << " RECEIVED.";
                     emit traceItemUpdate();
-
                 }
             }
         }
 
         canMessages can_messages_;
 
+
         std::atomic_int samples_;
 
+        QThread* outerThread;
+
     signals:
-        void traceItemUpdate() { qDebug() << "itemupdate"; };
+        void traceItemUpdate();
 
 
     } listener_;
@@ -125,5 +130,8 @@ public:
     bool init();
 
     void run(uint32_t samples);
+
+    void setOuterThread(QThread* thread);
+
 };
 

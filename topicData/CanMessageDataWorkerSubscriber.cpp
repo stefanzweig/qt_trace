@@ -62,6 +62,10 @@ void CanMessageDataWorkerSubscriber::run(uint32_t samples)
     //}
 }
 
+void CanMessageDataWorkerSubscriber::setOuterThread(QThread* thread)
+{
+    this->listener_.outerThread = thread;
+}
 
 // in the commandline 
 //int main(

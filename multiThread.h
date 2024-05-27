@@ -16,6 +16,7 @@ public:
 
 public slots:
     void stopThread();
+    void stopFlag();
     void restartThread();
     void pauseThread();
     void setQueryString(QString str);
@@ -40,7 +41,6 @@ private:
     QString query_string;
     int samples_ = 10;
     CanMessageDataWorkerSubscriber* mysub_ = nullptr;
-    CanMessageDataWorkerSubscriber* mysub_backup = nullptr;
 
     void bindDataToTraceTree();
 };

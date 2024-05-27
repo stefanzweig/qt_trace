@@ -25,6 +25,7 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
         mysub_ = nullptr;
     }
     if (calc_thread != nullptr) {
+        calc_thread->stopFlag();
 
         calc_thread->quit();
         calc_thread->wait();
@@ -53,6 +54,8 @@ void QtWidgetsApplication1::init()
     
     calc_thread = new multiThread();
     connect(calc_thread, SIGNAL(traceItemUpdate()), this, SLOT(formatRow()));
+    //connect(calc_thread, &multiThread::traceItemUpdate, this, &QtWidgetsApplication1::formatRow);
+    
 
     // 重置布局 todo
     resetLayout();
@@ -111,13 +114,6 @@ void QtWidgetsApplication1::resetLayout()
 void QtWidgetsApplication1::onActionTriggered()
 {
     qDebug() << tr("菜单项已触发！");
-    // 下面的部分会有core dump问题
-    //HelloWorldSubscriber mysub;
-    //bool use_environment_qos = false;
-    //if (mysub.init(use_environment_qos))
-    //{
-    //    mysub.run();
-    //}
 }
 
 void QtWidgetsApplication1::startTrace()
@@ -127,17 +123,12 @@ void QtWidgetsApplication1::startTrace()
 
     uint32_t samples = 10;
 
-    if (mysub_ == nullptr) { // 2024-05-17: in fact != should be == 
-        // CanMessageDataWorkerSubscriber* mysub = new CanMessageDataWorkerSubscriber();
+    if (mysub_ == nullptr) {
         mysub_ = new CanMessageDataWorkerSubscriber();
-        //if (mysub->init())
-        //{
-        //    mysub->run(samples);
-        //}
     }
     calc_thread->restartThread();
     calc_thread->setSubscriber(mysub_, samples);
-    calc_thread->start(); // the real algorithm lies in calc_thread::run() function.
+    calc_thread->start();
     //timer->start(1000);
 }
 
