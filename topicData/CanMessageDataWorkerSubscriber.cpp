@@ -53,13 +53,13 @@ bool CanMessageDataWorkerSubscriber::init()
 
 void CanMessageDataWorkerSubscriber::run(uint32_t samples)
 {
-    while (1) 
-    {
+    //while (1) 
+    //{
         while (listener_.samples_ < samples)
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
-    }
+    //}
 }
 
 

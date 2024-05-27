@@ -19,8 +19,9 @@ void multiThread::stopThread() {
 }
 
 void multiThread::pauseThread() {
-    is_stop = false;
-    is_paused = true;
+    if (!is_stop) {
+        is_paused = true;
+    }
 }
 
 void multiThread::restartThread() {

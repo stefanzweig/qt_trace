@@ -25,6 +25,10 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
         mysub_ = nullptr;
     }
     if (calc_thread != nullptr) {
+
+        calc_thread->quit();
+        calc_thread->wait();
+
         delete calc_thread;
         calc_thread = nullptr;
     }
