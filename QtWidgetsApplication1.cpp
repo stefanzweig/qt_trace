@@ -3,6 +3,7 @@
 #include <QDebug>
 //#include "HelloWorld/HelloWorldSubscriber.h"
 #include "multiThread.h"
+#include "demo.h"
 
 
 QtWidgetsApplication1::QtWidgetsApplication1(QWidget *parent)
@@ -62,6 +63,10 @@ void QtWidgetsApplication1::init()
 
     // ¸üÐÂ×´Ì¬ todo
     updateCurrentState();
+
+    Demo dataModel{};
+    ui.treetrace->setModel(&dataModel);
+    ui.treetrace->show();
 
 }
 
@@ -127,7 +132,7 @@ void QtWidgetsApplication1::startTrace()
         mysub_ = new CanMessageDataWorkerSubscriber();
     }
     calc_thread->restartThread();
-    calc_thread->setSubscriber(mysub_, samples);
+    calc_thread->setSubscriber(mysub_, samples, ui.treetrace);
     calc_thread->start();
     //timer->start(1000);
 }
@@ -137,11 +142,6 @@ void QtWidgetsApplication1::stopTrace()
     qDebug() << "stopTrace...";
     calc_thread->stopThread();
     mysub_ = nullptr;
-    //if (mysub_ != nullptr) { 
-    //    delete mysub_; 
-    //    mysub_ = nullptr; 
-    //}
-    //timer->stop();
 }
 
 void QtWidgetsApplication1::pauseTrace()

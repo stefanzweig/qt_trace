@@ -4,6 +4,7 @@
 #include <QThread>
 #include <QMutex>
 #include "topicData/CanMessageDataWorkerSubscriber.h"
+#include <QtWidgets/QTreeView>
 
 class multiThread :
     public QThread
@@ -12,7 +13,7 @@ class multiThread :
 public:
     multiThread();
     ~multiThread();
-    void setSubscriber(CanMessageDataWorkerSubscriber* subscriber, int samples);
+    void setSubscriber(CanMessageDataWorkerSubscriber* subscriber, int samples, QTreeView* treeview);
 
 public slots:
     void stopThread();
@@ -41,6 +42,7 @@ private:
     QString query_string;
     int samples_ = 10;
     CanMessageDataWorkerSubscriber* mysub_ = nullptr;
+    QTreeView* tree_;
 
     void bindDataToTraceTree();
 };

@@ -94,5 +94,8 @@
     <QtMoc Include="multiThread.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="demo.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
 </Project>

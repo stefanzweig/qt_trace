@@ -62,9 +62,10 @@ void CanMessageDataWorkerSubscriber::run(uint32_t samples)
     //}
 }
 
-void CanMessageDataWorkerSubscriber::setOuterThread(QThread* thread)
+void CanMessageDataWorkerSubscriber::setOuterThread(QThread* thread, QTreeView* treeview)
 {
     this->listener_.outerThread = thread;
+    this->listener_.tree_ = treeview;
 }
 
 // in the commandline 

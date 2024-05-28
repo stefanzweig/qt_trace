@@ -16,6 +16,7 @@
 
 #include <QDebug>
 #include <QThread>
+#include <QtWidgets/QTreeView>
 
 using namespace eprosima::fastdds::dds;
 
@@ -93,9 +94,10 @@ private:
         std::atomic_int samples_;
 
         QThread* outerThread;
+        QTreeView* tree_;
 
     signals:
-        void traceItemUpdate();
+        void traceItemUpdate() {};
 
 
     } listener_;
@@ -131,7 +133,7 @@ public:
 
     void run(uint32_t samples);
 
-    void setOuterThread(QThread* thread);
+    void setOuterThread(QThread* thread, QTreeView* treeview);
 
 };
 
