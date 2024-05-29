@@ -51,7 +51,7 @@ void QtWidgetsApplication1::init()
     // 定义定时器
     timer = new QTimer();
     connect(timer, &QTimer::timeout, this, &QtWidgetsApplication1::updateState);
-    
+
     calc_thread = new multiThread();
     //connect(calc_thread, SIGNAL(traceItemUpdate()), this, SLOT(formatRow()));
     //connect(calc_thread, calc_thread.mysub_.listener_.traceItemUpdate, this, &QtWidgetsApplication1::formatRow);
@@ -84,7 +84,7 @@ void QtWidgetsApplication1::updateCurrentState()
 
 void QtWidgetsApplication1::updateState()
 {
-    qDebug() << "State...";
+    //qDebug() << "State...";
 }
 
 void QtWidgetsApplication1::createActions()
@@ -131,6 +131,7 @@ void QtWidgetsApplication1::startTrace()
 
     if (mysub_ == nullptr) {
         mysub_ = new CanMessageDataWorkerSubscriber();
+        connect(&mysub_->listener_, &SubListener::traceItemUpdate_internal, [=]() {qDebug() << "lambda11111"; });
     }
     calc_thread->restartThread();
     calc_thread->setSubscriber(mysub_, samples, ui.treetrace); // nonsense

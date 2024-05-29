@@ -35,8 +35,8 @@ private:
 
     TypeSupport type_;
 
-private:
-    SubListener listener_;
+//private:
+    //SubListener listener_;
 
     //class SubListener : public DataReaderListener, public QObject
     //{
@@ -139,6 +139,6 @@ public:
     void run(uint32_t samples);
 
     void setOuterThread(QThread* thread, QTreeView* treeview);
-
+    SubListener listener_;
 };
 
