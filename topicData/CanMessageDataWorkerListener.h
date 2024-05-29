@@ -22,6 +22,7 @@ using namespace eprosima::fastdds::dds;
 
 class SubListener : public QObject, public DataReaderListener
 {
+    Q_OBJECT
 public:
 
     SubListener()
@@ -81,7 +82,7 @@ public:
     QTreeView* tree_;
 
 signals:
-    void traceItemUpdate_internal(int i){
+    void traceItemUpdate_internal(int i);/* {
         qDebug() << i;
-    };
+    };*/
 };

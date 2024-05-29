@@ -29,7 +29,7 @@ private slots:
     void updateState();
     void updateCurrentState();
     void onActionTriggered();
-    void formatRow();
+    void formatRow(int x);
 
     void startTrace();
     void stopTrace();

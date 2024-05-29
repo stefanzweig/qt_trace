@@ -1,7 +1,6 @@
 #include "QtWidgetsApplication1.h"
 #include <QTimer>
 #include <QDebug>
-//#include "HelloWorld/HelloWorldSubscriber.h"
 #include "multiThread.h"
 #include "demo.h"
 
@@ -54,9 +53,10 @@ void QtWidgetsApplication1::init()
     connect(timer, &QTimer::timeout, this, &QtWidgetsApplication1::updateState);
     
     calc_thread = new multiThread();
-    connect(calc_thread, SIGNAL(traceItemUpdate()), this, SLOT(formatRow()));
+    //connect(calc_thread, SIGNAL(traceItemUpdate()), this, SLOT(formatRow()));
     //connect(calc_thread, calc_thread.mysub_.listener_.traceItemUpdate, this, &QtWidgetsApplication1::formatRow);
-    
+    connect(calc_thread, &multiThread::traceItemUpdate_internal, this, &QtWidgetsApplication1::formatRow);
+
 
     // ÷ÿ÷√≤ºæ÷ todo
     resetLayout();
@@ -153,7 +153,7 @@ void QtWidgetsApplication1::pauseTrace()
 }
 
 
-void QtWidgetsApplication1::formatRow()
+void QtWidgetsApplication1::formatRow(int x)
 {
-    qDebug() << "formatRow...";
+    qDebug() << "formatRow..."<< x;
 }

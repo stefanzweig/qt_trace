@@ -8,10 +8,10 @@
 #include <QtWidgets/QTreeView>
 
 class multiThread :
-    public QThread
-    // , SubListener
+    public QThread, public SubListener, public QObject
 {
     Q_OBJECT
+
 public:
     multiThread();
     ~multiThread();
@@ -28,8 +28,8 @@ public slots:
 protected:
     virtual void run() override;
 
-signals:
-    void traceItemUpdate();
+//signals:
+//    void traceItemUpdate();
 
 private:
     bool is_stop;

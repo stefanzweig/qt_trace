@@ -95,5 +95,5 @@ void multiThread::setSubscriber(CanMessageDataWorkerSubscriber* subscriber, int 
     mysub_ = subscriber;
     samples_ = samples;
     subscriber->setOuterThread(this, treeview);
-    tree_ = treeview;
+    //tree_ = treeview;
 }
