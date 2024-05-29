@@ -131,7 +131,8 @@ void QtWidgetsApplication1::startTrace()
 
     if (mysub_ == nullptr) {
         mysub_ = new CanMessageDataWorkerSubscriber();
-        connect(&mysub_->listener_, &SubListener::traceItemUpdate_internal, [=]() {qDebug() << "lambda11111"; });
+        //connect(&mysub_->listener_, &SubListener::traceItemUpdate_internal, [=]() {qDebug() << "lambda11111"; });
+        connect(&mysub_->listener_, &SubListener::traceItemUpdate_internal, this, &QtWidgetsApplication1::formatRow);
     }
     calc_thread->restartThread();
     calc_thread->setSubscriber(mysub_, samples, ui.treetrace); // nonsense
