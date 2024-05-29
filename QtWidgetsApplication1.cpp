@@ -55,7 +55,7 @@ void QtWidgetsApplication1::init()
     
     calc_thread = new multiThread();
     connect(calc_thread, SIGNAL(traceItemUpdate()), this, SLOT(formatRow()));
-    //connect(calc_thread, &multiThread::traceItemUpdate, this, &QtWidgetsApplication1::formatRow);
+    //connect(calc_thread, calc_thread.mysub_.listener_.traceItemUpdate, this, &QtWidgetsApplication1::formatRow);
     
 
     // ÖØÖÃ²¼¾Ö todo
@@ -132,7 +132,7 @@ void QtWidgetsApplication1::startTrace()
         mysub_ = new CanMessageDataWorkerSubscriber();
     }
     calc_thread->restartThread();
-    calc_thread->setSubscriber(mysub_, samples, ui.treetrace);
+    calc_thread->setSubscriber(mysub_, samples, ui.treetrace); // nonsense
     calc_thread->start();
     //timer->start(1000);
 }

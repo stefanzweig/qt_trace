@@ -27,7 +27,7 @@ public:
         //  nothing new here
         t = new QTimer(this);
         t->setInterval(1000);
-        connect(t, SIGNAL(timeout()), this, SLOT(timerHit()));
+        QObject::connect(t, SIGNAL(timeout()), this, SLOT(timerHit()));
         t->start();
     }
 

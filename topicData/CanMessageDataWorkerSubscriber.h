@@ -34,7 +34,7 @@ private:
 
     TypeSupport type_;
 
-
+private:
     class SubListener : public DataReaderListener, public QObject
     {
     public:
@@ -97,7 +97,9 @@ private:
         QTreeView* tree_;
 
     signals:
-        void traceItemUpdate() {};
+        void traceItemUpdate() {
+            qDebug() << "hallo"; 
+        };
 
 
     } listener_;
