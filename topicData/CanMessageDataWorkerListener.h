@@ -67,8 +67,8 @@ public:
                 samples_++;
                 //std::cout << " with Length: " << can_messages_.len()
                 //    << " RECEIVED." << std::endl;
-                qDebug() << " with Length: " << can_messages_.len() << " RECEIVED.";
-                emit traceItemUpdate_internal(0);
+                //qDebug() << " with Length: " << can_messages_.len() << " RECEIVED.";
+                emit traceItemUpdate_internal(can_messages_.len());
             }
         }
     }
