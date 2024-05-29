@@ -55,7 +55,8 @@ void QtWidgetsApplication1::init()
     calc_thread = new multiThread();
     //connect(calc_thread, SIGNAL(traceItemUpdate()), this, SLOT(formatRow()));
     //connect(calc_thread, calc_thread.mysub_.listener_.traceItemUpdate, this, &QtWidgetsApplication1::formatRow);
-    connect(calc_thread, &multiThread::traceItemUpdate_internal, this, &QtWidgetsApplication1::formatRow);
+    //connect(calc_thread, &multiThread::traceItemUpdate_internal, this, &QtWidgetsApplication1::formatRow);
+    connect(calc_thread, &multiThread::traceItemUpdate_internal, [=]() {qDebug() << "lambda"; });
 
 
     // ÖØÖÃ²¼¾Ö todo

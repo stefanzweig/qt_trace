@@ -10,7 +10,7 @@
 class multiThread :
     public QThread, public SubListener, public QObject
 {
-    Q_OBJECT
+    //Q_OBJECT
 
 public:
     multiThread();

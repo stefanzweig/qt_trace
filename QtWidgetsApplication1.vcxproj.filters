@@ -86,14 +86,14 @@
     <ClInclude Include="topicData\CanMessageDataPubSubTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="multiThread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="HelloWorld\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="multiThread.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="demo.h">
       <Filter>Header Files</Filter>
     </QtMoc>

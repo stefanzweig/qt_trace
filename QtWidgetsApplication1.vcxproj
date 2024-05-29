@@ -126,7 +126,7 @@
     <ClInclude Include="HelloWorld\HelloWorldCdrAux.ipp" />
     <QtMoc Include="topicData\CanMessageDataWorkerListener.h" />
     <QtMoc Include="demo.h" />
-    <QtMoc Include="multiThread.h" />
+    <ClInclude Include="multiThread.h" />
     <ClInclude Include="topicData\CanMessageData.h" />
     <ClInclude Include="topicData\CanMessageDataCdrAux.hpp" />
     <ClInclude Include="topicData\CanMessageDataCdrAux.ipp" />
