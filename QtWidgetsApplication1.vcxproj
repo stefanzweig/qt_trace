@@ -124,6 +124,7 @@
     <ClInclude Include="core_global.h" />
     <ClInclude Include="gui_global.h" />
     <ClInclude Include="HelloWorld\HelloWorldCdrAux.ipp" />
+    <ClInclude Include="topicData\CanMessageDataWorkerListener.h" />
     <QtMoc Include="demo.h" />
     <QtMoc Include="multiThread.h" />
     <ClInclude Include="topicData\CanMessageData.h" />

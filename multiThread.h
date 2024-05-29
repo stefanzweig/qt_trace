@@ -4,10 +4,12 @@
 #include <QThread>
 #include <QMutex>
 #include "topicData/CanMessageDataWorkerSubscriber.h"
+#include "topicData/CanMessageDataWorkerListener.h"
 #include <QtWidgets/QTreeView>
 
 class multiThread :
     public QThread
+    // , SubListener
 {
     Q_OBJECT
 public:

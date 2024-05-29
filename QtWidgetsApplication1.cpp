@@ -134,7 +134,7 @@ void QtWidgetsApplication1::startTrace()
     calc_thread->restartThread();
     calc_thread->setSubscriber(mysub_, samples, ui.treetrace); // nonsense
     calc_thread->start();
-    //timer->start(1000);
+    timer->start(1000);
 }
 
 void QtWidgetsApplication1::stopTrace()
@@ -142,13 +142,14 @@ void QtWidgetsApplication1::stopTrace()
     qDebug() << "stopTrace...";
     calc_thread->stopThread();
     mysub_ = nullptr;
+    timer->stop();
 }
 
 void QtWidgetsApplication1::pauseTrace()
 {
     qDebug() << "pauseTrace...";
     calc_thread->pauseThread();
-    //timer->stop();
+    timer->stop();
 }
 
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "topicData/CanMessageDataPubSubTypes.h"
+#include "topicData/CanMessageDataWorkerListener.h"
 
 #include <chrono>
 #include <thread>
@@ -35,74 +36,76 @@ private:
     TypeSupport type_;
 
 private:
-    class SubListener : public DataReaderListener, public QObject
-    {
-    public:
+    SubListener listener_;
 
-        SubListener()
-            : samples_(0)
-        {
-            /*connect(this, SIGNAL(traceItemUpdate()), outerThread, SIGNAL(traceItemUpdate()));*/
-        }
+    //class SubListener : public DataReaderListener, public QObject
+    //{
+    //public:
 
-        ~SubListener() override
-        {
-        }
+    //    SubListener()
+    //        : samples_(0)
+    //    {
+    //        /*connect(this, SIGNAL(traceItemUpdate()), outerThread, SIGNAL(traceItemUpdate()));*/
+    //    }
 
-        void on_subscription_matched(
-            DataReader*,
-            const SubscriptionMatchedStatus& info) override
-        {
-            if (info.current_count_change == 1)
-            {
-                qDebug() << "Subscriber matched.";
-                //std::cout << "Subscriber matched." << std::endl;
-            }
-            else if (info.current_count_change == -1)
-            {
-                qDebug() << "Subscriber unmatched.";
-                //std::cout << "Subscriber unmatched." << std::endl;
-            }
-            else
-            {
-                qDebug() << info.current_count_change;
-                //std::cout << info.current_count_change
-                    //<< " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
-            }
-        }
+    //    ~SubListener() override
+    //    {
+    //    }
 
-        void on_data_available(
-            DataReader* reader) override
-        {
-            SampleInfo info;
-            if (reader->take_next_sample(&can_messages_, &info) == ReturnCode_t::RETCODE_OK)
-            {
-                if (info.valid_data)
-                {
-                    samples_++;
-                    //std::cout << " with Length: " << can_messages_.len()
-                    //    << " RECEIVED." << std::endl;
-                    qDebug() << " with Length: " << can_messages_.len() << " RECEIVED.";
-                    emit traceItemUpdate();
-                }
-            }
-        }
+    //    void on_subscription_matched(
+    //        DataReader*,
+    //        const SubscriptionMatchedStatus& info) override
+    //    {
+    //        if (info.current_count_change == 1)
+    //        {
+    //            qDebug() << "Subscriber matched.";
+    //            //std::cout << "Subscriber matched." << std::endl;
+    //        }
+    //        else if (info.current_count_change == -1)
+    //        {
+    //            qDebug() << "Subscriber unmatched.";
+    //            //std::cout << "Subscriber unmatched." << std::endl;
+    //        }
+    //        else
+    //        {
+    //            qDebug() << info.current_count_change;
+    //            //std::cout << info.current_count_change
+    //                //<< " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
+    //        }
+    //    }
 
-        canMessages can_messages_;
+    //    void on_data_available(
+    //        DataReader* reader) override
+    //    {
+    //        SampleInfo info;
+    //        if (reader->take_next_sample(&can_messages_, &info) == ReturnCode_t::RETCODE_OK)
+    //        {
+    //            if (info.valid_data)
+    //            {
+    //                samples_++;
+    //                //std::cout << " with Length: " << can_messages_.len()
+    //                //    << " RECEIVED." << std::endl;
+    //                qDebug() << " with Length: " << can_messages_.len() << " RECEIVED.";
+    //                emit traceItemUpdate();
+    //            }
+    //        }
+    //    }
 
-
-        std::atomic_int samples_;
-
-        QThread* outerThread;
-        QTreeView* tree_;
-
-    signals:
-        void traceItemUpdate() {
-            qDebug() << "hallo"; 
-        };
+    //    canMessages can_messages_;
 
 
-    } listener_;
+    //    std::atomic_int samples_;
+
+    //    QThread* outerThread;
+    //    QTreeView* tree_;
+
+    //signals:
+    //    void traceItemUpdate() {
+    //        qDebug() << "hallo"; 
+    //    };
+
+
+    //} listener_;
 
 public:
     CanMessageDataWorkerSubscriber()
