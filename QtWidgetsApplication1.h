@@ -6,6 +6,7 @@
 #include "topicData/CanMessageDataWorkerSubscriber.h"
 #include "multiThread.h"
 #include "treemodel.h"
+#include "demo.h"
 
 
 class QtWidgetsApplication1 : public QMainWindow
@@ -28,6 +29,7 @@ private:
     CanMessageDataWorkerSubscriber* mysub_ = nullptr;
     multiThread* calc_thread = nullptr;
     TreeModel* model = nullptr;
+    Demo* demo_model = nullptr;
 
 private slots:
     void updateState();

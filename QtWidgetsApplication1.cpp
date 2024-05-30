@@ -2,7 +2,7 @@
 #include <QTimer>
 #include <QDebug>
 #include "multiThread.h"
-#include "demo.h"
+
 
 QtWidgetsApplication1::QtWidgetsApplication1(QWidget *parent)
     : QMainWindow(parent)
@@ -36,6 +36,11 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
         delete model;
         model = nullptr;
     }
+    if (demo_model != nullptr) {
+        delete demo_model;
+        demo_model = nullptr;
+    }
+    
 }
 
 void QtWidgetsApplication1::init()
@@ -179,6 +184,9 @@ void QtWidgetsApplication1::setupTreeTrace()
     model = new TreeModel(file.readAll());
     file.close();
     t->setModel(model);
+
+    demo_model = new Demo();
+    t->setModel(demo_model);
     //t->setWindowTitle(QObject::tr("Simple Tree Model"));
     //t->show();
 }
