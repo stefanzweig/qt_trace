@@ -19,6 +19,7 @@ protected:
 
 private:
     void init();
+    void setupTreeTrace();
 
     Ui::QtWidgetsApplication1Class ui;
     QTimer* timer = nullptr;
