@@ -3,7 +3,6 @@
 #include <QDebug>
 #include "multiThread.h"
 #include "demo.h"
-#include "treemodel.h"
 
 QtWidgetsApplication1::QtWidgetsApplication1(QWidget *parent)
     : QMainWindow(parent)
@@ -32,6 +31,10 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
 
         delete calc_thread;
         calc_thread = nullptr;
+    }
+    if (model != nullptr) {
+        delete model;
+        model = nullptr;
     }
 }
 
@@ -160,12 +163,22 @@ void QtWidgetsApplication1::formatRow(int x)
 
 void QtWidgetsApplication1::setupTreeTrace()
 {
-    QString data = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.\n Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.\n It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
+    QTreeView* t = ui.treetrace;
+    t->setSelectionBehavior(QTreeView::SelectRows);
+    t->setSelectionMode(QTreeView::SingleSelection);
+    t->setFocusPolicy(Qt::NoFocus);
+
+    t->header()->setHighlightSections(true);
+    t->header()->setDefaultAlignment(Qt::AlignCenter);
+    t->header()->setDefaultSectionSize(100);
+    t->header()->setStretchLastSection(true);
+    t->header()->setSortIndicator(0, Qt::AscendingOrder);
+
     QFile file(":/QtWidgetsApplication1/default.txt");
     file.open(QIODevice::ReadOnly);
-    TreeModel model(file.readAll());
+    model = new TreeModel(file.readAll());
     file.close();
-    ui.treetrace->setModel(&model);
-    ui.treetrace->setWindowTitle(QObject::tr("Simple Tree Model"));
-    ui.treetrace->show();
+    t->setModel(model);
+    //t->setWindowTitle(QObject::tr("Simple Tree Model"));
+    //t->show();
 }

@@ -5,6 +5,8 @@
 #include <QTimer>
 #include "topicData/CanMessageDataWorkerSubscriber.h"
 #include "multiThread.h"
+#include "treemodel.h"
+
 
 class QtWidgetsApplication1 : public QMainWindow
 {
@@ -25,6 +27,7 @@ private:
     QTimer* timer = nullptr;
     CanMessageDataWorkerSubscriber* mysub_ = nullptr;
     multiThread* calc_thread = nullptr;
+    TreeModel* model = nullptr;
 
 private slots:
     void updateState();
