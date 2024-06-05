@@ -105,6 +105,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DataTreeItemDelegate.cpp" />
     <ClCompile Include="DataTreeView.cpp" />
     <ClCompile Include="multiThread.cpp" />
     <ClCompile Include="topicData\CanMessageData.cxx" />
@@ -126,6 +127,7 @@
   <ItemGroup>
     <ClInclude Include="core_global.h" />
     <QtMoc Include="DataTreeView.h" />
+    <QtMoc Include="DataTreeItemDelegate.h" />
     <ClInclude Include="gui_global.h" />
     <ClInclude Include="HelloWorld\HelloWorldCdrAux.ipp" />
     <ClInclude Include="treeitem.h" />

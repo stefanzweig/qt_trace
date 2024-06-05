@@ -76,6 +76,9 @@
     <ClCompile Include="DataTreeView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DataTreeItemDelegate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HelloWorld\HelloWorldCdrAux.ipp" />
@@ -116,6 +119,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="DataTreeView.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="DataTreeItemDelegate.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

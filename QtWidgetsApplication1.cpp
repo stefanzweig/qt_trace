@@ -180,14 +180,14 @@ void QtWidgetsApplication1::setupTreeTrace()
     //t->header()->setStretchLastSection(true);
     //t->header()->setSortIndicator(0, Qt::AscendingOrder);
 
-    QFile file(":/QtWidgetsApplication1/default.txt");
-    file.open(QIODevice::ReadOnly);
-    model = new TreeModel(file.readAll());
-    file.close();
-    t->setModel(model);
+    //QFile file(":/QtWidgetsApplication1/default.txt");
+    //file.open(QIODevice::ReadOnly);
+    //model = new TreeModel(file.readAll());
+    //file.close();
+    //t->setModel(model);
 
-    //demo_model = new Demo();
-    //t->setModel(demo_model);
-    //t->setWindowTitle(QObject::tr("Simple Tree Model"));
+    demo_model = new Demo();
+    t->setModel(demo_model);
+    t->setWindowTitle(QObject::tr("Simple Tree Model"));
     //t->show();
 }

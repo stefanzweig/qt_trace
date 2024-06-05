@@ -2,6 +2,7 @@
 #include <QTreeView>
 #include <QList>
 #include <QUrl>
+#include "DataTreeItemDelegate.h"
 
 class QMenu;
 class QStandardItemModel;
@@ -12,6 +13,8 @@ class DataTreeView : public QTreeView
 public:
     explicit DataTreeView(QWidget* parent = 0);
     ~DataTreeView();
-
+private:
+    QMenu* contextMenu = nullptr;
+    DataTreeItemDelegate* itemDelegate = nullptr;
 };
 
