@@ -2,6 +2,7 @@
 #include <QTimer>
 #include <QDebug>
 #include "multiThread.h"
+#include "DataTreeView.h"
 
 
 QtWidgetsApplication1::QtWidgetsApplication1(QWidget *parent)
@@ -168,16 +169,16 @@ void QtWidgetsApplication1::formatRow(int x)
 
 void QtWidgetsApplication1::setupTreeTrace()
 {
-    QTreeView* t = ui.treetrace;
+    DataTreeView* t = ui.treetrace;
     t->setSelectionBehavior(QTreeView::SelectRows);
     t->setSelectionMode(QTreeView::SingleSelection);
     t->setFocusPolicy(Qt::NoFocus);
 
-    t->header()->setHighlightSections(true);
-    t->header()->setDefaultAlignment(Qt::AlignCenter);
-    t->header()->setDefaultSectionSize(100);
-    t->header()->setStretchLastSection(true);
-    t->header()->setSortIndicator(0, Qt::AscendingOrder);
+    //t->header()->setHighlightSections(true);
+    //t->header()->setDefaultAlignment(Qt::AlignCenter);
+    //t->header()->setDefaultSectionSize(100);
+    //t->header()->setStretchLastSection(true);
+    //t->header()->setSortIndicator(0, Qt::AscendingOrder);
 
     QFile file(":/QtWidgetsApplication1/default.txt");
     file.open(QIODevice::ReadOnly);
@@ -185,8 +186,8 @@ void QtWidgetsApplication1::setupTreeTrace()
     file.close();
     t->setModel(model);
 
-    demo_model = new Demo();
-    t->setModel(demo_model);
+    //demo_model = new Demo();
+    //t->setModel(demo_model);
     //t->setWindowTitle(QObject::tr("Simple Tree Model"));
     //t->show();
 }
