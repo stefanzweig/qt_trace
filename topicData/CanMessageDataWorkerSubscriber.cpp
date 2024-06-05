@@ -1,5 +1,6 @@
 #include "topicData/CanMessageDataPubSubTypes.h"
 #include "CanMessageDataWorkerSubscriber.h"
+#include "topicData/BaseNodeData.h"
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -14,7 +15,7 @@ bool CanMessageDataWorkerSubscriber::init()
 {
     DomainParticipantQos participantQos;
     participantQos.name("Participant_subscriber");
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, participantQos);
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(DDS_DOMAINID, participantQos);
 
     if (participant_ == nullptr)
     {

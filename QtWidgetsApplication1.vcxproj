@@ -130,6 +130,7 @@
     <QtMoc Include="DataTreeItemDelegate.h" />
     <ClInclude Include="gui_global.h" />
     <ClInclude Include="HelloWorld\HelloWorldCdrAux.ipp" />
+    <ClInclude Include="topicData\BaseNodeData.h" />
     <ClInclude Include="treeitem.h" />
     <QtMoc Include="treemodel.h" />
     <QtMoc Include="topicData\CanMessageDataWorkerListener.h" />
