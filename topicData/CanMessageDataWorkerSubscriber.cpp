@@ -26,7 +26,7 @@ bool CanMessageDataWorkerSubscriber::init()
     type_.register_type(participant_);
 
     // Create the subscriptions Topic
-     topic_ = participant_->create_topic("CanMessageDataTopic", type_.get_type_name(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+    topic_ = participant_->create_topic("CanMessageDataTopic", type_.get_type_name(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
     //topic_ = participant_->create_topic("canMessageTopic", type_.get_type_name(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
