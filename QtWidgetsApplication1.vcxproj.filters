@@ -79,6 +79,9 @@
     <ClCompile Include="DataTreeItemDelegate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="topicData\ZoneMasterCanMessageDataSubscriber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HelloWorld\HelloWorldCdrAux.ipp" />
@@ -105,6 +108,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="topicData\BaseNodeData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="topicData\ZoneMasterCanMessageDataSubscriber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="topicData\ZoneMasterCanMessageDataListener.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

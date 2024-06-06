@@ -113,6 +113,7 @@
     <ClCompile Include="topicData\CanMessageDataWorkerSubscriber.cpp" />
     <ClCompile Include="treeitem.cpp" />
     <ClCompile Include="treemodel.cpp" />
+    <ClCompile Include="topicData\ZoneMasterCanMessageDataSubscriber.cpp" />
     <QtRcc Include="QtWidgetsApplication1.qrc" />
     <QtUic Include="QtWidgetsApplication1.ui" />
     <QtMoc Include="QtWidgetsApplication1.h" />
@@ -126,6 +127,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core_global.h" />
+    <ClInclude Include="topicData\ZoneMasterCanMessageDataListener.h" />
+    <ClInclude Include="topicData\ZoneMasterCanMessageDataSubscriber.h" />
     <QtMoc Include="DataTreeView.h" />
     <QtMoc Include="DataTreeItemDelegate.h" />
     <ClInclude Include="gui_global.h" />
