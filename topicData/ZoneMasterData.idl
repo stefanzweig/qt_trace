@@ -1,0 +1,205 @@
+struct cansignal
+{
+	string name;
+	uint64 raw_value;
+	string phy_value;
+};
+
+struct canpdu
+{	
+	string name;
+	uint32 id;
+	sequence<uint8> data;
+	sequence<cansignal> signals;
+};
+
+
+struct canframe
+{
+    uint32 channel;
+    uint32 id;
+    uint8 dlc;
+    uint16 dataLen;
+    sequence<uint8> data;
+    uint64 cycTime;
+    uint16 flags;
+    uint64 timeStamp;
+    int64 timeStamp_d;
+    uint8 rxtx;
+    uint8 isFd;
+    uint8 isRt;
+    uint8 isExt;
+    uint8 errorCode;
+	boolean containerPduFlag;
+	boolean pduFlag;
+	sequence<string> containPduNames;
+	sequence<uint32> containPduNum;
+	sequence<canpdu> containPdus;
+	sequence<canpdu> pdus;
+	string name;
+};
+
+struct canMessage
+{
+    uint32 channel;
+    uint32 id;
+    uint8 dlc;
+    uint16 dataLen;
+    sequence<uint8> data;
+    uint64 cycTime;
+    uint16 flags;
+    uint64 timeStamp;
+    int64 timeStamp_d;
+    uint8 rxtx;
+    uint8 isFd;
+    uint8 isRt;
+    uint8 isExt;
+    uint8 errorCode;
+};
+
+struct canMessages {
+    uint64 len;
+    sequence<canMessage> canMsgs;
+};
+
+
+
+struct doipMessage
+{
+	
+	uint32 targetAddress;
+	uint32 headerType;
+	sequence<uint8> cmd;
+	
+    
+};
+
+
+struct ethFrame
+{
+	uint8 sourceAddress[6];
+	uint16 channle;
+	uint8 destinationAddress[6];
+	uint16 dir;
+	uint16 type;
+	uint16 tpid;
+	uint16 tci;
+	uint16 payLoadLength;
+	uint64 reservedEthernetFrame;
+	sequence<uint8> payLoad;
+	uint64 timeStamp;
+	
+};
+
+struct linSignal
+{
+	string name;
+	uint64 raw_value;
+	string phy_value;
+	string logical_value;
+};
+
+struct linFrame
+{
+    uint32 channel;
+    uint32 id;
+    uint8 dlc;
+    sequence<uint8> data;
+    uint16 flags;
+    uint64 timeStamp;
+    int64 timeStamp_d;
+    uint8 rxtx;
+    uint8 errorCode;
+	uint8 NMstate;
+	uint8 isMasterFrame;
+	sequence<linSignal> signals;
+	string name;
+};
+
+struct linFrames
+{
+	uint64 len;
+	sequence<linFrame> linframes;
+};
+
+struct linMessage
+{
+    uint32 channel;
+    uint32 id;
+    uint8 dlc;
+    sequence<uint8> data;
+	sequence<uint8> dataParser;
+    uint16 flags;
+    uint64 timeStamp;
+    int64 timeStamp_d;
+    uint8 rxtx;
+    uint8 errorCode;
+	uint8 NMstate;
+	uint8 isMasterFrame;
+};
+
+struct linMessages {
+    uint64 len;
+    sequence<linMessage> linMsgs;
+};
+
+
+
+struct someipFrame
+{
+	string proto;
+    uint64 timeStamp;
+	string src_ip;
+	uint32 src_port;
+	string dest_ip;
+	uint32 dest_port;
+	string if_type;
+	uint32 srv_id;
+	string srv_name;
+	uint32 inst_id;
+	uint32 if_id;
+	string if_name;
+	uint16 msg_type;
+	uint32 session_id;
+	sequence<uint8> payload;
+	string context_dict;
+	string dir;
+	string children;
+	uint16 ret_code;
+	uint32 channel;
+	uint64 delta_time;
+	
+    
+};
+
+
+
+struct sdFrame
+{
+	string proto;
+    uint64 timeStamp;
+	string src_ip;
+	uint32 src_port;
+	string dest_ip;
+	uint32 dest_port;
+	sequence<uint8> data;
+	string children;
+	string dir;
+	uint32 channel; 
+};
+
+struct someipStateInfo
+{
+	uint64 timeStamp;
+	uint32 srv_id;
+	uint32 inst_id;
+	uint8 state;
+	uint16 channel;
+};
+
+
+
+
+
+
+
