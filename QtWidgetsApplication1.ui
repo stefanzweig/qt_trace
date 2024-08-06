@@ -58,7 +58,14 @@
        <addaction name="actionpause"/>
        <addaction name="actionstop"/>
       </widget>
+      <widget class="QMenu" name="menuConfig">
+       <property name="title">
+        <string>Config</string>
+       </property>
+       <addaction name="actionConfig"/>
+      </widget>
       <addaction name="menu"/>
+      <addaction name="menuConfig"/>
      </widget>
     </item>
     <item>
@@ -182,7 +189,7 @@
                 </property>
                 <layout class="QHBoxLayout" name="hLayout_2">
                  <item>
-                  <widget class="QTreeView" name="treetrace">
+                  <widget class="DataTreeView" name="treetrace">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                      <horstretch>0</horstretch>
@@ -212,7 +219,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
@@ -238,6 +245,11 @@
   <action name="actionstop">
    <property name="text">
     <string>stop</string>
+   </property>
+  </action>
+  <action name="actionConfig">
+   <property name="text">
+    <string>Config</string>
    </property>
   </action>
  </widget>

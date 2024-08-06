@@ -41,18 +41,14 @@ public:
         if (info.current_count_change == 1)
         {
             qDebug() << "Subscriber matched.";
-            //std::cout << "Subscriber matched." << std::endl;
         }
         else if (info.current_count_change == -1)
         {
             qDebug() << "Subscriber unmatched.";
-            //std::cout << "Subscriber unmatched." << std::endl;
         }
         else
         {
             qDebug() << info.current_count_change;
-            //std::cout << info.current_count_change
-                //<< " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
         }
     }
 
@@ -67,10 +63,18 @@ public:
                 samples_++;
                 //std::cout << " with Length: " << can_messages_.len()
                 //    << " RECEIVED." << std::endl;
-                qDebug() << " with Length: " << can_messages_.len() << " RECEIVED.";
-                emit traceItemUpdate_internal(0);
+                //qDebug() << " with Length: " << can_messages_.len() << " RECEIVED.";
+                emit traceItemUpdate_internal(can_messages_.len());
             }
         }
+    }
+
+    void on_requested_incompatible_qos(
+        DataReader* reader,
+        const RequestedIncompatibleQosStatus& status)
+    {
+        (void)reader;
+        (void)status;
     }
 
     canMessages can_messages_;

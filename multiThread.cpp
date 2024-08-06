@@ -39,10 +39,16 @@ void multiThread::run() {
     // key function
     
     // from_t = get_timestamp();
-
-    if (mysub_ != nullptr) 
-        if (mysub_->init())
-            mysub_->run(samples_);
+    
+    if (mysub_ != nullptr) {
+        qDebug() << "mysub is not nullptr";
+            if (mysub_->init()) {
+                qDebug() << "mysub before run";
+                mysub_->run(samples_);
+                qDebug() << "mysub after run";
+                qDebug() << "debug: inited";
+            }
+    }
 
     while (true) {
         if (!is_stop) {

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "topicData/CanMessageDataPubSubTypes.h"
-#include "topicData/CanMessageDataWorkerListener.h"
+#include "topicData/ZoneMasterDataPubSubTypes.h"
+#include "topicData/ZoneMasterCanMessageDataListener.h"
 
 #include <chrono>
 #include <thread>
@@ -15,13 +15,9 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
-#include <QDebug>
-#include <QThread>
-#include <QtWidgets/QTreeView>
-
 using namespace eprosima::fastdds::dds;
 
-class CanMessageDataWorkerSubscriber
+class ZoneMasterCanMessageDataSubscriber
 {
 private:
 
@@ -34,9 +30,8 @@ private:
     Topic* topic_;
 
     TypeSupport type_;
-
 public:
-    CanMessageDataWorkerSubscriber()
+    ZoneMasterCanMessageDataSubscriber()
         : participant_(nullptr)
         , subscriber_(nullptr)
         , topic_(nullptr)
@@ -45,7 +40,7 @@ public:
     {
     }
 
-    virtual ~CanMessageDataWorkerSubscriber()
+    virtual ~ZoneMasterCanMessageDataSubscriber()
     {
         if (reader_ != nullptr)
         {
@@ -66,7 +61,5 @@ public:
 
     void run(uint32_t samples);
 
-    void setOuterThread(QThread* thread, QTreeView* treeview);
-    SubListener listener_;
 };
 

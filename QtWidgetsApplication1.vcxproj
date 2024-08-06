@@ -105,10 +105,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DataTreeItemDelegate.cpp" />
+    <ClCompile Include="DataTreeView.cpp" />
     <ClCompile Include="multiThread.cpp" />
     <ClCompile Include="topicData\CanMessageData.cxx" />
     <ClCompile Include="topicData\CanMessageDataPubSubTypes.cxx" />
     <ClCompile Include="topicData\CanMessageDataWorkerSubscriber.cpp" />
+    <ClCompile Include="treeitem.cpp" />
+    <ClCompile Include="treemodel.cpp" />
+    <ClCompile Include="topicData\ZoneMasterCanMessageDataSubscriber.cpp" />
     <QtRcc Include="QtWidgetsApplication1.qrc" />
     <QtUic Include="QtWidgetsApplication1.ui" />
     <QtMoc Include="QtWidgetsApplication1.h" />
@@ -122,8 +127,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core_global.h" />
+    <ClInclude Include="topicData\ZoneMasterCanMessageDataListener.h" />
+    <ClInclude Include="topicData\ZoneMasterCanMessageDataSubscriber.h" />
+    <QtMoc Include="DataTreeView.h" />
+    <QtMoc Include="DataTreeItemDelegate.h" />
     <ClInclude Include="gui_global.h" />
     <ClInclude Include="HelloWorld\HelloWorldCdrAux.ipp" />
+    <ClInclude Include="topicData\BaseNodeData.h" />
+    <ClInclude Include="treeitem.h" />
+    <QtMoc Include="treemodel.h" />
     <QtMoc Include="topicData\CanMessageDataWorkerListener.h" />
     <QtMoc Include="demo.h" />
     <ClInclude Include="multiThread.h" />

@@ -5,6 +5,9 @@
 #include <QTimer>
 #include "topicData/CanMessageDataWorkerSubscriber.h"
 #include "multiThread.h"
+#include "treemodel.h"
+#include "demo.h"
+
 
 class QtWidgetsApplication1 : public QMainWindow
 {
@@ -19,11 +22,14 @@ protected:
 
 private:
     void init();
+    void setupTreeTrace();
 
     Ui::QtWidgetsApplication1Class ui;
     QTimer* timer = nullptr;
     CanMessageDataWorkerSubscriber* mysub_ = nullptr;
     multiThread* calc_thread = nullptr;
+    TreeModel* model = nullptr;
+    Demo* demo_model = nullptr;
 
 private slots:
     void updateState();

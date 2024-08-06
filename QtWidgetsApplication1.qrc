@@ -4,5 +4,6 @@
         <file>res/startTrace.png</file>
         <file>res/stopTrace.png</file>
         <file>res/sqlitestudio.ico</file>
+        <file>default.txt</file>
     </qresource>
 </RCC>
