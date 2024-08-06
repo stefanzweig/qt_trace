@@ -29,16 +29,9 @@ void setQOS(DomainParticipantQos& pqos) {
 
 bool CanMessageDataWorkerSubscriber::init()
 {
-    DomainParticipantQos participantQos = PARTICIPANT_QOS_DEFAULT;
-    participantQos.name("Participant_subscriber_Stefan");
-
-    auto factory = DomainParticipantFactory::get_instance();
-    factory->load_profiles();
-    factory->get_default_participant_qos(participantQos);
-
-    setQOS(participantQos);
-
-    participant_ = factory->create_participant(DDS_DOMAINID, participantQos);
+    DomainParticipantQos participantQos;
+    participantQos.name("Participant_subscriber");
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(90, participantQos);
 
     if (participant_ == nullptr)
     {
@@ -46,13 +39,10 @@ bool CanMessageDataWorkerSubscriber::init()
     }
 
     // Register the Type
-    auto debug1 = type_.register_type(participant_);
+    type_.register_type(participant_);
 
     // Create the subscriptions Topic
-
-    topic_ = participant_->create_topic("canMessageTopic", "canMessageData", TOPIC_QOS_DEFAULT);
-    //topic_ = participant_->create_topic("canMessageTopic", type_.get_type_name(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
-
+    topic_ = participant_->create_topic("CanMessageDataTopic", type_.get_type_name(), eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
     {
