@@ -108,20 +108,15 @@
     <ClCompile Include="DataTreeItemDelegate.cpp" />
     <ClCompile Include="DataTreeView.cpp" />
     <ClCompile Include="multiThread.cpp" />
-    <ClCompile Include="topicData\CanMessageData.cxx" />
-    <ClCompile Include="topicData\CanMessageDataPubSubTypes.cxx" />
     <ClCompile Include="topicData\CanMessageDataWorkerSubscriber.cpp" />
+    <ClCompile Include="topicData\ZoneMasterData.cxx" />
+    <ClCompile Include="topicData\ZoneMasterDataPubSubTypes.cxx" />
     <ClCompile Include="treeitem.cpp" />
     <ClCompile Include="treemodel.cpp" />
     <ClCompile Include="topicData\ZoneMasterCanMessageDataSubscriber.cpp" />
     <QtRcc Include="QtWidgetsApplication1.qrc" />
     <QtUic Include="QtWidgetsApplication1.ui" />
     <QtMoc Include="QtWidgetsApplication1.h" />
-    <ClCompile Include="HelloWorld\HelloWorld.cxx" />
-    <ClCompile Include="HelloWorld\HelloWorldPublisher.cpp" />
-    <ClCompile Include="HelloWorld\HelloWorldPubSubTypes.cxx" />
-    <ClCompile Include="HelloWorld\HelloWorldSubscriber.cpp" />
-    <ClCompile Include="HelloWorld\HelloWorldv1.cxx" />
     <ClCompile Include="QtWidgetsApplication1.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -132,20 +127,16 @@
     <QtMoc Include="DataTreeView.h" />
     <QtMoc Include="DataTreeItemDelegate.h" />
     <ClInclude Include="gui_global.h" />
-    <ClInclude Include="HelloWorld\HelloWorldCdrAux.ipp" />
     <ClInclude Include="topicData\BaseNodeData.h" />
+    <ClInclude Include="topicData\ZoneMasterData.h" />
+    <ClInclude Include="topicData\ZoneMasterDataCdrAux.hpp" />
+    <ClInclude Include="topicData\ZoneMasterDataCdrAux.ipp" />
+    <ClInclude Include="topicData\ZoneMasterDataPubSubTypes.h" />
     <ClInclude Include="treeitem.h" />
     <QtMoc Include="treemodel.h" />
     <QtMoc Include="topicData\CanMessageDataWorkerListener.h" />
     <QtMoc Include="demo.h" />
     <ClInclude Include="multiThread.h" />
-    <ClInclude Include="topicData\CanMessageData.h" />
-    <ClInclude Include="topicData\CanMessageDataCdrAux.hpp" />
-    <ClInclude Include="topicData\CanMessageDataCdrAux.ipp" />
-    <ClInclude Include="topicData\CanMessageDataPubSubTypes.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="HelloWorld\CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

@@ -40,27 +40,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HelloWorld\HelloWorld.cxx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HelloWorld\HelloWorldPublisher.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HelloWorld\HelloWorldPubSubTypes.cxx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HelloWorld\HelloWorldSubscriber.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HelloWorld\HelloWorldv1.cxx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="topicData\CanMessageData.cxx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="topicData\CanMessageDataPubSubTypes.cxx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="topicData\CanMessageDataWorkerSubscriber.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -82,23 +61,18 @@
     <ClCompile Include="topicData\ZoneMasterCanMessageDataSubscriber.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="topicData\ZoneMasterData.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="topicData\ZoneMasterDataPubSubTypes.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="HelloWorld\HelloWorldCdrAux.ipp" />
     <ClInclude Include="gui_global.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="core_global.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="topicData\CanMessageData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="topicData\CanMessageDataCdrAux.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="topicData\CanMessageDataCdrAux.ipp" />
-    <ClInclude Include="topicData\CanMessageDataPubSubTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="multiThread.h">
@@ -116,9 +90,16 @@
     <ClInclude Include="topicData\ZoneMasterCanMessageDataListener.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="HelloWorld\CMakeLists.txt" />
+    <ClInclude Include="topicData\ZoneMasterData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="topicData\ZoneMasterDataCdrAux.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="topicData\ZoneMasterDataCdrAux.ipp" />
+    <ClInclude Include="topicData\ZoneMasterDataPubSubTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="demo.h">
