@@ -17,3 +17,9 @@ bool ZoneMasterCanMessageDataSubscriber::init()
 
 void ZoneMasterCanMessageDataSubscriber::run(uint32_t samples){
 }
+
+void ZoneMasterCanMessageDataSubscriber::setOuterThread(QThread* thread, QTreeView* treeview)
+{
+    this->listener_.outerThread = thread;
+    this->listener_.tree_ = treeview;
+}

@@ -5,6 +5,9 @@
 #include <QMutex>
 #include "topicData/CanMessageDataWorkerSubscriber.h"
 #include "topicData/CanMessageDataWorkerListener.h"
+//#include "topicData/ZoneMasterCanMessageDataSubscriber.h"
+//#include "topicData/ZoneMasterCanMessageDataListener.h"
+
 #include <QtWidgets/QTreeView>
 
 class multiThread :
@@ -15,6 +18,7 @@ class multiThread :
 public:
     multiThread();
     ~multiThread();
+    //void setSubscriber(ZoneMasterCanMessageDataSubscriber* subscriber, int samples, QTreeView* treeview);
     void setSubscriber(CanMessageDataWorkerSubscriber* subscriber, int samples, QTreeView* treeview);
 
 public slots:

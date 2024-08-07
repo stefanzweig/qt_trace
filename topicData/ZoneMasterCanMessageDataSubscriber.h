@@ -36,7 +36,7 @@ public:
         , subscriber_(nullptr)
         , topic_(nullptr)
         , reader_(nullptr)
-        , type_(new canMessagesPubSubType()) // this should be matched.
+        , type_(new canMessagePubSubType()) // this should be matched.
     {
     }
 
@@ -60,6 +60,8 @@ public:
     bool init();
 
     void run(uint32_t samples);
+    void setOuterThread(QThread* thread, QTreeView* treeview);
+    SubListener listener_;
 
 };
 

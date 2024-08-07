@@ -40,9 +40,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="topicData\CanMessageDataWorkerSubscriber.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="multiThread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -67,6 +64,9 @@
     <ClCompile Include="topicData\ZoneMasterDataPubSubTypes.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="topicData\CanMessageDataWorkerSubscriber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gui_global.h">
@@ -87,9 +87,6 @@
     <ClInclude Include="topicData\ZoneMasterCanMessageDataSubscriber.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="topicData\ZoneMasterCanMessageDataListener.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="topicData\ZoneMasterData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -100,12 +97,12 @@
     <ClInclude Include="topicData\ZoneMasterDataPubSubTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="topicData\CanMessageDataWorkerSubscriber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="demo.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="topicData\CanMessageDataWorkerListener.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="treemodel.h">
@@ -115,6 +112,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="DataTreeItemDelegate.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="topicData\ZoneMasterCanMessageDataListener.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
