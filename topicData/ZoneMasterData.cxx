@@ -379,39 +379,39 @@ std::vector<uint8_t>& canpdu::data()
 
 
 /*!
- * @brief This function copies the value in member signals
- * @param _signals New value to be copied in member signals
+ * @brief This function copies the value in member zone_signals
+ * @param _signals New value to be copied in member zone_signals
  */
-void canpdu::signals(
+void canpdu::zone_signals(
         const std::vector<cansignal>& _signals)
 {
     m_signals = _signals;
 }
 
 /*!
- * @brief This function moves the value in member signals
- * @param _signals New value to be moved in member signals
+ * @brief This function moves the value in member zone_signals
+ * @param _signals New value to be moved in member zone_signals
  */
-void canpdu::signals(
+void canpdu::zone_signals(
         std::vector<cansignal>&& _signals)
 {
     m_signals = std::move(_signals);
 }
 
 /*!
- * @brief This function returns a constant reference to member signals
- * @return Constant reference to member signals
+ * @brief This function returns a constant reference to member zone_signals
+ * @return Constant reference to member zone_signals
  */
-const std::vector<cansignal>& canpdu::signals() const
+const std::vector<cansignal>& canpdu::zone_signals() const
 {
     return m_signals;
 }
 
 /*!
- * @brief This function returns a reference to member signals
- * @return Reference to member signals
+ * @brief This function returns a reference to member zone_signals
+ * @return Reference to member zone_signals
  */
-std::vector<cansignal>& canpdu::signals()
+std::vector<cansignal>& canpdu::zone_signals()
 {
     return m_signals;
 }
@@ -3151,39 +3151,39 @@ uint8_t& linFrame::isMasterFrame()
 
 
 /*!
- * @brief This function copies the value in member signals
- * @param _signals New value to be copied in member signals
+ * @brief This function copies the value in member zone_signals
+ * @param _signals New value to be copied in member zone_signals
  */
-void linFrame::signals(
+void linFrame::zone_signals(
         const std::vector<linSignal>& _signals)
 {
     m_signals = _signals;
 }
 
 /*!
- * @brief This function moves the value in member signals
- * @param _signals New value to be moved in member signals
+ * @brief This function moves the value in member zone_signals
+ * @param _signals New value to be moved in member zone_signals
  */
-void linFrame::signals(
+void linFrame::zone_signals(
         std::vector<linSignal>&& _signals)
 {
     m_signals = std::move(_signals);
 }
 
 /*!
- * @brief This function returns a constant reference to member signals
- * @return Constant reference to member signals
+ * @brief This function returns a constant reference to member zone_signals
+ * @return Constant reference to member zone_signals
  */
-const std::vector<linSignal>& linFrame::signals() const
+const std::vector<linSignal>& linFrame::zone_signals() const
 {
     return m_signals;
 }
 
 /*!
- * @brief This function returns a reference to member signals
- * @return Reference to member signals
+ * @brief This function returns a reference to member zone_signals
+ * @return Reference to member zone_signals
  */
-std::vector<linSignal>& linFrame::signals()
+std::vector<linSignal>& linFrame::zone_signals()
 {
     return m_signals;
 }

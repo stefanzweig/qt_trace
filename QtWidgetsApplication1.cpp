@@ -135,7 +135,7 @@ void QtWidgetsApplication1::startTrace()
     uint32_t samples = 10;
 
     if (mysub_ == nullptr) {
-        mysub_ = new CanMessageDataWorkerSubscriber();
+        mysub_ = new ZoneMasterCanMessageDataSubscriber();
         //connect(&mysub_->listener_, &SubListener::traceItemUpdate_internal, [=]() {qDebug() << "lambda11111"; });
         connect(&mysub_->listener_, &SubListener::traceItemUpdate_internal, this, &QtWidgetsApplication1::formatRow);
     }

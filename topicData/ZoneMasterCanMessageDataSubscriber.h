@@ -36,7 +36,8 @@ public:
         , subscriber_(nullptr)
         , topic_(nullptr)
         , reader_(nullptr)
-        , type_(new canMessagePubSubType()) // this should be matched.
+        , type_(new canMessagesPubSubType()) // this should be matched.
+        //, type_(new canMessagePubSubType()) // this should be matched.
     {
     }
 

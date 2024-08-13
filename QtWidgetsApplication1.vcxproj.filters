@@ -64,9 +64,6 @@
     <ClCompile Include="topicData\ZoneMasterDataPubSubTypes.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="topicData\CanMessageDataWorkerSubscriber.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gui_global.h">
@@ -95,9 +92,6 @@
     </ClInclude>
     <ClInclude Include="topicData\ZoneMasterDataCdrAux.ipp" />
     <ClInclude Include="topicData\ZoneMasterDataPubSubTypes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="topicData\CanMessageDataWorkerSubscriber.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

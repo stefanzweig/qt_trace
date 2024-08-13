@@ -108,7 +108,6 @@
     <ClCompile Include="DataTreeItemDelegate.cpp" />
     <ClCompile Include="DataTreeView.cpp" />
     <ClCompile Include="multiThread.cpp" />
-    <ClCompile Include="topicData\CanMessageDataWorkerSubscriber.cpp" />
     <ClCompile Include="topicData\ZoneMasterData.cxx" />
     <ClCompile Include="topicData\ZoneMasterDataPubSubTypes.cxx" />
     <ClCompile Include="treeitem.cpp" />
@@ -123,7 +122,6 @@
   <ItemGroup>
     <ClInclude Include="core_global.h" />
     <QtMoc Include="topicData\ZoneMasterCanMessageDataListener.h" />
-    <ClInclude Include="topicData\CanMessageDataWorkerSubscriber.h" />
     <ClInclude Include="topicData\ZoneMasterCanMessageDataSubscriber.h" />
     <QtMoc Include="DataTreeView.h" />
     <QtMoc Include="DataTreeItemDelegate.h" />

@@ -158,7 +158,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
                 data.data(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
-                data.signals(), current_alignment);
+                data.zone_signals(), current_alignment);
 
 
     calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
@@ -181,7 +181,7 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(0) << data.name()
         << eprosima::fastcdr::MemberId(1) << data.id()
         << eprosima::fastcdr::MemberId(2) << data.data()
-        << eprosima::fastcdr::MemberId(3) << data.signals()
+        << eprosima::fastcdr::MemberId(3) << data.zone_signals()
 ;
     scdr.end_serialize_type(current_state);
 }
@@ -212,7 +212,7 @@ eProsima_user_DllExport void deserialize(
                                             break;
 
                                         case 3:
-                                                dcdr >> data.signals();
+                                                dcdr >> data.zone_signals();
                                             break;
 
                     default:
@@ -1148,7 +1148,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
                 data.isMasterFrame(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(11),
-                data.signals(), current_alignment);
+                data.zone_signals(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(12),
                 data.name(), current_alignment);
@@ -1182,7 +1182,7 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(8) << data.errorCode()
         << eprosima::fastcdr::MemberId(9) << data.NMstate()
         << eprosima::fastcdr::MemberId(10) << data.isMasterFrame()
-        << eprosima::fastcdr::MemberId(11) << data.signals()
+        << eprosima::fastcdr::MemberId(11) << data.zone_signals()
         << eprosima::fastcdr::MemberId(12) << data.name()
 ;
     scdr.end_serialize_type(current_state);
@@ -1246,7 +1246,7 @@ eProsima_user_DllExport void deserialize(
                                             break;
 
                                         case 11:
-                                                dcdr >> data.signals();
+                                                dcdr >> data.zone_signals();
                                             break;
 
                                         case 12:

@@ -96,7 +96,7 @@ void multiThread::setQueryString(QString str)
     this->query_string = str;
 }
 
-void multiThread::setSubscriber(CanMessageDataWorkerSubscriber* subscriber, int samples, QTreeView* treeview)
+void multiThread::setSubscriber(ZoneMasterCanMessageDataSubscriber* subscriber, int samples, QTreeView* treeview)
 {
     mysub_ = subscriber;
     samples_ = samples;

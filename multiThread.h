@@ -3,10 +3,10 @@
 #define MULTITHREAD_H
 #include <QThread>
 #include <QMutex>
-#include "topicData/CanMessageDataWorkerSubscriber.h"
-#include "topicData/CanMessageDataWorkerListener.h"
-//#include "topicData/ZoneMasterCanMessageDataSubscriber.h"
-//#include "topicData/ZoneMasterCanMessageDataListener.h"
+//#include "topicData/CanMessageDataWorkerSubscriber.h"
+//#include "topicData/CanMessageDataWorkerListener.h"
+#include "topicData/ZoneMasterCanMessageDataSubscriber.h"
+#include "topicData/ZoneMasterCanMessageDataListener.h"
 
 #include <QtWidgets/QTreeView>
 
@@ -18,8 +18,8 @@ class multiThread :
 public:
     multiThread();
     ~multiThread();
-    //void setSubscriber(ZoneMasterCanMessageDataSubscriber* subscriber, int samples, QTreeView* treeview);
-    void setSubscriber(CanMessageDataWorkerSubscriber* subscriber, int samples, QTreeView* treeview);
+    void setSubscriber(ZoneMasterCanMessageDataSubscriber* subscriber, int samples, QTreeView* treeview);
+    //void setSubscriber(CanMessageDataWorkerSubscriber* subscriber, int samples, QTreeView* treeview);
 
 public slots:
     void stopThread();
@@ -47,7 +47,7 @@ private:
     std::string to_id = "-1";
     QString query_string;
     int samples_ = 10;
-    CanMessageDataWorkerSubscriber* mysub_ = nullptr;
+    ZoneMasterCanMessageDataSubscriber* mysub_ = nullptr;
     QTreeView* tree_;
 
     void bindDataToTraceTree();

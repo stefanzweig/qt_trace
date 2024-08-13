@@ -3,7 +3,7 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_QtWidgetsApplication1.h"
 #include <QTimer>
-#include "topicData/CanMessageDataWorkerSubscriber.h"
+#include "topicData/ZoneMasterCanMessageDataSubscriber.h"
 #include "multiThread.h"
 #include "treemodel.h"
 #include "demo.h"
@@ -26,7 +26,7 @@ private:
 
     Ui::QtWidgetsApplication1Class ui;
     QTimer* timer = nullptr;
-    CanMessageDataWorkerSubscriber* mysub_ = nullptr;
+    ZoneMasterCanMessageDataSubscriber* mysub_ = nullptr;
     multiThread* calc_thread = nullptr;
     TreeModel* model = nullptr;
     Demo* demo_model = nullptr;

@@ -349,30 +349,30 @@ public:
 
 
     /*!
-     * @brief This function copies the value in member signals
-     * @param _signals New value to be copied in member signals
+     * @brief This function copies the value in member zone_signals
+     * @param _signals New value to be copied in member zone_signals
      */
-    eProsima_user_DllExport void signals(
+    eProsima_user_DllExport void zone_signals(
             const std::vector<cansignal>& _signals);
 
     /*!
-     * @brief This function moves the value in member signals
-     * @param _signals New value to be moved in member signals
+     * @brief This function moves the value in member zone_signals
+     * @param _signals New value to be moved in member zone_signals
      */
-    eProsima_user_DllExport void signals(
+    eProsima_user_DllExport void zone_signals(
             std::vector<cansignal>&& _signals);
 
     /*!
-     * @brief This function returns a constant reference to member signals
-     * @return Constant reference to member signals
+     * @brief This function returns a constant reference to member zone_signals
+     * @return Constant reference to member zone_signals
      */
-    eProsima_user_DllExport const std::vector<cansignal>& signals() const;
+    eProsima_user_DllExport const std::vector<cansignal>& zone_signals() const;
 
     /*!
-     * @brief This function returns a reference to member signals
-     * @return Reference to member signals
+     * @brief This function returns a reference to member zone_signals
+     * @return Reference to member zone_signals
      */
-    eProsima_user_DllExport std::vector<cansignal>& signals();
+    eProsima_user_DllExport std::vector<cansignal>& zone_signals();
 
 private:
 
@@ -2326,30 +2326,30 @@ public:
 
 
     /*!
-     * @brief This function copies the value in member signals
-     * @param _signals New value to be copied in member signals
+     * @brief This function copies the value in member zone_signals
+     * @param _signals New value to be copied in member zone_signals
      */
-    eProsima_user_DllExport void signals(
+    eProsima_user_DllExport void zone_signals(
             const std::vector<linSignal>& _signals);
 
     /*!
-     * @brief This function moves the value in member signals
-     * @param _signals New value to be moved in member signals
+     * @brief This function moves the value in member zone_signals
+     * @param _signals New value to be moved in member zone_signals
      */
-    eProsima_user_DllExport void signals(
+    eProsima_user_DllExport void zone_signals(
             std::vector<linSignal>&& _signals);
 
     /*!
-     * @brief This function returns a constant reference to member signals
-     * @return Constant reference to member signals
+     * @brief This function returns a constant reference to member zone_signals
+     * @return Constant reference to member zone_signals
      */
-    eProsima_user_DllExport const std::vector<linSignal>& signals() const;
+    eProsima_user_DllExport const std::vector<linSignal>& zone_signals() const;
 
     /*!
-     * @brief This function returns a reference to member signals
-     * @return Reference to member signals
+     * @brief This function returns a reference to member zone_signals
+     * @return Reference to member zone_signals
      */
-    eProsima_user_DllExport std::vector<linSignal>& signals();
+    eProsima_user_DllExport std::vector<linSignal>& zone_signals();
 
 
     /*!
