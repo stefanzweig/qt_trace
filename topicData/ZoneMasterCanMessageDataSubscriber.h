@@ -36,9 +36,12 @@ public:
         , subscriber_(nullptr)
         , topic_(nullptr)
         , reader_(nullptr)
-        , type_(new canMessagesPubSubType()) // this should be matched.
+        , type_(nullptr) // this should be matched.
         //, type_(new canMessagePubSubType()) // this should be matched.
     {
+        canMessagesPubSubType* can_messages_pubsubtype = new canMessagesPubSubType();
+        can_messages_pubsubtype->setName("canMessageData");
+        type_ = TypeSupport(can_messages_pubsubtype);
     }
 
     virtual ~ZoneMasterCanMessageDataSubscriber()

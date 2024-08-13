@@ -22,14 +22,18 @@ bool ZoneMasterCanMessageDataSubscriber::init()
     }
 
     // Register the Type
-    type_.register_type(participant_);
+    // type_.register_type(participant_);
+    participant_->register_type(type_);
+
+    TopicQos tqos;
+    participant_->get_default_topic_qos(tqos);
 
     // Create the subscriptions Topic
     topic_ = participant_->create_topic(
-        //"ZoneMasterDataTopic", 
         "canMessageTopic",
         type_.get_type_name(), 
-        TOPIC_QOS_DEFAULT);
+        tqos);
+        //TOPIC_QOS_DEFAULT);
         //eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
@@ -42,7 +46,6 @@ bool ZoneMasterCanMessageDataSubscriber::init()
     participant_->get_default_subscriber_qos(subscriber_qos);
 
     subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
-    //subscriber_ = participant_->create_subscriber(subscriber_qos, nullptr);
 
     if (subscriber_ == nullptr)
     {
@@ -51,10 +54,11 @@ bool ZoneMasterCanMessageDataSubscriber::init()
 
     // Create the DataReader
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
-    reader_qos.reliable_reader_qos();
+    reader_qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    reader_qos.durability().kind = eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS;
+    reader_qos.data_sharing().automatic();
     subscriber_->set_default_datareader_qos(reader_qos);
 
-    //reader_ = subscriber_->create_datareader(topic_, DATAREADER_QOS_DEFAULT, &listener_);
     reader_ = subscriber_->create_datareader(topic_, reader_qos, &listener_);
 
     if (reader_ == nullptr)
