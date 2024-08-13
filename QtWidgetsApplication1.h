@@ -36,6 +36,7 @@ private slots:
     void updateCurrentState();
     void onActionTriggered();
     void formatRow(int x);
+    void formatRow_str(QString s);
 
     void startTrace();
     void stopTrace();

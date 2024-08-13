@@ -62,9 +62,6 @@ void QtWidgetsApplication1::init()
     connect(timer, &QTimer::timeout, this, &QtWidgetsApplication1::updateState);
 
     calc_thread = new multiThread();
-    //connect(calc_thread, SIGNAL(traceItemUpdate()), this, SLOT(formatRow()));
-    //connect(calc_thread, calc_thread.mysub_.listener_.traceItemUpdate, this, &QtWidgetsApplication1::formatRow);
-    //connect(calc_thread, &multiThread::traceItemUpdate_internal, this, &QtWidgetsApplication1::formatRow);
     connect(calc_thread, &multiThread::traceItemUpdate_internal, [=]() {qDebug() << "lambda"; });
 
 
@@ -136,8 +133,8 @@ void QtWidgetsApplication1::startTrace()
 
     if (mysub_ == nullptr) {
         mysub_ = new ZoneMasterCanMessageDataSubscriber();
-        //connect(&mysub_->listener_, &SubListener::traceItemUpdate_internal, [=]() {qDebug() << "lambda11111"; });
-        connect(&mysub_->listener_, &SubListener::traceItemUpdate_internal, this, &QtWidgetsApplication1::formatRow);
+        // connect(&mysub_->listener_, &SubListener::traceItemUpdate_internal, this, &QtWidgetsApplication1::formatRow);
+        connect(&mysub_->listener_, &SubListener::traceItemUpdate_internal_str, this, &QtWidgetsApplication1::formatRow_str);
     }
     calc_thread->restartThread();
     calc_thread->setSubscriber(mysub_, samples, ui.treetrace); // nonsense
@@ -166,6 +163,10 @@ void QtWidgetsApplication1::formatRow(int x)
     qDebug() << "formatRow..."<< x;
 }
 
+void QtWidgetsApplication1::formatRow_str(QString s)
+{
+    qDebug() << "formatRow..." << s;
+}
 
 void QtWidgetsApplication1::setupTreeTrace()
 {

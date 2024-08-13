@@ -64,7 +64,8 @@ public:
                 //std::cout << " with Length: " << can_messages_.len()
                 //    << " RECEIVED." << std::endl;
                 //qDebug() << " with Length: " << can_messages_.len() << " RECEIVED.";
-                emit traceItemUpdate_internal(can_messages_.len());
+                //emit traceItemUpdate_internal(can_messages_.len());
+                emit traceItemUpdate_internal_str(QString("hallo"));
             }
         }
     }
@@ -86,7 +87,6 @@ public:
     QTreeView* tree_;
 
 signals:
-    void traceItemUpdate_internal(int i);/* {
-        qDebug() << i;
-    };*/
+    void traceItemUpdate_internal(int i);
+    void traceItemUpdate_internal_str(QString s);
 };
