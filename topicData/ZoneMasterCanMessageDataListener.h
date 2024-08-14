@@ -17,6 +17,7 @@
 #include <QDebug>
 #include <QThread>
 #include <QtWidgets/QTreeView>
+#include <QDateTime>
 
 using namespace eprosima::fastdds::dds;
 
@@ -61,11 +62,14 @@ public:
             if (info.valid_data)
             {
                 samples_++;
-                //std::cout << " with Length: " << can_messages_.len()
-                //    << " RECEIVED." << std::endl;
-                //qDebug() << " with Length: " << can_messages_.len() << " RECEIVED.";
                 //emit traceItemUpdate_internal(can_messages_.len());
-                emit traceItemUpdate_internal_str(QString("hallo"));
+                for (int i = 0; i < can_messages_.len(); i++ ) {
+                    canMessage msg = can_messages_.canMsgs()[i];
+                    QString repr = QString::number(msg.id());
+                    QDateTime timestamp = QDateTime::fromSecsSinceEpoch(msg.timeStamp()/1000000000);
+                    repr += "-" + timestamp.toString("yyyy-MM-dd hh:mm:ss");
+                    emit traceItemUpdate_internal_str(repr);
+                }
             }
         }
     }
