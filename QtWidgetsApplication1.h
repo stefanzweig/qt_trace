@@ -7,7 +7,7 @@
 #include "multiThread.h"
 #include "treemodel.h"
 #include "demo.h"
-
+#include "zm_struct.h"
 
 class QtWidgetsApplication1 : public QMainWindow
 {
@@ -30,6 +30,7 @@ private:
     multiThread* calc_thread = nullptr;
     TreeModel* model = nullptr;
     Demo* demo_model = nullptr;
+    QVector<can_frame> full_canframes;
 
 private slots:
     void updateState();
@@ -37,6 +38,7 @@ private slots:
     void onActionTriggered();
     void formatRow(int x);
     void formatRow_str(QString s);
+    void formatRow_canframe(can_frame cf);
 
     void startTrace();
     void stopTrace();

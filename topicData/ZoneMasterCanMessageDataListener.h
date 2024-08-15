@@ -18,6 +18,7 @@
 #include <QThread>
 #include <QtWidgets/QTreeView>
 #include <QDateTime>
+#include "..\zm_struct.h"
 
 using namespace eprosima::fastdds::dds;
 
@@ -68,7 +69,10 @@ public:
                     QString repr = QString::number(msg.id());
                     QDateTime timestamp = QDateTime::fromSecsSinceEpoch(msg.timeStamp()/1000000000);
                     repr += "-" + timestamp.toString("yyyy-MM-dd hh:mm:ss");
-                    emit traceItemUpdate_internal_str(repr);
+                    //emit traceItemUpdate_internal_str(repr);
+                    can_frame cf;
+                    cf.ID = msg.id();
+                    emit traceItemUpdate_internal_cf(cf);
                 }
             }
         }
@@ -93,4 +97,5 @@ public:
 signals:
     void traceItemUpdate_internal(int i);
     void traceItemUpdate_internal_str(QString s);
+    void traceItemUpdate_internal_cf(can_frame cf);
 };

@@ -189,7 +189,8 @@
                 </property>
                 <layout class="QHBoxLayout" name="hLayout_2">
                  <item>
-                  <widget class="DataTreeView" name="treetrace">
+     <!--             <widget class="DataTreeView" name="treetrace"> -->
+                  <widget class="QTreeWidget" name="treetrace">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                      <horstretch>0</horstretch>

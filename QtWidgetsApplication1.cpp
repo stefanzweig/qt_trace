@@ -133,8 +133,10 @@ void QtWidgetsApplication1::startTrace()
 
     if (mysub_ == nullptr) {
         mysub_ = new ZoneMasterCanMessageDataSubscriber();
+        qRegisterMetaType <can_frame>("can_frame");
         // connect(&mysub_->listener_, &SubListener::traceItemUpdate_internal, this, &QtWidgetsApplication1::formatRow);
-        connect(&mysub_->listener_, &SubListener::traceItemUpdate_internal_str, this, &QtWidgetsApplication1::formatRow_str);
+        //connect(&mysub_->listener_, &SubListener::traceItemUpdate_internal_str, this, &QtWidgetsApplication1::formatRow_str);
+        connect(&mysub_->listener_, &SubListener::traceItemUpdate_internal_cf, this, &QtWidgetsApplication1::formatRow_canframe);
     }
     calc_thread->restartThread();
     calc_thread->setSubscriber(mysub_, samples, ui.treetrace); // nonsense
@@ -168,9 +170,19 @@ void QtWidgetsApplication1::formatRow_str(QString s)
     qDebug() << "formatRow..." << s;
 }
 
+
+void QtWidgetsApplication1::formatRow_canframe(can_frame cf)
+{
+    qDebug() << "formatRow...cf->";
+    qDebug() << cf.ID << endl;
+    full_canframes.append(cf);
+    qDebug() << QString::number(full_canframes.count()) << endl;
+}
+
 void QtWidgetsApplication1::setupTreeTrace()
 {
-    DataTreeView* t = ui.treetrace;
+    //DataTreeView* t = ui.treetrace;
+    QTreeWidget* t = ui.treetrace;
     t->setSelectionBehavior(QTreeView::SelectRows);
     t->setSelectionMode(QTreeView::SingleSelection);
     t->setFocusPolicy(Qt::NoFocus);
@@ -188,7 +200,7 @@ void QtWidgetsApplication1::setupTreeTrace()
     //t->setModel(model);
 
     demo_model = new Demo();
-    t->setModel(demo_model);
+    //t->setModel(demo_model);
     t->setWindowTitle(QObject::tr("Simple Tree Model"));
     //t->show();
 }
