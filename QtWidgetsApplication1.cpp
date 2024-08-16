@@ -211,7 +211,6 @@ void QtWidgetsApplication1::setupTreeTrace()
 void QtWidgetsApplication1::setupdatamodel()
 {
     qDebug() << QString::number(full_canframes.count()) << endl;
-    // todo foreach cf in full_canframes, bind it to the widget.
     QStringList str = {};
     for (int i =0; i< full_canframes.count(); i++)
     {
@@ -225,7 +224,7 @@ void QtWidgetsApplication1::setupdatamodel()
         str.append(full_canframes[i].Name);
         str.append(full_canframes[i].Dir);
         str.append(QString::number(full_canframes[i].DLC));
-        QString myData = "my data";
+        QString myData = full_canframes[i].Data_Str;
         str.append(myData);
         str.append(full_canframes[i].EventType);
         str.append(QString::number(full_canframes[i].DataLength));

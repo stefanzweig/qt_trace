@@ -17,8 +17,8 @@ struct can_frame : public BaseStruct {
     QString Name;
     QString Dir;
     uint8_t DLC;                                                                          //DLC
-    //QVector<uint8_t> Data;                                                  //Êý¾Ý
     std::vector<uint8_t> Data;
+    QString Data_Str;
     QString EventType;
     uint8_t DataLength;
     QString BusType;

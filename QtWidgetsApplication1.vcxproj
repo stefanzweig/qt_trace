@@ -64,6 +64,7 @@
     <IncludePath>C:\Program Files\eProsima\fastrtps 2.13.1\include\fastdds\thirdparty\optionparser;C:\Program Files\eProsima\fastrtps 2.13.1\include;C:\Program Files\eProsima\fastrtps 2.13.1\include\fastdds\thirdparty;$(IncludePath)$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <IncludePath>C:\Program Files\eProsima\fastrtps 2.13.1\include\fastdds\thirdparty\optionparser;C:\Program Files\eProsima\fastrtps 2.13.1\include;C:\Program Files\eProsima\fastrtps 2.13.1\include\fastdds\thirdparty;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
@@ -75,6 +76,14 @@
     <ClCompile>
       <AdditionalOptions> /D FASTRTPS_NO_LIB /D FASTRTPS_DYN_LINK /D FASTCDR_NO_LIB /D FASTCDR_DYN_LINK %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Link>
+      <AdditionalDependencies>C:\Program Files\eProsima\fastrtps 2.13.1\lib\x64Win64VS2019\fastrtps-2.13.lib;C:\Program Files\eProsima\fastrtps 2.13.1\lib\x64Win64VS2019\fastcdr-2.1.lib;C:\Program Files\eProsima\fastrtps 2.13.1\lib\x64Win64VS2019\foonathan_memory-0.7.3.lib;C:\Program Files\eProsima\fastrtps 2.13.1\lib\x64Win64VS2019\libfastcdr-2.1.lib;C:\Program Files\eProsima\fastrtps 2.13.1\lib\x64Win64VS2019\libfastrtps-2.13.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <AdditionalLibraryDirectories>C:\Program Files\eProsima\fastrtps 2.13.1\lib\x64Win64VS2019\VC\static;%(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>/FORCE:MULTIPLE %(AdditionalOptions)</AdditionalOptions>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>

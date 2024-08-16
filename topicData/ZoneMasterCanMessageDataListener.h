@@ -19,9 +19,11 @@
 #include <QtWidgets/QTreeView>
 #include <QDateTime>
 #include <QVector>
+#include <QByteArray>
 #include "..\zm_struct.h"
 
 using namespace eprosima::fastdds::dds;
+
 
 class SubListener : public QObject, public DataReaderListener
 {
@@ -71,16 +73,17 @@ public:
                     QDateTime timestamp = QDateTime::fromSecsSinceEpoch(msg.timeStamp()/1000000000);
                     repr += "-" + timestamp.toString("yyyy-MM-dd hh:mm:ss");
                     //emit traceItemUpdate_internal_str(repr);
-                    can_frame cf;
-                    
+                    can_frame cf;                    
                     cf.Timestamp = msg.timeStamp();
                     cf.Chn = msg.channel();
                     cf.ID = msg.id();
                     cf.Name = "";
                     cf.Dir = QString::number(msg.rxtx());
                     cf.DLC = msg.dlc();
-                    //cf.Data = msg.data();
-                    cf.EventType = msg.isFd();
+                    QByteArray output;
+                    std::copy(msg.data().begin(), msg.data().end(), std::back_inserter(output));
+                    cf.Data_Str = output.toHex(' ');
+                    cf.EventType = QString::number(msg.isFd());
                     cf.DataLength = msg.dataLen();
                     cf.BusType = "0";
                     emit traceItemUpdate_internal_cf(cf);

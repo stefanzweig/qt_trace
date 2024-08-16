@@ -46,8 +46,6 @@ private slots:
     void startTrace();
     void stopTrace();
     void pauseTrace();
-
-
-signals:
     void resetLayout();
+// signals:
 };
