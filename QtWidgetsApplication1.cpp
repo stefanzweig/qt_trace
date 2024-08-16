@@ -71,6 +71,8 @@ void QtWidgetsApplication1::init()
     // ¸üÐÂ×´Ì¬ todo
     updateCurrentState();
     setupTreeTrace();
+
+    showMaximized();
 }
 
 void QtWidgetsApplication1::updateCurrentState() 
@@ -219,7 +221,7 @@ void QtWidgetsApplication1::setupdatamodel()
         QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(full_canframes[i].Timestamp/1000000);
         str.append(timestamp.toString("yyyy-MM-dd hh:mm:ss.zzz"));
         str.append(QString::number(full_canframes[i].Chn));
-        str.append(QString::number(full_canframes[i].ID));
+        str.append("0x" +QString::number(full_canframes[i].ID, 16));
         str.append(full_canframes[i].Name);
         str.append(full_canframes[i].Dir);
         str.append(QString::number(full_canframes[i].DLC));
