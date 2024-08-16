@@ -11,12 +11,14 @@ public:
 };
 
 struct can_frame : public BaseStruct {
+    uint64_t Timestamp;
     uint32_t Chn;                                                                 //通道
     uint32_t ID;                                               //ID
     QString Name;
     QString Dir;
     uint8_t DLC;                                                                          //DLC
-    QVector<uint8_t> Data;                                                  //数据
+    //QVector<uint8_t> Data;                                                  //数据
+    std::vector<uint8_t> Data;
     QString EventType;
     uint8_t DataLength;
     QString BusType;

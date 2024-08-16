@@ -23,7 +23,8 @@ protected:
 private:
     void init();
     void setupTreeTrace();
-
+    void setupdatamodel();
+    void initialHeaders();
     Ui::QtWidgetsApplication1Class ui;
     QTimer* timer = nullptr;
     ZoneMasterCanMessageDataSubscriber* mysub_ = nullptr;
@@ -31,6 +32,8 @@ private:
     TreeModel* model = nullptr;
     Demo* demo_model = nullptr;
     QVector<can_frame> full_canframes;
+    uint64_t last_imestamp = 0;
+    QStringList initialHeader = { "Time[ms]", "Chn", "ID", "Name", "Dir", "DLC", "Data", "EventType", "DataLength", "BusType" };
 
 private slots:
     void updateState();

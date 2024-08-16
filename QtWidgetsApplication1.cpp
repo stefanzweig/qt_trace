@@ -117,6 +117,7 @@ void QtWidgetsApplication1::resetLayout()
     ui.toolbar->addAction(ui.actionstart);
     ui.toolbar->addAction(ui.actionstop);
     ui.toolbar->addAction(ui.actionpause);
+    initialHeaders();
 }
 
 void QtWidgetsApplication1::onActionTriggered()
@@ -173,10 +174,10 @@ void QtWidgetsApplication1::formatRow_str(QString s)
 
 void QtWidgetsApplication1::formatRow_canframe(can_frame cf)
 {
-    qDebug() << "formatRow...cf->";
-    qDebug() << cf.ID << endl;
+    //qDebug() << "formatRow...cf->";
+    //qDebug() << cf.ID << endl;
     full_canframes.append(cf);
-    qDebug() << QString::number(full_canframes.count()) << endl;
+    setupdatamodel();
 }
 
 void QtWidgetsApplication1::setupTreeTrace()
@@ -203,4 +204,47 @@ void QtWidgetsApplication1::setupTreeTrace()
     //t->setModel(demo_model);
     t->setWindowTitle(QObject::tr("Simple Tree Model"));
     //t->show();
+}
+
+void QtWidgetsApplication1::setupdatamodel()
+{
+    qDebug() << QString::number(full_canframes.count()) << endl;
+    // todo foreach cf in full_canframes, bind it to the widget.
+    QStringList str = {};
+    for (int i =0; i< full_canframes.count(); i++)
+    {
+        if (full_canframes[i].Timestamp <= last_imestamp) continue;
+        last_imestamp = full_canframes[i].Timestamp;
+        qDebug() << "last_imestamp..." << last_imestamp << endl;
+        QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(full_canframes[i].Timestamp/1000000);
+        str.append(timestamp.toString("yyyy-MM-dd hh:mm:ss.zzz"));
+        str.append(QString::number(full_canframes[i].Chn));
+        str.append(QString::number(full_canframes[i].ID));
+        str.append(full_canframes[i].Name);
+        str.append(full_canframes[i].Dir);
+        str.append(QString::number(full_canframes[i].DLC));
+        QString myData = "my data";
+        str.append(myData);
+        str.append(full_canframes[i].EventType);
+        str.append(QString::number(full_canframes[i].DataLength));
+        str.append(full_canframes[i].BusType);
+        QTreeWidgetItem* Item = new QTreeWidgetItem(str);
+        QTreeWidget* t = ui.treetrace;
+        t->addTopLevelItem(Item);
+        t->setIndentation(20);
+
+    }
+}
+
+void QtWidgetsApplication1::initialHeaders()
+{
+    QTreeWidget* tree = ui.treetrace;
+    QHeaderView* header = tree->header();
+    header->setDefaultSectionSize(200);
+    header->setSectionResizeMode(QHeaderView::Interactive);
+    tree->setHeaderLabels(initialHeader);
+    tree->setSortingEnabled(true);
+    tree->setColumnWidth(0, 250);
+    tree->sortByColumn(0, Qt::SortOrder::AscendingOrder);
+    tree->invisibleRootItem()->setHidden(true);
 }

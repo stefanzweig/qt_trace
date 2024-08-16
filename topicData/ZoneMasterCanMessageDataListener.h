@@ -18,6 +18,7 @@
 #include <QThread>
 #include <QtWidgets/QTreeView>
 #include <QDateTime>
+#include <QVector>
 #include "..\zm_struct.h"
 
 using namespace eprosima::fastdds::dds;
@@ -71,7 +72,17 @@ public:
                     repr += "-" + timestamp.toString("yyyy-MM-dd hh:mm:ss");
                     //emit traceItemUpdate_internal_str(repr);
                     can_frame cf;
+                    
+                    cf.Timestamp = msg.timeStamp();
+                    cf.Chn = msg.channel();
                     cf.ID = msg.id();
+                    cf.Name = "";
+                    cf.Dir = QString::number(msg.rxtx());
+                    cf.DLC = msg.dlc();
+                    //cf.Data = msg.data();
+                    cf.EventType = msg.isFd();
+                    cf.DataLength = msg.dataLen();
+                    cf.BusType = "0";
                     emit traceItemUpdate_internal_cf(cf);
                 }
             }
