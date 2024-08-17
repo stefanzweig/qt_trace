@@ -2,13 +2,12 @@
 #include <QTimer>
 #include <QDebug>
 #include "multiThread.h"
-#include "DataTreeView.h"
+//#include "DataTreeView.h"
 
 
 QtWidgetsApplication1::QtWidgetsApplication1(QWidget *parent)
     : QMainWindow(parent)
 {
-    // ui.setupUi(this);
     init();
 }
 
@@ -37,11 +36,6 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
         delete model;
         model = nullptr;
     }
-    if (demo_model != nullptr) {
-        delete demo_model;
-        demo_model = nullptr;
-    }
-    
 }
 
 void QtWidgetsApplication1::init()
@@ -190,21 +184,12 @@ void QtWidgetsApplication1::setupTreeTrace()
     t->setSelectionMode(QTreeView::SingleSelection);
     t->setFocusPolicy(Qt::NoFocus);
 
-    //t->header()->setHighlightSections(true);
+    t->header()->setHighlightSections(true);
     //t->header()->setDefaultAlignment(Qt::AlignCenter);
     //t->header()->setDefaultSectionSize(100);
-    //t->header()->setStretchLastSection(true);
-    //t->header()->setSortIndicator(0, Qt::AscendingOrder);
-
-    //QFile file(":/QtWidgetsApplication1/default.txt");
-    //file.open(QIODevice::ReadOnly);
-    //model = new TreeModel(file.readAll());
-    //file.close();
-    //t->setModel(model);
-
-    demo_model = new Demo();
-    //t->setModel(demo_model);
-    t->setWindowTitle(QObject::tr("Simple Tree Model"));
+    t->header()->setStretchLastSection(true);
+    t->header()->setSortIndicator(0, Qt::AscendingOrder);
+    t->setWindowTitle(QObject::tr("CAN Frames"));
     //t->show();
 }
 
@@ -215,8 +200,8 @@ void QtWidgetsApplication1::setupdatamodel()
     for (int i =0; i< full_canframes.count(); i++)
     {
         if (full_canframes[i].Timestamp <= last_imestamp) continue;
+        
         last_imestamp = full_canframes[i].Timestamp;
-        qDebug() << "last_imestamp..." << last_imestamp << endl;
         QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(full_canframes[i].Timestamp/1000000);
         str.append(timestamp.toString("yyyy-MM-dd hh:mm:ss.zzz"));
         str.append(QString::number(full_canframes[i].Chn));
@@ -233,7 +218,6 @@ void QtWidgetsApplication1::setupdatamodel()
         QTreeWidget* t = ui.treetrace;
         t->addTopLevelItem(Item);
         t->setIndentation(20);
-
     }
 }
 
