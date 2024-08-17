@@ -25,6 +25,7 @@ private:
     void setupTreeTrace();
     void setupdatamodel();
     void initialHeaders();
+    void _updateCurrentState();
     Ui::QtWidgetsApplication1Class ui;
     QTimer* timer = nullptr;
     ZoneMasterCanMessageDataSubscriber* mysub_ = nullptr;
@@ -39,7 +40,6 @@ private:
 
 private slots:
     void updateState();
-    void updateCurrentState();
     void onActionTriggered();
     void formatRow(int x);
     void formatRow_str(QString s);
@@ -49,5 +49,4 @@ private slots:
     void stopTrace();
     void pauseTrace();
     void resetLayout();
-// signals:
 };

@@ -63,26 +63,24 @@ void QtWidgetsApplication1::init()
     resetLayout();
 
     // ¸üÐÂ×´Ì¬ todo
-    updateCurrentState();
+    _updateCurrentState();
     setupTreeTrace();
 
     showMaximized();
 }
 
-void QtWidgetsApplication1::updateCurrentState() 
+void QtWidgetsApplication1::_updateCurrentState()
 {
-    qDebug() << "Updating...";
-
-    // the following lines don't work.
-    foreach(QAction * action, ui.toolbar->actions()) {
-        bool checked = false;
-        action->setChecked(checked);
-    }
+    ui.statusBar->showMessage(QString::number(this->full_count));
+    //foreach(QAction * action, ui.toolbar->actions()) {
+    //    bool checked = false;
+    //    action->setChecked(checked);
+    //}
 }
 
 void QtWidgetsApplication1::updateState()
 {
-    //qDebug() << "State...";
+    _updateCurrentState();
 }
 
 void QtWidgetsApplication1::createActions()
@@ -195,11 +193,12 @@ void QtWidgetsApplication1::setupTreeTrace()
 
 void QtWidgetsApplication1::setupdatamodel()
 {
-    qDebug() << QString::number(full_canframes.count()) << endl;
     QStringList str = {};
     for (int i =0; i< full_canframes.count(); i++)
     {
         if (full_canframes[i].Timestamp <= last_imestamp) continue;
+
+        full_count++; // message counts
         
         last_imestamp = full_canframes[i].Timestamp;
         QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(full_canframes[i].Timestamp/1000000);

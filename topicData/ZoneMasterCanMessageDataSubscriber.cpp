@@ -15,14 +15,12 @@ bool ZoneMasterCanMessageDataSubscriber::init()
     DomainParticipantQos participantQos;
     participantQos.name("Participant_ZWEIG");
     participant_ = DomainParticipantFactory::get_instance()->create_participant(90, participantQos);
-
     if (participant_ == nullptr)
     {
         return false;
     }
 
     // Register the Type
-    // type_.register_type(participant_);
     participant_->register_type(type_);
 
     TopicQos tqos;
@@ -33,9 +31,6 @@ bool ZoneMasterCanMessageDataSubscriber::init()
         "canMessageTopic",
         type_.get_type_name(), 
         tqos);
-        //TOPIC_QOS_DEFAULT);
-        //eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
-
     if (topic_ == nullptr)
     {
         return false;
@@ -44,9 +39,7 @@ bool ZoneMasterCanMessageDataSubscriber::init()
     // Create the Subscriber
     SubscriberQos subscriber_qos = SUBSCRIBER_QOS_DEFAULT;
     participant_->get_default_subscriber_qos(subscriber_qos);
-
     subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
-
     if (subscriber_ == nullptr)
     {
         return false;
