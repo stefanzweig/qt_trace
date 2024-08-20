@@ -181,10 +181,14 @@ void QtWidgetsApplication1::formatRow_canframe(can_frame cf)
     setupdatamodel();
 }
 
-void QtWidgetsApplication1::formatRow_canparser(int i)
+void QtWidgetsApplication1::formatRow_canparser(unsigned long long i)
 {
-    qDebug() << "formatRow...canparser->";
-    qDebug() << i << endl;
+    qDebug() << "canparser id ->" << i;
+    for (int k = 0; k < full_canframes.size(); k++) {
+        if (full_canframes[k].Timestamp == i) {
+            qDebug() << "MATCHED ->" << full_canframes[k].ID << "INDEX ->" << k;
+        }
+    }
 }
 
 void QtWidgetsApplication1::setupTreeTrace()

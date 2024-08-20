@@ -66,7 +66,8 @@ public:
             if (info.valid_data)
             {
                 samples_++;
-                qDebug() << canframe_.id() << endl;
+                //qDebug() << canframe_.id() << endl;
+                emit traceItemUpdate_internal(canframe_.timeStamp());
             }
         }
     }
@@ -89,5 +90,5 @@ public:
     QTreeView* tree_;
 
 signals:
-    void traceItemUpdate_internal(int i);
+    void traceItemUpdate_internal(unsigned long long i);
 };
