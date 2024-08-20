@@ -213,7 +213,7 @@ void QtWidgetsApplication1::setupdatamodel()
     QStringList str = {};
     for (int i =0; i< full_canframes.count(); i++)
     {
-        if (full_canframes[i].Timestamp <= last_imestamp) continue;
+        if (full_canframes[i].Timestamp <= last_timestamp) continue;
 
         full_count++; // message counts
         int count_in_page = full_count % count_per_page;
@@ -228,7 +228,7 @@ void QtWidgetsApplication1::setupdatamodel()
                 }
         }
         
-        last_imestamp = full_canframes[i].Timestamp;
+        last_timestamp = full_canframes[i].Timestamp;
         QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(full_canframes[i].Timestamp/1000000);
         str.append(timestamp.toString("hh:mm:ss.zzz"));
         str.append(QString::number(full_canframes[i].Chn));

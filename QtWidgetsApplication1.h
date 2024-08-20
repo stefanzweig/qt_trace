@@ -35,7 +35,7 @@ private:
     //TreeModel* model = nullptr;
     //Demo* demo_model = nullptr;
     QVector<can_frame> full_canframes;
-    uint64_t last_imestamp = 0;
+    uint64_t last_timestamp = 0;
     uint64_t full_count = 0;
     uint64_t count_per_page = 100;
     uint64_t current_page = 0;
