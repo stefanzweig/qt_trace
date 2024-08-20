@@ -38,7 +38,7 @@ private:
     std::string to_id = "-1";
     QString query_string;
     int samples_ = 100;
-    ZoneMasterCanMessageDataSubscriber* mysub_ = nullptr;
+    ZoneMasterCanMessageDataSubscriber* mysub_can_frames = nullptr;
     QTreeView* tree_;
 
     void bindDataToTraceTree();

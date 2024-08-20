@@ -12,9 +12,9 @@ void multiThread::stopThread() {
     is_stop = true;
     is_paused = false;
 
-    if (mysub_ != nullptr) {
-        delete mysub_;
-        mysub_ = nullptr;
+    if (mysub_can_frames != nullptr) {
+        delete mysub_can_frames;
+        mysub_can_frames = nullptr;
     }
 }
 
@@ -40,11 +40,11 @@ void multiThread::run() {
     
     // from_t = get_timestamp();
     
-    if (mysub_ != nullptr) {
+    if (mysub_can_frames != nullptr) {
         qDebug() << "mysub is not nullptr";
-            if (mysub_->init()) {
+            if (mysub_can_frames->init()) {
                 qDebug() << "mysub before run";
-                mysub_->run(samples_);
+                mysub_can_frames->run(samples_);
                 qDebug() << "mysub after run";
                 qDebug() << "debug: inited";
             }
@@ -98,7 +98,7 @@ void multiThread::setQueryString(QString str)
 
 void multiThread::setSubscriber(ZoneMasterCanMessageDataSubscriber* subscriber, int samples, QTreeView* treeview)
 {
-    mysub_ = subscriber;
+    mysub_can_frames = subscriber;
     samples_ = samples;
     subscriber->setOuterThread(this, treeview);
     //tree_ = treeview;

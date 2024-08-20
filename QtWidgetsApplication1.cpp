@@ -19,9 +19,9 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
         delete timer;
         timer = nullptr;
     }
-    if (mysub_ != nullptr) {
-        delete mysub_;
-        mysub_ = nullptr;
+    if (mysub_can_frames != nullptr) {
+        delete mysub_can_frames;
+        mysub_can_frames = nullptr;
     }
     if (calc_thread != nullptr) {
         calc_thread->stopFlag();
@@ -126,15 +126,15 @@ void QtWidgetsApplication1::startTrace()
 
     uint32_t samples = 10;
 
-    if (mysub_ == nullptr) {
-        mysub_ = new ZoneMasterCanMessageDataSubscriber();
+    if (mysub_can_frames == nullptr) {
+        mysub_can_frames = new ZoneMasterCanMessageDataSubscriber();
         qRegisterMetaType <can_frame>("can_frame");
-        // connect(&mysub_->listener_, &SubListener::traceItemUpdate_internal, this, &QtWidgetsApplication1::formatRow);
-        //connect(&mysub_->listener_, &SubListener::traceItemUpdate_internal_str, this, &QtWidgetsApplication1::formatRow_str);
-        connect(&mysub_->listener_, &SubListener::traceItemUpdate_internal_cf, this, &QtWidgetsApplication1::formatRow_canframe);
+        // connect(&mysub_can_frames->listener_, &SubListener::traceItemUpdate_internal, this, &QtWidgetsApplication1::formatRow);
+        //connect(&mysub_can_frames->listener_, &SubListener::traceItemUpdate_internal_str, this, &QtWidgetsApplication1::formatRow_str);
+        connect(&mysub_can_frames->listener_, &SubListener::traceItemUpdate_internal_cf, this, &QtWidgetsApplication1::formatRow_canframe);
     }
     calc_thread->restartThread();
-    calc_thread->setSubscriber(mysub_, samples, ui.treetrace); // nonsense
+    calc_thread->setSubscriber(mysub_can_frames, samples, ui.treetrace); // nonsense
     calc_thread->start();
     timer->start(1000);
 }
@@ -143,7 +143,7 @@ void QtWidgetsApplication1::stopTrace()
 {
     qDebug() << "stopTrace...";
     calc_thread->stopThread();
-    mysub_ = nullptr;
+    mysub_can_frames = nullptr;
     timer->stop();
 }
 
@@ -199,10 +199,21 @@ void QtWidgetsApplication1::setupdatamodel()
         if (full_canframes[i].Timestamp <= last_imestamp) continue;
 
         full_count++; // message counts
+        int count_in_page = full_count % count_per_page;
+        int last_page_index = full_count / count_per_page;
+        if (last_page_index > 0) {
+            if (last_page_index != current_page)
+                if (count_in_page != 0) {
+                    QTreeWidget* t = ui.treetrace;
+                    t->clear();
+                    current_page = last_page_index;
+                    qDebug() << full_count << endl;
+                }
+        }
         
         last_imestamp = full_canframes[i].Timestamp;
         QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(full_canframes[i].Timestamp/1000000);
-        str.append(timestamp.toString("yyyy-MM-dd hh:mm:ss.zzz"));
+        str.append(timestamp.toString("hh:mm:ss.zzz"));
         str.append(QString::number(full_canframes[i].Chn));
         str.append("0x" +QString::number(full_canframes[i].ID, 16));
         str.append(full_canframes[i].Name);
