@@ -117,6 +117,7 @@
     <ClCompile Include="DataTreeItemDelegate.cpp" />
     <ClCompile Include="DataTreeView.cpp" />
     <ClCompile Include="multiThread.cpp" />
+    <ClCompile Include="topicData\ZoneMasterCanParserSubscriber.cpp" />
     <ClCompile Include="topicData\ZoneMasterData.cxx" />
     <ClCompile Include="topicData\ZoneMasterDataPubSubTypes.cxx" />
     <ClCompile Include="treeitem.cpp" />
@@ -136,6 +137,8 @@
     <QtMoc Include="DataTreeItemDelegate.h" />
     <ClInclude Include="gui_global.h" />
     <ClInclude Include="topicData\BaseNodeData.h" />
+    <QtMoc Include="topicData\ZoneMasterCanParserListener.h" />
+    <ClInclude Include="topicData\ZoneMasterCanParserSubscriber.h" />
     <ClInclude Include="topicData\ZoneMasterData.h" />
     <ClInclude Include="topicData\ZoneMasterDataCdrAux.hpp" />
     <ClInclude Include="topicData\ZoneMasterDataCdrAux.ipp" />

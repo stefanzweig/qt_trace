@@ -4,9 +4,10 @@
 #include "ui_QtWidgetsApplication1.h"
 #include <QTimer>
 #include "topicData/ZoneMasterCanMessageDataSubscriber.h"
+#include "topicData/ZoneMasterCanParserSubscriber.h"
 #include "multiThread.h"
-#include "treemodel.h"
-#include "demo.h"
+//#include "treemodel.h"
+//#include "demo.h"
 #include "zm_struct.h"
 
 class QtWidgetsApplication1 : public QMainWindow
@@ -29,8 +30,9 @@ private:
     Ui::QtWidgetsApplication1Class ui;
     QTimer* timer = nullptr;
     ZoneMasterCanMessageDataSubscriber* mysub_can_frames = nullptr;
+    ZoneMasterCanParserSubscriber* mysub_can_parser = nullptr;
     multiThread* calc_thread = nullptr;
-    TreeModel* model = nullptr;
+    //TreeModel* model = nullptr;
     //Demo* demo_model = nullptr;
     QVector<can_frame> full_canframes;
     uint64_t last_imestamp = 0;
@@ -46,6 +48,7 @@ private slots:
     void formatRow(int x);
     void formatRow_str(QString s);
     void formatRow_canframe(can_frame cf);
+    void formatRow_canparser(int i);
 
     void startTrace();
     void stopTrace();

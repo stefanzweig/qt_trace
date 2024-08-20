@@ -23,6 +23,10 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
         delete mysub_can_frames;
         mysub_can_frames = nullptr;
     }
+    if (mysub_can_parser != nullptr) {
+        delete mysub_can_parser;
+        mysub_can_parser = nullptr;
+    }
     if (calc_thread != nullptr) {
         calc_thread->stopFlag();
 
@@ -32,10 +36,7 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
         delete calc_thread;
         calc_thread = nullptr;
     }
-    if (model != nullptr) {
-        delete model;
-        model = nullptr;
-    }
+
 }
 
 void QtWidgetsApplication1::init()
@@ -129,12 +130,17 @@ void QtWidgetsApplication1::startTrace()
     if (mysub_can_frames == nullptr) {
         mysub_can_frames = new ZoneMasterCanMessageDataSubscriber();
         qRegisterMetaType <can_frame>("can_frame");
-        // connect(&mysub_can_frames->listener_, &SubListener::traceItemUpdate_internal, this, &QtWidgetsApplication1::formatRow);
-        //connect(&mysub_can_frames->listener_, &SubListener::traceItemUpdate_internal_str, this, &QtWidgetsApplication1::formatRow_str);
         connect(&mysub_can_frames->listener_, &SubListener::traceItemUpdate_internal_cf, this, &QtWidgetsApplication1::formatRow_canframe);
+    }
+
+    if (mysub_can_parser == nullptr) {
+        mysub_can_parser = new ZoneMasterCanParserSubscriber();
+        qRegisterMetaType <canframe>("canframe");
+        connect(&mysub_can_parser->listener_, &CanParserListener::traceItemUpdate_internal, this, &QtWidgetsApplication1::formatRow_canparser);
     }
     calc_thread->restartThread();
     calc_thread->setSubscriber(mysub_can_frames, samples, ui.treetrace); // nonsense
+    calc_thread->setCanParserSubscriber(mysub_can_parser, samples, ui.treetrace);
     calc_thread->start();
     timer->start(1000);
 }
@@ -144,6 +150,7 @@ void QtWidgetsApplication1::stopTrace()
     qDebug() << "stopTrace...";
     calc_thread->stopThread();
     mysub_can_frames = nullptr;
+    mysub_can_parser = nullptr;
     timer->stop();
 }
 
@@ -172,6 +179,12 @@ void QtWidgetsApplication1::formatRow_canframe(can_frame cf)
     //qDebug() << cf.ID << endl;
     full_canframes.append(cf);
     setupdatamodel();
+}
+
+void QtWidgetsApplication1::formatRow_canparser(int i)
+{
+    qDebug() << "formatRow...canparser->";
+    qDebug() << i << endl;
 }
 
 void QtWidgetsApplication1::setupTreeTrace()

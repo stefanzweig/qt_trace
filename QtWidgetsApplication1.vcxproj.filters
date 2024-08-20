@@ -64,6 +64,9 @@
     <ClCompile Include="topicData\ZoneMasterDataPubSubTypes.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="topicData\ZoneMasterCanParserSubscriber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gui_global.h">
@@ -94,6 +97,9 @@
     <ClInclude Include="topicData\ZoneMasterDataPubSubTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="topicData\ZoneMasterCanParserSubscriber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="demo.h">
@@ -109,6 +115,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="topicData\ZoneMasterCanMessageDataListener.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="topicData\ZoneMasterCanParserListener.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

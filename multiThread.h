@@ -5,6 +5,8 @@
 #include <QMutex>
 #include "topicData/ZoneMasterCanMessageDataSubscriber.h"
 #include "topicData/ZoneMasterCanMessageDataListener.h"
+#include "topicData/ZoneMasterCanParserSubscriber.h"
+#include "topicData/ZoneMasterCanParserListener.h"
 
 #include <QtWidgets/QTreeView>
 
@@ -15,6 +17,7 @@ public:
     multiThread();
     ~multiThread();
     void setSubscriber(ZoneMasterCanMessageDataSubscriber* subscriber, int samples, QTreeView* treeview);
+    void setCanParserSubscriber(ZoneMasterCanParserSubscriber* subscriber, int samples, QTreeView* treeview);
 
 public slots:
     void stopThread();
@@ -39,6 +42,7 @@ private:
     QString query_string;
     int samples_ = 100;
     ZoneMasterCanMessageDataSubscriber* mysub_can_frames = nullptr;
+    ZoneMasterCanParserSubscriber* mysub_can_parser = nullptr;
     QTreeView* tree_;
 
     void bindDataToTraceTree();

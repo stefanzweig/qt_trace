@@ -16,6 +16,10 @@ void multiThread::stopThread() {
         delete mysub_can_frames;
         mysub_can_frames = nullptr;
     }
+    if (mysub_can_parser != nullptr) {
+        delete mysub_can_parser;
+        mysub_can_parser = nullptr;
+    }
 }
 
 void multiThread::stopFlag()
@@ -39,7 +43,6 @@ void multiThread::run() {
     // key function
     
     // from_t = get_timestamp();
-    
     if (mysub_can_frames != nullptr) {
         qDebug() << "mysub is not nullptr";
             if (mysub_can_frames->init()) {
@@ -48,6 +51,17 @@ void multiThread::run() {
                 qDebug() << "mysub after run";
                 qDebug() << "debug: inited";
             }
+    }
+
+
+    if (mysub_can_parser != nullptr) {
+        qDebug() << "mysubparser is not nullptr";
+        if (mysub_can_parser->init()) {
+            qDebug() << "mysubparser before run";
+            mysub_can_parser->run(samples_);
+            qDebug() << "mysubparser after run";
+            qDebug() << "debug: mysubparser inited";
+        }
     }
 
     while (true) {
@@ -101,5 +115,11 @@ void multiThread::setSubscriber(ZoneMasterCanMessageDataSubscriber* subscriber, 
     mysub_can_frames = subscriber;
     samples_ = samples;
     subscriber->setOuterThread(this, treeview);
-    //tree_ = treeview;
+}
+
+void multiThread::setCanParserSubscriber(ZoneMasterCanParserSubscriber* subscriber, int samples, QTreeView* treeview)
+{
+    mysub_can_parser = subscriber;
+    samples_ = samples;
+    subscriber->setOuterThread(this, treeview);
 }

@@ -1,4 +1,4 @@
-#include "ZoneMasterCanParserSubscriber.h"
+#include "ZoneMasterCanMessageDataSubscriber.h"
 #include "topicData/BaseNodeData.h"
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -10,10 +10,10 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
-bool ZoneMasterCanParserSubscriber::init()
+bool ZoneMasterCanMessageDataSubscriber::init()
 {
     DomainParticipantQos participantQos;
-    participantQos.name("Participant_canParser_ZWEIG");
+    participantQos.name("Participant_ZWEIG");
     participant_ = DomainParticipantFactory::get_instance()->create_participant(90, participantQos);
     if (participant_ == nullptr)
     {
@@ -28,8 +28,8 @@ bool ZoneMasterCanParserSubscriber::init()
 
     // Create the subscriptions Topic
     topic_ = participant_->create_topic(
-        "canParserTopic",
-        type_.get_type_name(), 
+        "canMessageTopic",
+        type_.get_type_name(),
         tqos);
     if (topic_ == nullptr)
     {
@@ -63,7 +63,7 @@ bool ZoneMasterCanParserSubscriber::init()
 
 }
 
-void ZoneMasterCanParserSubscriber::run(uint32_t samples)
+void ZoneMasterCanMessageDataSubscriber::run(uint32_t samples)
 {
     while (listener_.samples_ < samples)
     {
@@ -71,7 +71,7 @@ void ZoneMasterCanParserSubscriber::run(uint32_t samples)
     }
 }
 
-void ZoneMasterCanParserSubscriber::setOuterThread(QThread* thread, QTreeView* treeview)
+void ZoneMasterCanMessageDataSubscriber::setOuterThread(QThread* thread, QTreeView* treeview)
 {
     this->listener_.outerThread = thread;
     this->listener_.tree_ = treeview;
