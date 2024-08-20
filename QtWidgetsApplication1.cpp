@@ -137,6 +137,7 @@ void QtWidgetsApplication1::startTrace()
         mysub_can_parser = new ZoneMasterCanParserSubscriber();
         qRegisterMetaType <canframe>("canframe");
         connect(&mysub_can_parser->listener_, &CanParserListener::traceItemUpdate_internal, this, &QtWidgetsApplication1::formatRow_canparser);
+        connect(&mysub_can_parser->listener_, &CanParserListener::traceItemUpdate_internal_canparser, this, &QtWidgetsApplication1::internal_canparser);
     }
     calc_thread->restartThread();
     calc_thread->setSubscriber(mysub_can_frames, samples, ui.treetrace); // nonsense
@@ -190,7 +191,10 @@ void QtWidgetsApplication1::formatRow_canparser(unsigned long long i)
         }
     }
 }
-
+void QtWidgetsApplication1::internal_canparser(canframe frame)
+{
+    qDebug() << "canframe ->" << QString::fromStdString(frame.name());
+}
 void QtWidgetsApplication1::setupTreeTrace()
 {
     //DataTreeView* t = ui.treetrace;

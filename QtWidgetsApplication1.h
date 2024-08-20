@@ -49,6 +49,7 @@ private slots:
     void formatRow_str(QString s);
     void formatRow_canframe(can_frame cf);
     void formatRow_canparser(unsigned long long i);
+    void internal_canparser(canframe frame);
 
     void startTrace();
     void stopTrace();

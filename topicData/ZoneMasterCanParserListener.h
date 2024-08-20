@@ -67,7 +67,8 @@ public:
             {
                 samples_++;
                 //qDebug() << canframe_.id() << endl;
-                emit traceItemUpdate_internal(canframe_.timeStamp());
+                //emit traceItemUpdate_internal(canframe_.timeStamp());
+                emit traceItemUpdate_internal_canparser(canframe_);
             }
         }
     }
@@ -91,4 +92,5 @@ public:
 
 signals:
     void traceItemUpdate_internal(unsigned long long i);
+    void traceItemUpdate_internal_canparser(canframe can_frame);
 };
