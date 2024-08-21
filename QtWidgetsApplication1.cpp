@@ -3,6 +3,7 @@
 #include <QDebug>
 #include "multiThread.h"
 //#include "DataTreeView.h"
+#include "columnfilter.h"
 
 
 QtWidgetsApplication1::QtWidgetsApplication1(QWidget *parent)
@@ -66,6 +67,8 @@ void QtWidgetsApplication1::init()
     // ¸üÐÂ×´Ì¬ todo
     _updateCurrentState();
     setupTreeTrace();
+
+    filter = new columnFilterDialog(this);
 
     showMaximized();
 }
@@ -339,4 +342,52 @@ void QtWidgetsApplication1::initialHeaders()
     tree->setColumnWidth(0, 250);
     tree->sortByColumn(0, Qt::SortOrder::AscendingOrder);
     tree->invisibleRootItem()->setHidden(true);
+
+
+    for (int i = 0; i < header->count(); i++) {
+        QPushButton* button;
+        button = new QPushButton(header);
+        connect(button, &QPushButton::clicked, this, &QtWidgetsApplication1::headerButtonClicked);
+        button->setIcon(QIcon(":/QtWidgetsApplication1/res/sqlitestudio.ico"));
+        headerButtonList << button;
+        int length = header->sectionPosition(i) + header->sectionSize(i);
+        button->setGeometry(length - 20, 3, 17, 18);
+    }
+}
+
+void QtWidgetsApplication1::headerButtonClicked()
+{
+    qDebug() << "headerButtonClicked" << endl;
+
+    QPushButton* filterButton = qobject_cast<QPushButton*>(sender());
+    int columnButton = headerButtonList.indexOf(filterButton);
+    QList<QString> filterConfig;
+
+    for (int i = 0; i < ui.treetrace->invisibleRootItem()->childCount(); i++)
+    {
+
+        if (filterConfig.count(ui.treetrace->invisibleRootItem()->child(i)->text(columnButton)) > 0)
+            continue;
+        else {
+            filterConfig << ui.treetrace->invisibleRootItem()->child(i)->text(columnButton);
+        }
+    }
+    filterConfig.removeAll("");
+
+    filterConfig.sort();
+
+    filter->ui->tableWidget->setRowCount(filterConfig.count());
+    filter->ui->tableWidget->setColumnCount(1);
+    filter->ui->tableWidget->horizontalHeader()->setVisible(false);
+    filter->ui->tableWidget->verticalHeader()->setVisible(false);
+    filter->ui->tableWidget->horizontalHeader()->setStretchLastSection(true);
+
+    for (int i = 0; i < filterConfig.count(); i++) {
+        QTableWidgetItem* pItem = new QTableWidgetItem(filterConfig.at(i));
+        pItem->setCheckState(Qt::Unchecked);
+        filter->ui->tableWidget->setItem(i, 0, pItem);
+    }
+    filter->columnIndex = columnButton;
+    filter->exec();
+    
 }

@@ -67,6 +67,9 @@
     <ClCompile Include="topicData\ZoneMasterCanParserSubscriber.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="columnfilter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gui_global.h">
@@ -100,6 +103,9 @@
     <ClInclude Include="topicData\ZoneMasterCanParserSubscriber.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="columnfilterdialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="demo.h">
@@ -120,5 +126,13 @@
     <QtMoc Include="topicData\ZoneMasterCanParserListener.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="columnfilter.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="columnfilterdialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
 </Project>

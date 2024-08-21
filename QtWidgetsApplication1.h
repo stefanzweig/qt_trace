@@ -9,6 +9,7 @@
 //#include "treemodel.h"
 //#include "demo.h"
 #include "zm_struct.h"
+#include "columnfilter.h"
 
 class QtWidgetsApplication1 : public QMainWindow
 {
@@ -45,6 +46,8 @@ private:
     uint64_t current_page = 0;
     bool isHex = true; // repr in hex
     QStringList initialHeader = { "Time[ms]", "Chn", "ID", "Name", "Dir", "DLC", "Data", "EventType", "DataLength", "BusType" };
+    QList<QPushButton*> headerButtonList;
+    columnFilterDialog* filter = nullptr;
 
 private slots:
     void updateState();
@@ -59,4 +62,6 @@ private slots:
     void stopTrace();
     void pauseTrace();
     void resetLayout();
+
+    void headerButtonClicked();
 };
