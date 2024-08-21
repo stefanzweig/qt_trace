@@ -41,7 +41,7 @@ private:
     uint64_t last_timestamp_canparser = 0;
     uint64_t full_count = 0;
     uint64_t full_count_canparser = 0;
-    uint64_t count_per_page = 500;
+    uint64_t count_per_page = 3000;
     uint64_t current_page = 0;
     bool isHex = true; // repr in hex
     QStringList initialHeader = { "Time[ms]", "Chn", "ID", "Name", "Dir", "DLC", "Data", "EventType", "DataLength", "BusType" };
