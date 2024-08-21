@@ -25,6 +25,7 @@ private:
     void init();
     void setupTreeTrace();
     void setupdatamodel();
+    void setupdatamodel_canparser();
     void initialHeaders();
     void _updateCurrentState();
     Ui::QtWidgetsApplication1Class ui;
@@ -35,9 +36,12 @@ private:
     //TreeModel* model = nullptr;
     //Demo* demo_model = nullptr;
     QVector<can_frame> full_canframes;
+    QVector<canframe> full_canparserdata;
     uint64_t last_timestamp = 0;
+    uint64_t last_timestamp_canparser = 0;
     uint64_t full_count = 0;
-    uint64_t count_per_page = 100;
+    uint64_t full_count_canparser = 0;
+    uint64_t count_per_page = 500;
     uint64_t current_page = 0;
     bool isHex = true; // repr in hex
     QStringList initialHeader = { "Time[ms]", "Chn", "ID", "Name", "Dir", "DLC", "Data", "EventType", "DataLength", "BusType" };

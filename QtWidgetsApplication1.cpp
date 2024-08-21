@@ -73,10 +73,7 @@ void QtWidgetsApplication1::init()
 void QtWidgetsApplication1::_updateCurrentState()
 {
     ui.statusBar->showMessage(QString::number(this->full_count));
-    //foreach(QAction * action, ui.toolbar->actions()) {
-    //    bool checked = false;
-    //    action->setChecked(checked);
-    //}
+    // setupdatamodel();
 }
 
 void QtWidgetsApplication1::updateState()
@@ -193,7 +190,9 @@ void QtWidgetsApplication1::formatRow_canparser(unsigned long long i)
 }
 void QtWidgetsApplication1::internal_canparser(canframe frame)
 {
-    qDebug() << "canframe ->" << QString::fromStdString(frame.name());
+    //qDebug() << "canframe ->" << QString::fromStdString(frame.name());
+    full_canparserdata.append(frame);
+    setupdatamodel_canparser();
 }
 void QtWidgetsApplication1::setupTreeTrace()
 {
@@ -210,6 +209,70 @@ void QtWidgetsApplication1::setupTreeTrace()
     t->header()->setSortIndicator(0, Qt::AscendingOrder);
     t->setWindowTitle(QObject::tr("CAN Frames"));
     //t->show();
+}
+void QtWidgetsApplication1::setupdatamodel_canparser()
+{
+    QStringList str = {};
+    for (int i = 0; i < this->full_canparserdata.count(); i++)
+    {
+        if (full_canparserdata[i].timeStamp() <= last_timestamp_canparser) continue;
+        canframe cf = full_canparserdata[i];
+        last_timestamp_canparser = cf.timeStamp();
+        full_count_canparser++;
+        QStringList str_parser = {};
+        QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(full_canparserdata[i].timeStamp() / 1000000);
+        str_parser.append(timestamp.toString("hh:mm:ss.zzz"));
+        str_parser.append("");
+        str_parser.append("");
+        str_parser.append(QString::fromStdString(full_canparserdata[i].name()));
+        QTreeWidgetItem* Item = new QTreeWidgetItem(str_parser);
+        QTreeWidget* t = ui.treetrace;
+        t->addTopLevelItem(Item);
+        t->setIndentation(20);
+        std::vector<canpdu> pdus = cf.pdus();
+        std::vector<canpdu> containspdus = cf.containPdus();
+        for (int k = 0; k < pdus.size(); k++) {
+            canpdu current_pdu = pdus[k];
+            QString pdu_name = QString::fromStdString(current_pdu.name());
+            QString pdu_size = QString::number(current_pdu.zone_signals().size());
+            QStringList str_pdu = {};
+            str_pdu.append(pdu_name);
+            str_pdu.append(pdu_size);
+            QTreeWidgetItem* item_pdu = new QTreeWidgetItem(str_pdu);
+            for (int m = 0; m < current_pdu.zone_signals().size(); m++) {
+                QStringList str_signal = {};
+                cansignal current_signal = current_pdu.zone_signals()[m];
+                str_signal.append(QString::fromStdString(current_signal.name()));
+                str_signal.append(QString::number(current_signal.raw_value()));
+                str_signal.append(QString::fromStdString(current_signal.phy_value()));
+                QTreeWidgetItem *item_signal = new QTreeWidgetItem(str_signal);
+                item_pdu->addChild(item_signal);
+            }            
+            Item->addChild(item_pdu);
+        }
+
+        if (containspdus.size() == 0) continue;
+
+        for (int k = 0; k < containspdus.size(); k++) {
+            canpdu current_pdu = containspdus[k];
+            QString pdu_name = QString::fromStdString(current_pdu.name());
+            QString pdu_size = QString::number(current_pdu.zone_signals().size());
+            QStringList str_pdu = {};
+            str_pdu.append(pdu_name);
+            str_pdu.append(pdu_size);
+            QTreeWidgetItem* item_pdu = new QTreeWidgetItem(str_pdu);
+            for (int m = 0; m < current_pdu.zone_signals().size(); m++) {
+                QStringList str_signal = {};
+                cansignal current_signal = current_pdu.zone_signals()[m];
+                str_signal.append(QString::fromStdString(current_signal.name()));
+                str_signal.append(QString::number(current_signal.raw_value()));
+                str_signal.append(QString::fromStdString(current_signal.phy_value()));
+                QTreeWidgetItem* item_signal = new QTreeWidgetItem(str_signal);
+                item_pdu->addChild(item_signal);
+            }
+            Item->addChild(item_pdu);
+        }
+    }
 }
 
 void QtWidgetsApplication1::setupdatamodel()
@@ -249,6 +312,19 @@ void QtWidgetsApplication1::setupdatamodel()
         QTreeWidget* t = ui.treetrace;
         t->addTopLevelItem(Item);
         t->setIndentation(20);
+
+/*        for (int k = 0; k < full_canparserdata.size(); k++) {
+            if (full_canparserdata[k].timeStamp() == last_timestamp) {
+                qDebug() << "MATCHED ->" << full_canparserdata[k].id() << "INDEX ->" << k;
+                // todo 
+                QStringList str_parser = {};
+                QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(full_canparserdata[k].timeStamp() / 1000000);
+                str_parser.append(timestamp.toString("hh:mm:ss.zzz"));
+                str_parser.append(QString::fromStdString(full_canparserdata[k].name()));
+                QTreeWidgetItem* childItem = new QTreeWidgetItem(str_parser);
+                Item->addChild(childItem);
+            } 
+        } */
     }
 }
 
