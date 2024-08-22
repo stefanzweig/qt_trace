@@ -348,7 +348,7 @@ void QtWidgetsApplication1::initialHeaders()
         QPushButton* button;
         button = new QPushButton(header);
         connect(button, &QPushButton::clicked, this, &QtWidgetsApplication1::headerButtonClicked);
-        button->setIcon(QIcon(":/QtWidgetsApplication1/res/sqlitestudio.ico"));
+        button->setIcon(QIcon(":/QtWidgetsApplication1/res/funnel-icon.ico"));
         headerButtonList << button;
         int length = header->sectionPosition(i) + header->sectionSize(i);
         button->setGeometry(length - 20, 3, 17, 18);

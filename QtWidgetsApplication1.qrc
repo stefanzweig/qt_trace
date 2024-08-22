@@ -1,9 +1,10 @@
 <RCC>
-    <qresource prefix="/QtWidgetsApplication1">
-        <file>res/pauseTrace.png</file>
-        <file>res/startTrace.png</file>
-        <file>res/stopTrace.png</file>
-        <file>res/sqlitestudio.ico</file>
-        <file>default.txt</file>
-    </qresource>
+  <qresource prefix="/QtWidgetsApplication1">
+    <file>res/funnel-icon.ico</file>
+    <file>res/pauseTrace.png</file>
+    <file>res/startTrace.png</file>
+    <file>res/stopTrace.png</file>
+    <file>res/sqlitestudio.ico</file>
+    <file>default.txt</file>
+  </qresource>
 </RCC>
