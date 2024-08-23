@@ -25,6 +25,9 @@ class Ui_columnFilterDialog
 public:
     QVBoxLayout *verticalLayout;
     QPushButton *resetFilterButton;
+    //dgm
+    QPushButton* confirmFilterButton;
+    //dgm
     QFrame *line;
     QTableWidget *tableWidget;
 
@@ -43,6 +46,16 @@ public:
         resetFilterButton->setFlat(true);
 
         verticalLayout->addWidget(resetFilterButton);
+
+        //dgm
+        confirmFilterButton = new QPushButton(columnFilterDialog);
+        confirmFilterButton->setObjectName(QString::fromUtf8("resetFilterButton"));
+        confirmFilterButton->setContextMenuPolicy(Qt::ActionsContextMenu);
+        confirmFilterButton->setStyleSheet(QString::fromUtf8("QPushButton{text-align:left;}"));
+        confirmFilterButton->setAutoDefault(false);
+        confirmFilterButton->setFlat(true);
+        verticalLayout->addWidget(confirmFilterButton);
+        //dgm
 
         line = new QFrame(columnFilterDialog);
         line->setObjectName(QString::fromUtf8("line"));
@@ -69,6 +82,9 @@ public:
     {
         columnFilterDialog->setWindowTitle(QCoreApplication::translate("columnFilterDialog", "Dialog", nullptr));
         resetFilterButton->setText(QCoreApplication::translate("columnFilterDialog", "Reset Filter", nullptr));
+        //dgm
+        confirmFilterButton->setText(QCoreApplication::translate("columnFilterDialog", "Confirm Filter", nullptr));
+        //dgm
     } // retranslateUi
 
 };

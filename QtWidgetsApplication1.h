@@ -57,6 +57,7 @@ private slots:
     void formatRow_canframe(can_frame cf);
     void formatRow_canparser(unsigned long long i);
     void internal_canparser(canframe frame);
+    void applyFilter(QList<QList<QString>> items, int count);
 
     void startTrace();
     void stopTrace();

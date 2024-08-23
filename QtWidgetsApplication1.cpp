@@ -388,6 +388,29 @@ void QtWidgetsApplication1::headerButtonClicked()
         filter->ui->tableWidget->setItem(i, 0, pItem);
     }
     filter->columnIndex = columnButton;
+    connect(filter, &columnFilterDialog::filter_apply, this, &QtWidgetsApplication1::applyFilter);
     filter->exec();
     
+}
+
+void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
+{
+    //sig_filter = 1;
+    bool judgement = false;
+    for (int i = 0; i < ui.treetrace->topLevelItemCount(); ++i) {
+        judgement = true;
+        QTreeWidgetItem* item = ui.treetrace->topLevelItem(i);
+        if (items.size()) {
+            //for (int j = 0; j < count; ++j) {
+            //    if (item->text(columnButton).toLower() == items[columnButton][j]) {
+            //        judgement = false;//显示
+            //    }
+            //}
+            item->setHidden(judgement);
+        }
+        else {
+            //             reset_column_flag[columnButton]=0;//这个呆一会
+            item->setHidden(false);
+        }
+    }
 }
