@@ -115,10 +115,26 @@ void QtWidgetsApplication1::resetLayout()
     ui.toolbar->addAction(ui.actionpause);
     initialHeaders();
 
-    QMenu* contextMenu = new QMenu(this);
-    contextMenu->addAction("Action 1");
-    contextMenu->addAction("Action 2");
-    setContextMenuPolicy(Qt::DefaultContextMenu);
+    ui.treetrace->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui.treetrace, &QTreeWidget::customContextMenuRequested, this, &QtWidgetsApplication1::prepareMenu);
+}
+
+void QtWidgetsApplication1::prepareMenu(const QPoint& pos)
+{
+    QTreeWidget* tree = ui.treetrace;
+    QTreeWidgetItem* nd = tree->itemAt(pos);
+    QAction* newAct = new QAction(QIcon(":/QtWidgetsApplication1/res/funnel-icon.ico"), tr("&New"), this);
+    newAct->setStatusTip(tr("new sth"));
+    connect(newAct, SIGNAL(triggered()), this, SLOT(newDev()));
+    QMenu menu(this);
+    menu.addAction(newAct);
+    QPoint pt(pos);
+    menu.exec(tree->mapToGlobal(pos));
+}
+
+void QtWidgetsApplication1::newDev()
+{
+    qDebug() << tr("newDev");
 }
 
 void QtWidgetsApplication1::onActionTriggered()
@@ -409,24 +425,4 @@ void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
     //    }
     //}
     qDebug() << "FILTER -> " << items.size() << count;
-}
-
-void QtWidgetsApplication1::treeWidgetContextMenuEvent(QContextMenuEvent* event)
-{
-    QTreeWidgetItem* item = ui.treetrace->itemAt(event->pos());
-
-    QMenu* contextMenu = new QMenu(ui.treetrace);
-    contextMenu->addAction("Add Child");
-    contextMenu->addAction("Remove Item");
-
-    contextMenu->exec(event->globalPos());
-}
-
-void QtWidgetsApplication1::on_columnTreeView_customContextMenuRequested(const QPoint& pos)
-{
-    QMenu* contextMenu = new QMenu(ui.treetrace);
-    contextMenu->setAttribute(Qt::WA_DeleteOnClose);
-    QAction* action = contextMenu->addAction(tr("Reset all changes"));
-    connect(action, &QAction::triggered, this, &QtWidgetsApplication1::headerButtonClicked);
-    contextMenu->popup(mapToGlobal(pos));
 }

@@ -66,6 +66,6 @@ private slots:
     void resetLayout();
 
     void headerButtonClicked();
-    void treeWidgetContextMenuEvent(QContextMenuEvent* event);
-    void on_columnTreeView_customContextMenuRequested(const QPoint& pos);
+    void prepareMenu(const QPoint& pos);
+    void newDev();
 };
