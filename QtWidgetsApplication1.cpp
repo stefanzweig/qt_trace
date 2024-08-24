@@ -75,8 +75,9 @@ void QtWidgetsApplication1::init()
 
 void QtWidgetsApplication1::_updateCurrentState()
 {
-    ui.statusBar->showMessage(QString::number(this->full_count));
-    // setupdatamodel();
+    QString status_string = "CAN Frames: " + QString::number(this->full_count_canframes) 
+        + ". PDUs: " + QString::number(this->full_count_canparser);
+    ui.statusBar->showMessage(status_string);
 }
 
 void QtWidgetsApplication1::updateState()
@@ -113,6 +114,11 @@ void QtWidgetsApplication1::resetLayout()
     ui.toolbar->addAction(ui.actionstop);
     ui.toolbar->addAction(ui.actionpause);
     initialHeaders();
+
+    QMenu* contextMenu = new QMenu(this);
+    contextMenu->addAction("Action 1");
+    contextMenu->addAction("Action 2");
+    setContextMenuPolicy(Qt::DefaultContextMenu);
 }
 
 void QtWidgetsApplication1::onActionTriggered()
@@ -285,16 +291,16 @@ void QtWidgetsApplication1::setupdatamodel()
     {
         if (full_canframes[i].Timestamp <= last_timestamp) continue;
 
-        full_count++; // message counts
-        int count_in_page = full_count % count_per_page;
-        int last_page_index = full_count / count_per_page;
+        full_count_canframes++; // message counts
+        int count_in_page = full_count_canframes % count_per_page;
+        int last_page_index = full_count_canframes / count_per_page;
         if (last_page_index > 0) {
             if (last_page_index != current_page)
                 if (count_in_page != 0) {
                     QTreeWidget* t = ui.treetrace;
                     t->clear();
                     current_page = last_page_index;
-                    qDebug() << full_count << endl;
+                    qDebug() << full_count_canframes << endl;
                 }
         }
         
@@ -315,19 +321,7 @@ void QtWidgetsApplication1::setupdatamodel()
         QTreeWidget* t = ui.treetrace;
         t->addTopLevelItem(Item);
         t->setIndentation(20);
-
-/*        for (int k = 0; k < full_canparserdata.size(); k++) {
-            if (full_canparserdata[k].timeStamp() == last_timestamp) {
-                qDebug() << "MATCHED ->" << full_canparserdata[k].id() << "INDEX ->" << k;
-                // todo 
-                QStringList str_parser = {};
-                QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(full_canparserdata[k].timeStamp() / 1000000);
-                str_parser.append(timestamp.toString("hh:mm:ss.zzz"));
-                str_parser.append(QString::fromStdString(full_canparserdata[k].name()));
-                QTreeWidgetItem* childItem = new QTreeWidgetItem(str_parser);
-                Item->addChild(childItem);
-            } 
-        } */
+        
     }
 }
 
@@ -353,6 +347,7 @@ void QtWidgetsApplication1::initialHeaders()
         int length = header->sectionPosition(i) + header->sectionSize(i);
         button->setGeometry(length - 20, 3, 17, 18);
     }
+
 }
 
 void QtWidgetsApplication1::headerButtonClicked()
@@ -397,20 +392,41 @@ void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
 {
     //sig_filter = 1;
     bool judgement = false;
-    for (int i = 0; i < ui.treetrace->topLevelItemCount(); ++i) {
-        judgement = true;
-        QTreeWidgetItem* item = ui.treetrace->topLevelItem(i);
-        if (items.size()) {
-            //for (int j = 0; j < count; ++j) {
-            //    if (item->text(columnButton).toLower() == items[columnButton][j]) {
-            //        judgement = false;//显示
-            //    }
-            //}
-            item->setHidden(judgement);
-        }
-        else {
-            //             reset_column_flag[columnButton]=0;//这个呆一会
-            item->setHidden(false);
-        }
-    }
+    //for (int i = 0; i < ui.treetrace->topLevelItemCount(); ++i) {
+    //    judgement = true;
+    //    QTreeWidgetItem* item = ui.treetrace->topLevelItem(i);
+    //    if (items.size()) {
+    //        //for (int j = 0; j < count; ++j) {
+    //        //    if (item->text(columnButton).toLower() == items[columnButton][j]) {
+    //        //        judgement = false;//显示
+    //        //    }
+    //        //}
+    //        item->setHidden(judgement);
+    //    }
+    //    else {
+    //        //             reset_column_flag[columnButton]=0;//这个呆一会
+    //        item->setHidden(false);
+    //    }
+    //}
+    qDebug() << "FILTER -> " << items.size() << count;
+}
+
+void QtWidgetsApplication1::treeWidgetContextMenuEvent(QContextMenuEvent* event)
+{
+    QTreeWidgetItem* item = ui.treetrace->itemAt(event->pos());
+
+    QMenu* contextMenu = new QMenu(ui.treetrace);
+    contextMenu->addAction("Add Child");
+    contextMenu->addAction("Remove Item");
+
+    contextMenu->exec(event->globalPos());
+}
+
+void QtWidgetsApplication1::on_columnTreeView_customContextMenuRequested(const QPoint& pos)
+{
+    QMenu* contextMenu = new QMenu(ui.treetrace);
+    contextMenu->setAttribute(Qt::WA_DeleteOnClose);
+    QAction* action = contextMenu->addAction(tr("Reset all changes"));
+    connect(action, &QAction::triggered, this, &QtWidgetsApplication1::headerButtonClicked);
+    contextMenu->popup(mapToGlobal(pos));
 }

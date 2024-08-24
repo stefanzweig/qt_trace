@@ -40,7 +40,7 @@ private:
     QVector<canframe> full_canparserdata;
     uint64_t last_timestamp = 0;
     uint64_t last_timestamp_canparser = 0;
-    uint64_t full_count = 0;
+    uint64_t full_count_canframes = 0;
     uint64_t full_count_canparser = 0;
     uint64_t count_per_page = 3000;
     uint64_t current_page = 0;
@@ -48,6 +48,7 @@ private:
     QStringList initialHeader = { "Time[ms]", "Chn", "ID", "Name", "Dir", "DLC", "Data", "EventType", "DataLength", "BusType" };
     QList<QPushButton*> headerButtonList;
     columnFilterDialog* filter = nullptr;
+    QHash<QString, QString> filterConfig;
 
 private slots:
     void updateState();
@@ -65,4 +66,6 @@ private slots:
     void resetLayout();
 
     void headerButtonClicked();
+    void treeWidgetContextMenuEvent(QContextMenuEvent* event);
+    void on_columnTreeView_customContextMenuRequested(const QPoint& pos);
 };

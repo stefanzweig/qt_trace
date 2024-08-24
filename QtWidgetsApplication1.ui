@@ -64,14 +64,7 @@
        <addaction name="actionpause"/>
        <addaction name="actionstop"/>
       </widget>
-      <widget class="QMenu" name="menuConfig">
-       <property name="title">
-        <string>Config</string>
-       </property>
-       <addaction name="actionConfig"/>
-      </widget>
       <addaction name="menu"/>
-      <addaction name="menuConfig"/>
      </widget>
     </item>
     <item>
@@ -259,8 +252,20 @@
    </property>
   </action>
   <action name="actionConfig">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Config</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>false</bool>
+   </property>
+   <property name="shortcutVisibleInContextMenu">
+    <bool>false</bool>
    </property>
   </action>
  </widget>

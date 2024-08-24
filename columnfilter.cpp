@@ -1,5 +1,6 @@
 #include "columnfilter.h"
 #include <iostream>
+#include <QDebug>
 
 columnFilterDialog::columnFilterDialog(QWidget* parent) :
     QDialog(parent),
@@ -33,7 +34,7 @@ void columnFilterDialog::closeEvent(QCloseEvent* e) {
 
 
 void columnFilterDialog::on_resetFilterButton_clicked() {
-    std::cout << "reset filter button clicked" << std::endl;
+    qDebug() << "reset filter button clicked";
     reset_column_flag[columnButton] = 0;
     comfirm_button_flag[columnButton] = 0;
     twoSelectedItems.clear();
@@ -43,10 +44,11 @@ void columnFilterDialog::on_resetFilterButton_clicked() {
 }
 
 void columnFilterDialog::on_confirmFilterButton_clicked() {
-    std::cout << "on_confirmedButton_clicked clicked" << std::endl;
+    qDebug() << "on_confirmedButton_clicked clicked";
 
-    int numColumns = 13;
-    int numRows = 1000;
+    int numColumns = 13; // counts of columns
+    int numRows = 1000; // distinct values 
+    twoSelectedItems.clear();
     for (int col = 0; col < numColumns; ++col) {
         QList<QString> newRow;
         for (int row = 0; row < numRows; ++row) {
