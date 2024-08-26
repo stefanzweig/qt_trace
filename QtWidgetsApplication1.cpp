@@ -59,6 +59,7 @@ void QtWidgetsApplication1::init()
 
     calc_thread = new multiThread();
     connect(calc_thread, &multiThread::traceItemUpdate_internal, [=]() {qDebug() << "lambda"; });
+    connect(calc_thread, &multiThread::popToRoot, this, &QtWidgetsApplication1::on_pop_to_root);
 
 
     // ÖØÖÃ²¼¾Ö todo
@@ -76,7 +77,7 @@ void QtWidgetsApplication1::init()
 void QtWidgetsApplication1::_updateCurrentState()
 {
     QString status_string = "CAN Frames: " + QString::number(this->full_count_canframes) 
-        + ". PDUs: " + QString::number(this->full_count_canparser);
+        + ". PDUs: " + QString::number(this->calc_thread->full_count_canparser);
     ui.statusBar->showMessage(status_string);
 }
 
@@ -152,14 +153,14 @@ void QtWidgetsApplication1::startTrace()
     if (mysub_can_frames == nullptr) {
         mysub_can_frames = new ZoneMasterCanMessageDataSubscriber();
         qRegisterMetaType <can_frame>("can_frame");
-        connect(&mysub_can_frames->listener_, &SubListener::traceItemUpdate_internal_cf, this, &QtWidgetsApplication1::formatRow_canframe);
+        //connect(&mysub_can_frames->listener_, &SubListener::traceItemUpdate_internal_cf, this, &QtWidgetsApplication1::formatRow_canframe);
     }
 
     if (mysub_can_parser == nullptr) {
         mysub_can_parser = new ZoneMasterCanParserSubscriber();
         qRegisterMetaType <canframe>("canframe");
-        connect(&mysub_can_parser->listener_, &CanParserListener::traceItemUpdate_internal, this, &QtWidgetsApplication1::formatRow_canparser);
-        connect(&mysub_can_parser->listener_, &CanParserListener::traceItemUpdate_internal_canparser, this, &QtWidgetsApplication1::internal_canparser);
+        //connect(&mysub_can_parser->listener_, &CanParserListener::traceItemUpdate_internal, this, &QtWidgetsApplication1::formatRow_canparser);
+        //connect(&mysub_can_parser->listener_, &CanParserListener::traceItemUpdate_internal_canparser, this, &QtWidgetsApplication1::internal_canparser);
     }
     calc_thread->restartThread();
     calc_thread->setSubscriber(mysub_can_frames, samples, ui.treetrace); // nonsense
@@ -425,4 +426,10 @@ void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
     //    }
     //}
     qDebug() << "FILTER -> " << items.size() << count;
+}
+
+
+void QtWidgetsApplication1::on_pop_to_root(QTreeWidgetItem* item)
+{
+    ui.treetrace->addTopLevelItem(item);
 }

@@ -9,15 +9,19 @@
 #include "topicData/ZoneMasterCanParserListener.h"
 
 #include <QtWidgets/QTreeView>
+#include <QTreeWidgetItem>
 
 class multiThread :
-    public QThread, public SubListener
+    public QThread, public QObject, public SubListener
 {
+    Q_OBJECT
+
 public:
     multiThread();
     ~multiThread();
     void setSubscriber(ZoneMasterCanMessageDataSubscriber* subscriber, int samples, QTreeView* treeview);
     void setCanParserSubscriber(ZoneMasterCanParserSubscriber* subscriber, int samples, QTreeView* treeview);
+    uint64_t full_count_canparser = 0;
 
 public slots:
     void stopThread();
@@ -44,8 +48,18 @@ private:
     ZoneMasterCanMessageDataSubscriber* mysub_can_frames = nullptr;
     ZoneMasterCanParserSubscriber* mysub_can_parser = nullptr;
     QTreeView* tree_;
+    QVector<canframe> full_canparserdata;
+    QVector<can_frame> full_canframes;
+    uint64_t last_timestamp_canparser = 0;
+    uint64_t last_timestamp_canframe = 0;
+    uint64_t full_count_canframes = 0;
 
     void bindDataToTraceTree();
+    void formatRow_canparser_thread(canframe frame);
+    void formatRow_canframe_thread(can_frame frame);
+
+signals:
+    void popToRoot(QTreeWidgetItem* item);
 };
 
 #endif // MULTITHREAD_H

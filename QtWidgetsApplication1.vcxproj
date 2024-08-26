@@ -151,7 +151,7 @@
     <ClInclude Include="treeitem.h" />
     <QtMoc Include="treemodel.h" />
     <QtMoc Include="demo.h" />
-    <ClInclude Include="multiThread.h" />
+    <QtMoc Include="multiThread.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

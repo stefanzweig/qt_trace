@@ -59,6 +59,7 @@ private slots:
     void formatRow_canparser(unsigned long long i);
     void internal_canparser(canframe frame);
     void applyFilter(QList<QList<QString>> items, int count);
+    void on_pop_to_root(QTreeWidgetItem* item);
 
     void startTrace();
     void stopTrace();

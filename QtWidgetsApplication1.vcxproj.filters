@@ -78,9 +78,6 @@
     <ClInclude Include="core_global.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="multiThread.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="treeitem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -127,6 +124,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="columnfilter.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="multiThread.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
