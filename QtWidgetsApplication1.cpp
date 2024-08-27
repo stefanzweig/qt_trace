@@ -2,7 +2,6 @@
 #include <QTimer>
 #include <QDebug>
 #include "multiThread.h"
-//#include "DataTreeView.h"
 #include "columnfilter.h"
 
 
@@ -124,8 +123,8 @@ void QtWidgetsApplication1::prepareMenu(const QPoint& pos)
 {
     QTreeWidget* tree = ui.treetrace;
     QTreeWidgetItem* nd = tree->itemAt(pos);
-    QAction* newAct = new QAction(QIcon(":/QtWidgetsApplication1/res/funnel-icon.ico"), tr("&New"), this);
-    newAct->setStatusTip(tr("new sth"));
+    QAction* newAct = new QAction(QIcon(":/QtWidgetsApplication1/res/funnel-icon.ico"), tr("&TBD"), this);
+    newAct->setStatusTip(tr("TBD"));
     connect(newAct, SIGNAL(triggered()), this, SLOT(newDev()));
     QMenu menu(this);
     menu.addAction(newAct);
@@ -222,7 +221,6 @@ void QtWidgetsApplication1::internal_canparser(canframe frame)
 }
 void QtWidgetsApplication1::setupTreeTrace()
 {
-    //DataTreeView* t = ui.treetrace;
     QTreeWidget* t = ui.treetrace;
     t->setSelectionBehavior(QTreeView::SelectRows);
     t->setSelectionMode(QTreeView::SingleSelection);
@@ -364,7 +362,6 @@ void QtWidgetsApplication1::initialHeaders()
         int length = header->sectionPosition(i) + header->sectionSize(i);
         button->setGeometry(length - 20, 3, 17, 18);
     }
-
 }
 
 void QtWidgetsApplication1::headerButtonClicked()
@@ -385,19 +382,7 @@ void QtWidgetsApplication1::headerButtonClicked()
         }
     }
     filterConfig.removeAll("");
-
     filterConfig.sort();
-
-
-
-    //ui.treetrace->setMouseTracking(true);
-    //QPoint mousePos = QCursor::pos();
-    //QString headerText = "";
-    //int column = ui.treetrace->columnAt();
-    //if (column != -1) {
-    //    // 获取鼠标所在位置的表头
-    //    QString headerText = ui.treetrace->headerItem()->text(column);
-    //}
 
     filter->ui->tableWidget->setRowCount(filterConfig.count());
     filter->ui->tableWidget->setColumnCount(1);
@@ -413,7 +398,6 @@ void QtWidgetsApplication1::headerButtonClicked()
     filter->columnIndex = columnButton;
     connect(filter, &columnFilterDialog::filter_apply, this, &QtWidgetsApplication1::applyFilter);
     filter->exec();
-    
 }
 
 void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
