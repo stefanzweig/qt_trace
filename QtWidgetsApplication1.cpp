@@ -75,7 +75,7 @@ void QtWidgetsApplication1::init()
 
 void QtWidgetsApplication1::_updateCurrentState()
 {
-    QString status_string = "CAN Frames: " + QString::number(this->full_count_canframes) 
+    QString status_string = "CAN Frames: " + QString::number(this->calc_thread->full_count_canframes)
         + ". PDUs: " + QString::number(this->calc_thread->full_count_canparser);
     ui.statusBar->showMessage(status_string);
 }

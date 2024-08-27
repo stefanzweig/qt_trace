@@ -23,6 +23,7 @@ public:
     void setCanParserSubscriber(ZoneMasterCanParserSubscriber* subscriber, int samples, QTreeView* treeview);
     void setFilterOption(QString colName, QList<QList<QString>> items);
     uint64_t full_count_canparser = 0;
+    uint64_t full_count_canframes = 0;
 
 public slots:
     void stopThread();
@@ -53,7 +54,6 @@ private:
     QVector<can_frame> full_canframes;
     uint64_t last_timestamp_canparser = 0;
     uint64_t last_timestamp_canframe = 0;
-    uint64_t full_count_canframes = 0;
     QString filter_colName;
     QList<QList<QString>> filter_items;
 
