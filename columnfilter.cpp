@@ -44,41 +44,57 @@ void columnFilterDialog::on_resetFilterButton_clicked() {
 }
 
 void columnFilterDialog::on_confirmFilterButton_clicked() {
-    qDebug() << "on_confirmedButton_clicked clicked";
+    //qDebug() << "on_confirmedButton_clicked clicked";
 
-    int numColumns = 13; // counts of columns
-    int numRows = 1000; // distinct values 
-    twoSelectedItems.clear();
-    for (int col = 0; col < numColumns; ++col) {
-        QList<QString> newRow;
-        for (int row = 0; row < numRows; ++row) {
-            newRow.append(QString("item_%1_%2").arg(col).arg(row));
-        }
-        twoSelectedItems.append(newRow);
-    }
-    int rows = 13;
-    int cols = 1000;
-    m_selectedStates.reserve(rows);
-    for (int i = 0; i < rows; ++i) {
-        m_selectedStates.append(QVector<bool>(cols, false));
-    }
+    //int numColumns = 13; // counts of columns
+    //int numRows = 1000; // distinct values 
+    //twoSelectedItems.clear();
+    //for (int col = 0; col < numColumns; ++col) {
+    //    QList<QString> newRow;
+    //    for (int row = 0; row < numRows; ++row) {
+    //        newRow.append(QString("item_%1_%2").arg(col).arg(row));
+    //    }
+    //    twoSelectedItems.append(newRow);
+    //}
+    //int rows = 13;
+    //int cols = 1000;
+    //m_selectedStates.reserve(rows);
+    //for (int i = 0; i < rows; ++i) {
+    //    m_selectedStates.append(QVector<bool>(cols, false));
+    //}
 
-    reset_column_flag[columnButton] = 1;
-    comfirm_button_flag[columnButton] = 1;
-    selectedItemscount = 0;
-    int intercount = 0;
-    for (int i = 0; i < ui->tableWidget->rowCount(); ++i) {
+    //reset_column_flag[columnButton] = 1;
+    //comfirm_button_flag[columnButton] = 1;
+    //selectedItemscount = 0;
+    //int intercount = 0;
+    //for (int i = 0; i < ui->tableWidget->rowCount(); ++i) {
+    //    QTableWidgetItem* item = ui->tableWidget->item(i, 0);
+    //    if (item->checkState() == Qt::Checked) {
+    //        twoSelectedItems[columnButton][intercount] = (item->text());
+    //        selectedItemscount++;
+    //        m_selectedStates[columnButton][i] = true;
+    //        intercount++;
+    //    }
+    //    else {
+    //        m_selectedStates[columnButton][i] = false;
+    //    }
+    //}
+
+    // stefan
+    QList<QList<QString>>  selectedItems;
+    for (int i = 0; i < ui->tableWidget->rowCount(); ++i) 
+    {
         QTableWidgetItem* item = ui->tableWidget->item(i, 0);
-        if (item->checkState() == Qt::Checked) {
-            twoSelectedItems[columnButton][intercount] = (item->text());
-            selectedItemscount++;
-            m_selectedStates[columnButton][i] = true;
-            intercount++;
+        if (item->checkState() == Qt::Checked) 
+        {
+            qDebug() << "CHECKED ->" << item->text();
+            QList<QString> newRow;
+            newRow.append(item->text());
+            selectedItems.append(newRow);
         }
-        else {
-            m_selectedStates[columnButton][i] = false;
-        }
+        
     }
+    // end of stefan
     accept();
-    emit filter_apply(twoSelectedItems, selectedItemscount);
+    emit filter_apply(selectedItems, selectedItemscount);
 }

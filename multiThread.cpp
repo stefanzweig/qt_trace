@@ -206,40 +206,71 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
 
     full_canframes.append(frame);
     QStringList str = {};
+    QStringList filter_value = {};
+    bool bFilter = false;
+    // std::vector<can_frame> filtered_canframes;
+    QVector<can_frame> filtered_canframes;
+    filtered_canframes.clear();
+    // filtered_canframes = full_canframes.toStdVector();
     for (int i = 0; i < full_canframes.count(); i++)
     {
         if (full_canframes[i].Timestamp <= last_timestamp_canframe) continue;
 
         full_count_canframes++; // message counts
-        //int count_in_page = full_count_canframes % count_per_page;
-        //int last_page_index = full_count_canframes / count_per_page;
-        //if (last_page_index > 0) {
-        //    if (last_page_index != current_page)
-        //        if (count_in_page != 0) {
-        //            QTreeWidget* t = ui.treetrace;
-        //            t->clear();
-        //            current_page = last_page_index;
-        //            qDebug() << full_count_canframes << endl;
-        //        }
-        //}
         last_timestamp_canframe = full_canframes[i].Timestamp;
-        QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(full_canframes[i].Timestamp / 1000000);
+        if (filter_items.size() > 0) {
+            bFilter = true;
+            for (int k = 0; k < filter_items.size(); k++) {
+                for (int i = 0; i < 1; i++) {
+                    filter_value.append(filter_items[k][i]);
+                }
+            }
+        }
+        if (bFilter) {
+            if (filter_colName == "Chn")
+            {
+                if (filter_value.contains(QString::number(full_canframes[i].Chn))) {
+                    //str.append(QString::number(full_canframes[i].Chn));
+                    filtered_canframes.append(full_canframes[i]);
+                    continue;
+                }
+                
+            }
+            if (filter_colName == "ID")
+            {
+                QString hexv = "0x" + QString::number(full_canframes[i].ID, 16);
+                if (filter_value.contains(hexv)) {
+                    //str.append("0x" + QString::number(full_canframes[i].ID, 16));
+                    filtered_canframes.append(full_canframes[i]);
+                    continue;
+                }
+            }
+        }
+        else {
+            filtered_canframes.append(full_canframes[i]);
+        }
+    }
+    for (int i = 0; i < filtered_canframes.count(); i++) 
+    {
+        QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(filtered_canframes[i].Timestamp / 1000000);
         str.append(timestamp.toString("hh:mm:ss.zzz"));
-        str.append(QString::number(full_canframes[i].Chn));
-        str.append("0x" + QString::number(full_canframes[i].ID, 16));
-        str.append(full_canframes[i].Name);
-        str.append(full_canframes[i].Dir);
-        str.append(QString::number(full_canframes[i].DLC));
-        QString myData = full_canframes[i].Data_Str;
+        str.append(QString::number(filtered_canframes[i].Chn));
+        str.append("0x" + QString::number(filtered_canframes[i].ID, 16));
+        str.append(filtered_canframes[i].Name);
+        str.append(filtered_canframes[i].Dir);
+        str.append(QString::number(filtered_canframes[i].DLC));
+        QString myData = filtered_canframes[i].Data_Str;
         str.append(myData);
-        str.append(full_canframes[i].EventType);
-        str.append(QString::number(full_canframes[i].DataLength));
-        str.append(full_canframes[i].BusType);
+        str.append(filtered_canframes[i].EventType);
+        str.append(QString::number(filtered_canframes[i].DataLength));
+        str.append(filtered_canframes[i].BusType);
         QTreeWidgetItem* Item = new QTreeWidgetItem(str);
-        //QTreeWidget* t = ui.treetrace;
-        //t->addTopLevelItem(Item);
-        //t->setIndentation(20);
         emit(popToRoot(Item));
     }
 }
 
+void multiThread::setFilterOption(QString colName, QList<QList<QString>> items)
+{
+    filter_colName = colName;
+    filter_items = items;
+}

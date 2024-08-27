@@ -388,6 +388,17 @@ void QtWidgetsApplication1::headerButtonClicked()
 
     filterConfig.sort();
 
+
+
+    //ui.treetrace->setMouseTracking(true);
+    //QPoint mousePos = QCursor::pos();
+    //QString headerText = "";
+    //int column = ui.treetrace->columnAt();
+    //if (column != -1) {
+    //    // 获取鼠标所在位置的表头
+    //    QString headerText = ui.treetrace->headerItem()->text(column);
+    //}
+
     filter->ui->tableWidget->setRowCount(filterConfig.count());
     filter->ui->tableWidget->setColumnCount(1);
     filter->ui->tableWidget->horizontalHeader()->setVisible(false);
@@ -407,25 +418,17 @@ void QtWidgetsApplication1::headerButtonClicked()
 
 void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
 {
-    //sig_filter = 1;
     bool judgement = false;
-    //for (int i = 0; i < ui.treetrace->topLevelItemCount(); ++i) {
-    //    judgement = true;
-    //    QTreeWidgetItem* item = ui.treetrace->topLevelItem(i);
-    //    if (items.size()) {
-    //        //for (int j = 0; j < count; ++j) {
-    //        //    if (item->text(columnButton).toLower() == items[columnButton][j]) {
-    //        //        judgement = false;//显示
-    //        //    }
-    //        //}
-    //        item->setHidden(judgement);
-    //    }
-    //    else {
-    //        //             reset_column_flag[columnButton]=0;//这个呆一会
-    //        item->setHidden(false);
-    //    }
-    //}
-    qDebug() << "FILTER -> " << items.size() << count;
+    int column_index = filter->columnIndex;
+    QString colName = this->initialHeader[column_index];
+    qDebug() << "COLUMN -> " << colName;
+    for (int k = 0; k < items.size(); k++) {
+        for (int i = 0; i < 1; i++) {
+            QString s = items[k][i];
+            qDebug() << "FILTER -> " << s;
+        }
+    }
+    this->calc_thread->setFilterOption(colName, items);
 }
 
 

@@ -17,6 +17,7 @@ public:
     int columnIndex_myy[30];
     int column_counter_myy = 0;
     QList<QList<QString>>  twoSelectedItems;
+    QString colName;
     int selectedItemscount = 0;
     int columnind;
     QVector<QVector<bool>> m_selectedStates;

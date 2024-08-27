@@ -21,6 +21,7 @@ public:
     ~multiThread();
     void setSubscriber(ZoneMasterCanMessageDataSubscriber* subscriber, int samples, QTreeView* treeview);
     void setCanParserSubscriber(ZoneMasterCanParserSubscriber* subscriber, int samples, QTreeView* treeview);
+    void setFilterOption(QString colName, QList<QList<QString>> items);
     uint64_t full_count_canparser = 0;
 
 public slots:
@@ -53,6 +54,8 @@ private:
     uint64_t last_timestamp_canparser = 0;
     uint64_t last_timestamp_canframe = 0;
     uint64_t full_count_canframes = 0;
+    QString filter_colName;
+    QList<QList<QString>> filter_items;
 
     void bindDataToTraceTree();
     void formatRow_canparser_thread(canframe frame);
