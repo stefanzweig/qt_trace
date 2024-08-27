@@ -422,6 +422,7 @@ void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
     int column_index = filter->columnIndex;
     QString colName = this->initialHeader[column_index];
     qDebug() << "COLUMN -> " << colName;
+    if (items.size() == 0) colName = "";
     for (int k = 0; k < items.size(); k++) {
         for (int i = 0; i < 1; i++) {
             QString s = items[k][i];
