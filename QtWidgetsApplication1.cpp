@@ -108,15 +108,20 @@ void QtWidgetsApplication1::resetLayout()
     ui.actionpause->setIcon(QIcon(":/QtWidgetsApplication1/res/pauseTrace.png"));
     ui.actionstart->setIcon(QIcon(":/QtWidgetsApplication1/res/startTrace.png"));
     ui.actionstop->setIcon(QIcon(":/QtWidgetsApplication1/res/stopTrace.png"));
+    ui.actionmode->setIcon(QIcon(":/QtWidgetsApplication1/res/funnel-icon.ico"));
 
     // toolbar actions
     ui.toolbar->addAction(ui.actionstart);
     ui.toolbar->addAction(ui.actionstop);
     ui.toolbar->addAction(ui.actionpause);
+    ui.toolbar->addAction(ui.actionmode);
     initialHeaders();
 
     ui.treetrace->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui.treetrace, &QTreeWidget::customContextMenuRequested, this, &QtWidgetsApplication1::prepareMenu);
+    datachoice = ui.comboBox;
+    connect(datachoice, &QComboBox::currentTextChanged, this, &QtWidgetsApplication1::ChangeHeader);
+
 }
 
 void QtWidgetsApplication1::prepareMenu(const QPoint& pos)
@@ -420,4 +425,30 @@ void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
 void QtWidgetsApplication1::on_pop_to_root(QTreeWidgetItem* item)
 {
     ui.treetrace->addTopLevelItem(item);
+}
+
+void QtWidgetsApplication1::ChangeHeader(const QString& text)
+{
+    qDebug() << "ChangeHeader -> " << text;
+    if (text == "Initial") {
+        ui.treetrace->setColumnCount(initialHeader.count()); //set column number
+        ui.treetrace->setHeaderLabels(initialHeader);        //set header labels
+        CurrentHeader = initialHeader;                        //save current header for data match
+    }
+    if (text == "CAN") {
+        ui.treetrace->setColumnCount(headers.count());
+        ui.treetrace->setHeaderLabels(headers);
+        CurrentHeader = headers;
+    }
+    if (text == "LIN") {
+        ui.treetrace->setColumnCount(linHeader.count());
+        ui.treetrace->setHeaderLabels(linHeader);
+        CurrentHeader = linHeader;
+        
+    }
+    if (text == "ETH") {
+        ui.treetrace->setColumnCount(ethHeader.count());
+        ui.treetrace->setHeaderLabels(ethHeader);
+        CurrentHeader = ethHeader;
+    }
 }

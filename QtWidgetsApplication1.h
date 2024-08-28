@@ -45,10 +45,18 @@ private:
     uint64_t count_per_page = 3000;
     uint64_t current_page = 0;
     bool isHex = true; // repr in hex
+
     QStringList initialHeader = { "Time[ms]", "Chn", "ID", "Name", "Dir", "DLC", "Data", "EventType", "DataLength", "BusType" };
+    QStringList CurrentHeader = initialHeader;
+    QStringList headers = { "Time[ms]", "Chn", "ID", "Name", "Dir", "DLC", "Data", "EventType", "DataLength", "BusType" };
+    QStringList linHeader = { "Time[ms]", "Chn", "ID", "Name", "Dir", "DataLength", "Data", "EventType", "BusType" };
+    QStringList ethHeader = { "Time[ms]","Chn","Dir","Source MAC","Destination MAC","Source IP","Destination IP","Protocol","Payload Data","VLAN ID","Transport Layer","Service","Service Instance","Method","Message Type","Port(s)","VLAN Priority" };
+    QComboBox* datachoice = nullptr;
+
     QList<QPushButton*> headerButtonList;
     columnFilterDialog* filter = nullptr;
     QHash<QString, QString> filterConfig;
+    
 
 private slots:
     void updateState();
@@ -69,4 +77,5 @@ private slots:
     void headerButtonClicked();
     void prepareMenu(const QPoint& pos);
     void newDev();
+    void ChangeHeader(const QString& text);
 };

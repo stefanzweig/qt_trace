@@ -63,6 +63,7 @@
        <addaction name="actionstart"/>
        <addaction name="actionpause"/>
        <addaction name="actionstop"/>
+       <addaction name="actionmode"/>
       </widget>
       <addaction name="menu"/>
      </widget>
@@ -186,7 +187,48 @@
                   <verstretch>15</verstretch>
                  </sizepolicy>
                 </property>
-                <layout class="QHBoxLayout" name="hLayout_2">
+                <layout class="QVBoxLayout" name="hLayout_2">
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_6">
+                   <item>
+                    <widget class="QComboBox" name="comboBox">
+                     <item>
+                      <property name="text">
+                       <string>Initial</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>CAN</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>LIN</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>ETH</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_2">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </item>
                  <item>
                   <widget class="QTreeWidget" name="treetrace">
                    <property name="sizePolicy">
@@ -266,6 +308,11 @@
    </property>
    <property name="shortcutVisibleInContextMenu">
     <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionmode">
+   <property name="text">
+    <string>actionmode</string>
    </property>
   </action>
  </widget>
