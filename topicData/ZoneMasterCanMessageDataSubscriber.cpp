@@ -47,7 +47,7 @@ bool ZoneMasterCanParserSubscriber::init()
 
     // Create the DataReader
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
-    reader_qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    reader_qos.reliability().kind = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
     reader_qos.durability().kind = eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS;
     reader_qos.data_sharing().automatic();
     subscriber_->set_default_datareader_qos(reader_qos);
