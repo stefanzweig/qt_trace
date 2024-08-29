@@ -128,8 +128,8 @@ void QtWidgetsApplication1::prepareMenu(const QPoint& pos)
 {
     QTreeWidget* tree = ui.treetrace;
     QTreeWidgetItem* nd = tree->itemAt(pos);
-    QAction* newAct = new QAction(QIcon(":/QtWidgetsApplication1/res/funnel-icon.ico"), tr("&TBD"), this);
-    newAct->setStatusTip(tr("TBD"));
+    QAction* newAct = new QAction(QIcon(":/QtWidgetsApplication1/res/funnel-icon.ico"), tr("&Clean All"), this);
+    newAct->setStatusTip(tr("Clean All"));
     connect(newAct, SIGNAL(triggered()), this, SLOT(newDev()));
     QMenu menu(this);
     menu.addAction(newAct);
@@ -139,7 +139,8 @@ void QtWidgetsApplication1::prepareMenu(const QPoint& pos)
 
 void QtWidgetsApplication1::newDev()
 {
-    qDebug() << tr("newDev");
+    qDebug() << tr("Clean All");
+    ui.treetrace->clear();
 }
 
 void QtWidgetsApplication1::onActionTriggered()
@@ -377,6 +378,17 @@ void QtWidgetsApplication1::headerButtonClicked()
     int columnButton = headerButtonList.indexOf(filterButton);
     QList<QString> filterConfig;
 
+    int header_count = ui.treetrace->columnCount();
+    filter->header_count = header_count;
+    filter->columnButton = columnButton;
+    if (filter->m_selectedStates.size() != 0) {}
+    else {
+        filter->m_selectedStates.reserve(header_count);
+        int distinct_count = 100;
+        for (int i = 0; i < header_count; ++i) {
+            filter->m_selectedStates.append(QVector<bool>(distinct_count, false));
+        }
+    }
     for (int i = 0; i < ui.treetrace->invisibleRootItem()->childCount(); i++)
     {
 
@@ -399,6 +411,7 @@ void QtWidgetsApplication1::headerButtonClicked()
         QTableWidgetItem* pItem = new QTableWidgetItem(filterConfig.at(i));
         pItem->setCheckState(Qt::Unchecked);
         filter->ui->tableWidget->setItem(i, 0, pItem);
+        pItem->setCheckState(filter->m_selectedStates[columnButton].at(i) ? Qt::Checked : Qt::Unchecked);
     }
     filter->columnIndex = columnButton;
     connect(filter, &columnFilterDialog::filter_apply, this, &QtWidgetsApplication1::applyFilter);
@@ -411,14 +424,21 @@ void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
     int column_index = filter->columnIndex;
     QString colName = this->initialHeader[column_index];
     qDebug() << "COLUMN -> " << colName;
-    if (items.size() == 0) colName = "";
-    for (int k = 0; k < items.size(); k++) {
-        for (int i = 0; i < 1; i++) {
-            QString s = items[k][i];
-            qDebug() << "FILTER -> " << s;
-        }
+    if (items.size() == 0) {
+        colName = "";
+        headerButtonList[column_index]->setIcon(QIcon(":/QtWidgetsApplication1/res/funnel-icon.ico"));
+    }
+    else {
+        headerButtonList[column_index]->setIcon(QIcon(":/QtWidgetsApplication1/res/funnel_icon_selected.ico"));
+        //for (int k = 0; k < items.size(); k++) {
+        //    for (int i = 0; i < 1; i++) {
+        //        QString s = items[k][i];
+        //        qDebug() << "FILTER -> " << s;
+        //    }
+        //}
     }
     this->calc_thread->setFilterOption(colName, items);
+    
 }
 
 

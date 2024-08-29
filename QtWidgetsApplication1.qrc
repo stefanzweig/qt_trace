@@ -4,6 +4,7 @@
     <file>res/pauseTrace.png</file>
     <file>res/startTrace.png</file>
     <file>res/stopTrace.png</file>
+    <file>res/funnel_icon_selected.ico</file>
     <file>res/sqlitestudio.ico</file>
     <file>default.txt</file>
   </qresource>

@@ -21,6 +21,7 @@ public:
     int selectedItemscount = 0;
     int columnind;
     QVector<QVector<bool>> m_selectedStates;
+    int header_count = 0;
     //dgm
     
     int resetbuttonflag = 0;

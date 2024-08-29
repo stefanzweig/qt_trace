@@ -56,6 +56,7 @@ private:
     QList<QPushButton*> headerButtonList;
     columnFilterDialog* filter = nullptr;
     QHash<QString, QString> filterConfig;
+    QVector<QVector<bool>> selectedStates;
     
 
 private slots:

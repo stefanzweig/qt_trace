@@ -39,25 +39,29 @@ void columnFilterDialog::on_resetFilterButton_clicked() {
     comfirm_button_flag[columnButton] = 0;
     twoSelectedItems.clear();
     selectedItemscount = 0;
+
+    for (int i = 0; i < ui->tableWidget->rowCount(); ++i)
+        m_selectedStates[columnButton][i] = false;
     accept();
     emit filter_apply(twoSelectedItems, selectedItemscount);
-
-
 }
 
 void columnFilterDialog::on_confirmFilterButton_clicked() {
+
     QList<QList<QString>>  selectedItems;
     for (int i = 0; i < ui->tableWidget->rowCount(); ++i) 
     {
         QTableWidgetItem* item = ui->tableWidget->item(i, 0);
         if (item->checkState() == Qt::Checked) 
         {
-            qDebug() << "CHECKED ->" << item->text();
             QList<QString> newRow;
             newRow.append(item->text());
             selectedItems.append(newRow);
+            m_selectedStates[columnButton][i] = true;
         }
-        
+        else {
+            m_selectedStates[columnButton][i] = false;
+        }
     }
     accept();
     emit filter_apply(selectedItems, selectedItemscount);
