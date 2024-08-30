@@ -75,7 +75,14 @@ void QtWidgetsApplication1::init()
 
 void QtWidgetsApplication1::_updateCurrentState()
 {
-    QString status_string = "CAN Frames: " + QString::number(this->calc_thread->full_count_canframes)
+    QString runStatus = "";
+    if (calc_thread->isSTOPPED())
+        runStatus = "READY. ";
+    if (!calc_thread->isSTOPPED())
+        runStatus = "RUNNING. ";
+    if (calc_thread->isPAUSED())
+        runStatus = "PAUSED. ";
+    QString status_string = runStatus + "CAN Frames: " + QString::number(this->calc_thread->full_count_canframes)
         + ". PDUs: " + QString::number(this->calc_thread->full_count_canparser);
     ui.statusBar->showMessage(status_string);
 }
@@ -91,6 +98,7 @@ void QtWidgetsApplication1::createActions()
     connect(ui.actionstart, &QAction::triggered, this, &QtWidgetsApplication1::startTrace);
     connect(ui.actionstop, &QAction::triggered, this, &QtWidgetsApplication1::stopTrace);
     connect(ui.actionpause, &QAction::triggered, this, &QtWidgetsApplication1::pauseTrace);
+    connect(ui.pushButton_search, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonSearchClicked);
 }
 
 void QtWidgetsApplication1::resetLayout()
@@ -98,9 +106,9 @@ void QtWidgetsApplication1::resetLayout()
     qDebug() << "resetLayout...";
 
     // will be removed later.
-    QAction* action = new QAction("Temp Action");
-    ui.menu->addAction(action);
-    connect(action, &QAction::triggered, this, &QtWidgetsApplication1::onActionTriggered);
+    //QAction* action = new QAction("Temp Action");
+    //ui.menu->addAction(action);
+    //connect(action, &QAction::triggered, this, &QtWidgetsApplication1::onActionTriggered);
 
     // icons
     ui.menu->setIcon(QIcon(":/QtWidgetsApplication1/res/sqlitestudio.ico"));
@@ -158,14 +166,11 @@ void QtWidgetsApplication1::startTrace()
     if (mysub_can_frames == nullptr) {
         mysub_can_frames = new ZoneMasterCanMessageDataSubscriber();
         qRegisterMetaType <can_frame>("can_frame");
-        //connect(&mysub_can_frames->listener_, &SubListener::traceItemUpdate_internal_cf, this, &QtWidgetsApplication1::formatRow_canframe);
     }
 
     if (mysub_can_parser == nullptr) {
         mysub_can_parser = new ZoneMasterCanParserSubscriber();
         qRegisterMetaType <canframe>("canframe");
-        //connect(&mysub_can_parser->listener_, &CanParserListener::traceItemUpdate_internal, this, &QtWidgetsApplication1::formatRow_canparser);
-        //connect(&mysub_can_parser->listener_, &CanParserListener::traceItemUpdate_internal_canparser, this, &QtWidgetsApplication1::internal_canparser);
     }
     calc_thread->restartThread();
     calc_thread->setSubscriber(mysub_can_frames, samples, ui.treetrace); // nonsense
@@ -178,9 +183,10 @@ void QtWidgetsApplication1::stopTrace()
 {
     qDebug() << "stopTrace...";
     calc_thread->stopThread();
+    timer->stop();
     mysub_can_frames = nullptr;
     mysub_can_parser = nullptr;
-    timer->stop();
+    updateState();
 }
 
 void QtWidgetsApplication1::pauseTrace()
@@ -188,6 +194,7 @@ void QtWidgetsApplication1::pauseTrace()
     qDebug() << "pauseTrace...";
     calc_thread->pauseThread();
     timer->stop();
+    updateState();
 }
 
 
@@ -471,4 +478,10 @@ void QtWidgetsApplication1::ChangeHeader(const QString& text)
         ui.treetrace->setHeaderLabels(ethHeader);
         CurrentHeader = ethHeader;
     }
+}
+
+void QtWidgetsApplication1::ButtonSearchClicked()
+{
+    calc_thread->pauseThread();
+    // search...
 }

@@ -3,7 +3,7 @@
 #include <QTreeWidgetItem>
 
 multiThread::multiThread()
-    :is_stop(false),is_paused(false)
+    :is_stop(true),is_paused(false)
 {
 }
 
@@ -16,10 +16,12 @@ void multiThread::stopThread() {
     if (mysub_can_frames != nullptr) {
         delete mysub_can_frames;
         mysub_can_frames = nullptr;
+        bconnected_cf = false;
     }
     if (mysub_can_parser != nullptr) {
         delete mysub_can_parser;
         mysub_can_parser = nullptr;
+        bconnected_cp = false;
     }
 }
 
@@ -113,24 +115,34 @@ void multiThread::setQueryString(QString str)
 
 void multiThread::setSubscriber(ZoneMasterCanMessageDataSubscriber* subscriber, int samples, QTreeView* treeview)
 {
-    mysub_can_frames = subscriber;
+    if (!bconnected_cf) {
+        mysub_can_frames = subscriber;
     samples_ = samples;
     subscriber->setOuterThread(this, treeview);
-    QObject::connect(&mysub_can_frames->listener_, &SubListener::traceItemUpdate_internal_cf, this, &multiThread::formatRow_canframe_thread);
+        QObject::connect(&mysub_can_frames->listener_, &SubListener::traceItemUpdate_internal_cf, this, &multiThread::formatRow_canframe_thread); 
+        bconnected_cf = true;
+    }
+    
 }
 
 void multiThread::setCanParserSubscriber(ZoneMasterCanParserSubscriber* subscriber, int samples, QTreeView* treeview)
 {
-    mysub_can_parser = subscriber;
+    if (!bconnected_cp) {
+        mysub_can_parser = subscriber;
     samples_ = samples;
     subscriber->setOuterThread(this, treeview);
-    QObject::connect(&mysub_can_parser->listener_, &CanParserListener::traceItemUpdate_internal_canparser, this, &multiThread::formatRow_canparser_thread);
+        QObject::connect(&mysub_can_parser->listener_, &CanParserListener::traceItemUpdate_internal_canparser, this, &multiThread::formatRow_canparser_thread);
+        bconnected_cp = true;
+    }
 }
 
 void multiThread::formatRow_canparser_thread(canframe frame)
 {
     full_canparserdata.append(frame);
     full_count_canparser++;
+
+    if (is_paused) { return; }
+
     last_timestamp_canparser = frame.timeStamp();
 
     QStringList str_parser = {};
@@ -194,6 +206,8 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
 {
     full_canframes.append(frame);
     full_count_canframes++; // message counts
+
+    if (is_paused) { return; }
 
     QStringList str = {};
     QStringList filter_value = {};

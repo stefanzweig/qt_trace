@@ -79,4 +79,5 @@ private slots:
     void prepareMenu(const QPoint& pos);
     void newDev();
     void ChangeHeader(const QString& text);
+    void ButtonSearchClicked();
 };

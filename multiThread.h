@@ -24,6 +24,8 @@ public:
     void setFilterOption(QString colName, QList<QList<QString>> items);
     uint64_t full_count_canparser = 0;
     uint64_t full_count_canframes = 0;
+    bool isSTOPPED() { return is_stop; };
+    bool isPAUSED() { return is_paused; }
 
 public slots:
     void stopThread();
@@ -37,8 +39,8 @@ protected:
     virtual void run() override;
 
 private:
-    bool is_stop;
-    bool is_paused;
+    bool is_stop = true;
+    bool is_paused = false;
     QMutex m_lock;
     std::string m_last_realtime_id = "-1";
     std::string m_from_id = "-1";
@@ -56,6 +58,8 @@ private:
     uint64_t last_timestamp_canframe = 0;
     QString filter_colName;
     QList<QList<QString>> filter_items;
+    bool bconnected_cf = false;
+    bool bconnected_cp = false;
 
     void bindDataToTraceTree();
     void formatRow_canparser_thread(canframe frame);
