@@ -29,6 +29,7 @@ private:
     void setupdatamodel_canparser();
     void initialHeaders();
     void _updateCurrentState();
+    void hide_filtered_items(int idx, QList<QList<QString>> items);
     Ui::QtWidgetsApplication1Class ui;
     QTimer* timer = nullptr;
     ZoneMasterCanMessageDataSubscriber* mysub_can_frames = nullptr;

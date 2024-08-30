@@ -34,6 +34,7 @@ private:
     void init();
     bool modifiedFlag = false;
     void closeEvent(QCloseEvent*) override;
+    bool connected = false;
 
 private slots:
     void on_resetFilterButton_clicked();

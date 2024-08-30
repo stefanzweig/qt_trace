@@ -111,7 +111,7 @@ void QtWidgetsApplication1::resetLayout()
     //connect(action, &QAction::triggered, this, &QtWidgetsApplication1::onActionTriggered);
 
     // icons
-    ui.menu->setIcon(QIcon(":/QtWidgetsApplication1/res/sqlitestudio.ico"));
+    //ui.menu->setIcon(QIcon(":/QtWidgetsApplication1/res/sqlitestudio.ico"));
 
     ui.actionpause->setIcon(QIcon(":/QtWidgetsApplication1/res/pauseTrace.png"));
     ui.actionstart->setIcon(QIcon(":/QtWidgetsApplication1/res/startTrace.png"));
@@ -129,7 +129,6 @@ void QtWidgetsApplication1::resetLayout()
     connect(ui.treetrace, &QTreeWidget::customContextMenuRequested, this, &QtWidgetsApplication1::prepareMenu);
     datachoice = ui.comboBox;
     connect(datachoice, &QComboBox::currentTextChanged, this, &QtWidgetsApplication1::ChangeHeader);
-
 }
 
 void QtWidgetsApplication1::prepareMenu(const QPoint& pos)
@@ -445,7 +444,7 @@ void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
         //}
     }
     this->calc_thread->setFilterOption(colName, items);
-    
+    hide_filtered_items(column_index, items);
 }
 
 
@@ -484,4 +483,33 @@ void QtWidgetsApplication1::ButtonSearchClicked()
 {
     calc_thread->pauseThread();
     // search...
+}
+
+void QtWidgetsApplication1::hide_filtered_items(int column_idx, QList<QList<QString>> items)
+{
+    qDebug() << "COL -> " << column_idx << "ITEMS -> " << items.size();
+    QStringList filtered_value = {};
+    if (items.size() > 0) {
+        for (int k = 0; k < items.size(); k++) {
+            for (int i = 0; i < 1; i++) {
+                filtered_value.append(items[k][i]);
+            }
+        }
+    }
+    QTreeWidgetItem* invisible_root_item = ui.treetrace->invisibleRootItem();
+    int child_count = invisible_root_item->childCount();
+    for (int i = 0; i < child_count; ++i) {
+        QTreeWidgetItem* item = invisible_root_item->child(i);
+        QString txt = item->text(column_idx);
+        if (filtered_value.size() > 0) {
+            if (filtered_value.contains(txt)) {
+                item->setHidden(false);
+            }
+            else {
+                item->setHidden(true);
+            }
+        }
+        else
+            item->setHidden(false);
+    }
 }

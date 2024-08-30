@@ -16,8 +16,11 @@ columnFilterDialog::~columnFilterDialog()
 
 void columnFilterDialog::init() {
     ui->setupUi(this);
-    connect(ui->confirmFilterButton, &QPushButton::clicked, this, &columnFilterDialog::on_confirmFilterButton_clicked);
-    connect(ui->resetFilterButton, &QPushButton::clicked, this, &columnFilterDialog::on_resetFilterButton_clicked);
+    if (!connected) {
+        connect(ui->confirmFilterButton, &QPushButton::clicked, this, &columnFilterDialog::on_confirmFilterButton_clicked);
+        connect(ui->resetFilterButton, &QPushButton::clicked, this, &columnFilterDialog::on_resetFilterButton_clicked);
+        connected = true;
+    }
 }
 
 void columnFilterDialog::closeEvent(QCloseEvent* e) {
