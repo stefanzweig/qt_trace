@@ -66,8 +66,6 @@ public:
             if (info.valid_data)
             {
                 samples_++;
-                //qDebug() << canframe_.id() << endl;
-                //emit traceItemUpdate_internal(canframe_.timeStamp());
                 emit traceItemUpdate_internal_canparser(canframe_);
             }
         }

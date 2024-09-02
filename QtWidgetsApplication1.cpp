@@ -57,7 +57,7 @@ void QtWidgetsApplication1::init()
     connect(timer, &QTimer::timeout, this, &QtWidgetsApplication1::updateState);
 
     calc_thread = new multiThread();
-    connect(calc_thread, &multiThread::traceItemUpdate_internal, [=]() {qDebug() << "lambda"; });
+    //connect(calc_thread, &multiThread::traceItemUpdate_internal, [=]() {qDebug() << "lambda"; });
     connect(calc_thread, &multiThread::popToRoot, this, &QtWidgetsApplication1::on_pop_to_root);
 
 
@@ -89,12 +89,18 @@ void QtWidgetsApplication1::_updateCurrentState()
 
 void QtWidgetsApplication1::updateState()
 {
+    while (!item_queue.isEmpty())
+        ui.treetrace->addTopLevelItem(item_queue.dequeue());
+    int ui_count = ui.treetrace->topLevelItemCount();
+    qDebug() << "TOP Items Count -> " << ui_count;
+    if (ui_count > 3000) 
+        ui.treetrace->clear();
     _updateCurrentState();
 }
 
 void QtWidgetsApplication1::createActions()
 {
-    qDebug() << "createActions...";
+    //qDebug() << "createActions...";
     connect(ui.actionstart, &QAction::triggered, this, &QtWidgetsApplication1::startTrace);
     connect(ui.actionstop, &QAction::triggered, this, &QtWidgetsApplication1::stopTrace);
     connect(ui.actionpause, &QAction::triggered, this, &QtWidgetsApplication1::pauseTrace);
@@ -103,7 +109,7 @@ void QtWidgetsApplication1::createActions()
 
 void QtWidgetsApplication1::resetLayout()
 {
-    qDebug() << "resetLayout...";
+    //qDebug() << "resetLayout...";
 
     // will be removed later.
     //QAction* action = new QAction("Temp Action");
@@ -160,7 +166,7 @@ void QtWidgetsApplication1::startTrace()
     qDebug() << "startTrace...";
     std::cout << "Starting subscriber." << std::endl;
 
-    uint32_t samples = 10;
+    uint32_t samples = 100;
 
     if (mysub_can_frames == nullptr) {
         mysub_can_frames = new ZoneMasterCanMessageDataSubscriber();
@@ -172,10 +178,10 @@ void QtWidgetsApplication1::startTrace()
         qRegisterMetaType <canframe>("canframe");
     }
     calc_thread->restartThread();
-    calc_thread->setSubscriber(mysub_can_frames, samples, ui.treetrace); // nonsense
+    calc_thread->setSubscriber(mysub_can_frames, samples, ui.treetrace);
     calc_thread->setCanParserSubscriber(mysub_can_parser, samples, ui.treetrace);
     calc_thread->start();
-    timer->start(1000);
+    timer->start(TIMER_HEARTBEAT);
 }
 
 void QtWidgetsApplication1::stopTrace()
@@ -212,24 +218,25 @@ void QtWidgetsApplication1::formatRow_canframe(can_frame cf)
 {
     //qDebug() << "formatRow...cf->";
     //qDebug() << cf.ID << endl;
-    full_canframes.append(cf);
-    setupdatamodel();
+    //full_canframes.append(cf);
+    //setupdatamodel();
 }
 
 void QtWidgetsApplication1::formatRow_canparser(unsigned long long i)
 {
-    qDebug() << "canparser id ->" << i;
-    for (int k = 0; k < full_canframes.size(); k++) {
-        if (full_canframes[k].Timestamp == i) {
-            qDebug() << "MATCHED ->" << full_canframes[k].ID << "INDEX ->" << k;
-        }
-    }
+    //qDebug() << "canparser id ->" << i;
+    //for (int k = 0; k < full_canframes.size(); k++) {
+    //    if (full_canframes[k].Timestamp == i) {
+    //        qDebug() << "MATCHED ->" << full_canframes[k].ID << "INDEX ->" << k;
+    //    }
+    //}
 }
+
 void QtWidgetsApplication1::internal_canparser(canframe frame)
 {
     //qDebug() << "canframe ->" << QString::fromStdString(frame.name());
-    full_canparserdata.append(frame);
-    setupdatamodel_canparser();
+    //full_canparserdata.append(frame);
+    //setupdatamodel_canparser();
 }
 void QtWidgetsApplication1::setupTreeTrace()
 {
@@ -245,111 +252,6 @@ void QtWidgetsApplication1::setupTreeTrace()
     t->header()->setSortIndicator(0, Qt::AscendingOrder);
     t->setWindowTitle(QObject::tr("CAN Frames"));
     //t->show();
-}
-void QtWidgetsApplication1::setupdatamodel_canparser()
-{
-    QStringList str = {};
-    for (int i = 0; i < this->full_canparserdata.count(); i++)
-    {
-        if (full_canparserdata[i].timeStamp() <= last_timestamp_canparser) continue;
-        canframe cf = full_canparserdata[i];
-        last_timestamp_canparser = cf.timeStamp();
-        full_count_canparser++;
-        QStringList str_parser = {};
-        QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(full_canparserdata[i].timeStamp() / 1000000);
-        str_parser.append(timestamp.toString("hh:mm:ss.zzz"));
-        str_parser.append("");
-        str_parser.append("");
-        str_parser.append(QString::fromStdString(full_canparserdata[i].name()));
-        QTreeWidgetItem* Item = new QTreeWidgetItem(str_parser);
-        QTreeWidget* t = ui.treetrace;
-        t->addTopLevelItem(Item);
-        t->setIndentation(20);
-        std::vector<canpdu> pdus = cf.pdus();
-        std::vector<canpdu> containspdus = cf.containPdus();
-        for (int k = 0; k < pdus.size(); k++) {
-            canpdu current_pdu = pdus[k];
-            QString pdu_name = QString::fromStdString(current_pdu.name());
-            QString pdu_size = QString::number(current_pdu.zone_signals().size());
-            QStringList str_pdu = {};
-            str_pdu.append(pdu_name);
-            str_pdu.append(pdu_size);
-            QTreeWidgetItem* item_pdu = new QTreeWidgetItem(str_pdu);
-            for (int m = 0; m < current_pdu.zone_signals().size(); m++) {
-                QStringList str_signal = {};
-                cansignal current_signal = current_pdu.zone_signals()[m];
-                str_signal.append(QString::fromStdString(current_signal.name()));
-                str_signal.append(QString::number(current_signal.raw_value()));
-                str_signal.append(QString::fromStdString(current_signal.phy_value()));
-                QTreeWidgetItem *item_signal = new QTreeWidgetItem(str_signal);
-                item_pdu->addChild(item_signal);
-            }            
-            Item->addChild(item_pdu);
-        }
-
-        if (containspdus.size() == 0) continue;
-
-        for (int k = 0; k < containspdus.size(); k++) {
-            canpdu current_pdu = containspdus[k];
-            QString pdu_name = QString::fromStdString(current_pdu.name());
-            QString pdu_size = QString::number(current_pdu.zone_signals().size());
-            QStringList str_pdu = {};
-            str_pdu.append(pdu_name);
-            str_pdu.append(pdu_size);
-            QTreeWidgetItem* item_pdu = new QTreeWidgetItem(str_pdu);
-            for (int m = 0; m < current_pdu.zone_signals().size(); m++) {
-                QStringList str_signal = {};
-                cansignal current_signal = current_pdu.zone_signals()[m];
-                str_signal.append(QString::fromStdString(current_signal.name()));
-                str_signal.append(QString::number(current_signal.raw_value()));
-                str_signal.append(QString::fromStdString(current_signal.phy_value()));
-                QTreeWidgetItem* item_signal = new QTreeWidgetItem(str_signal);
-                item_pdu->addChild(item_signal);
-            }
-            Item->addChild(item_pdu);
-        }
-    }
-}
-
-void QtWidgetsApplication1::setupdatamodel()
-{
-    QStringList str = {};
-    for (int i =0; i< full_canframes.count(); i++)
-    {
-        if (full_canframes[i].Timestamp <= last_timestamp) continue;
-
-        full_count_canframes++; // message counts
-        int count_in_page = full_count_canframes % count_per_page;
-        int last_page_index = full_count_canframes / count_per_page;
-        if (last_page_index > 0) {
-            if (last_page_index != current_page)
-                if (count_in_page != 0) {
-                    QTreeWidget* t = ui.treetrace;
-                    t->clear();
-                    current_page = last_page_index;
-                    qDebug() << full_count_canframes << endl;
-                }
-        }
-        
-        last_timestamp = full_canframes[i].Timestamp;
-        QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(full_canframes[i].Timestamp/1000000);
-        str.append(timestamp.toString("hh:mm:ss.zzz"));
-        str.append(QString::number(full_canframes[i].Chn));
-        str.append("0x" +QString::number(full_canframes[i].ID, 16));
-        str.append(full_canframes[i].Name);
-        str.append(full_canframes[i].Dir);
-        str.append(QString::number(full_canframes[i].DLC));
-        QString myData = full_canframes[i].Data_Str;
-        str.append(myData);
-        str.append(full_canframes[i].EventType);
-        str.append(QString::number(full_canframes[i].DataLength));
-        str.append(full_canframes[i].BusType);
-        QTreeWidgetItem* Item = new QTreeWidgetItem(str);
-        QTreeWidget* t = ui.treetrace;
-        t->addTopLevelItem(Item);
-        t->setIndentation(20);
-        
-    }
 }
 
 void QtWidgetsApplication1::initialHeaders()
@@ -378,7 +280,7 @@ void QtWidgetsApplication1::initialHeaders()
 
 void QtWidgetsApplication1::headerButtonClicked()
 {
-    qDebug() << "headerButtonClicked" << endl;
+    //qDebug() << "headerButtonClicked" << endl;
 
     QPushButton* filterButton = qobject_cast<QPushButton*>(sender());
     int columnButton = headerButtonList.indexOf(filterButton);
@@ -429,7 +331,7 @@ void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
     bool judgement = false;
     int column_index = filter->columnIndex;
     QString colName = this->initialHeader[column_index];
-    qDebug() << "COLUMN -> " << colName;
+    //qDebug() << "COLUMN -> " << colName;
     if (items.size() == 0) {
         colName = "";
         headerButtonList[column_index]->setIcon(QIcon(":/QtWidgetsApplication1/res/funnel-icon.ico"));
@@ -450,12 +352,13 @@ void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
 
 void QtWidgetsApplication1::on_pop_to_root(QTreeWidgetItem* item)
 {
-    ui.treetrace->addTopLevelItem(item);
+    //ui.treetrace->addTopLevelItem(item);
+    item_queue.enqueue(item);
 }
 
 void QtWidgetsApplication1::ChangeHeader(const QString& text)
 {
-    qDebug() << "ChangeHeader -> " << text;
+    //qDebug() << "ChangeHeader -> " << text;
     if (text == "Initial") {
         ui.treetrace->setColumnCount(initialHeader.count()); //set column number
         ui.treetrace->setHeaderLabels(initialHeader);        //set header labels
@@ -487,7 +390,7 @@ void QtWidgetsApplication1::ButtonSearchClicked()
 
 void QtWidgetsApplication1::hide_filtered_items(int column_idx, QList<QList<QString>> items)
 {
-    qDebug() << "COL -> " << column_idx << "ITEMS -> " << items.size();
+    //qDebug() << "COL -> " << column_idx << "ITEMS -> " << items.size();
     QStringList filtered_value = {};
     if (items.size() > 0) {
         for (int k = 0; k < items.size(); k++) {

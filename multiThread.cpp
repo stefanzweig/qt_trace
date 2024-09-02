@@ -47,30 +47,22 @@ void multiThread::run() {
     
     // from_t = get_timestamp();
     if (mysub_can_frames != nullptr) {
-        qDebug() << "mysub is not nullptr";
             if (mysub_can_frames->init()) {
-                qDebug() << "mysub before run";
-                mysub_can_frames->run(samples_);
-                qDebug() << "mysub after run";
-                qDebug() << "debug: inited";
+            //    mysub_can_frames->run(samples_);
             }
     }
 
 
     if (mysub_can_parser != nullptr) {
-        qDebug() << "mysubparser is not nullptr";
         if (mysub_can_parser->init()) {
-            qDebug() << "mysubparser before run";
-            mysub_can_parser->run(samples_);
-            qDebug() << "mysubparser after run";
-            qDebug() << "debug: mysubparser inited";
+            //mysub_can_parser->run(samples_);
         }
     }
 
     while (true) {
         if (!is_stop) {
-            qDebug() << "running...";
-            msleep(1000); // every 1 second
+            //qDebug() << "running...";
+            msleep(100); // every 1 second
         }
         else {
             break;
@@ -94,7 +86,7 @@ void multiThread::bindDataToTraceTree()
         m_from_id = to_id;
     }
     catch (...) {
-        qDebug() << "mongodb problem from " << from_t << " to " << to_t;
+        //qDebug() << "mongodb problem from " << from_t << " to " << to_t;
     }
 
     try {
@@ -104,7 +96,7 @@ void multiThread::bindDataToTraceTree()
             msleep(20);
     }
     catch (...) {
-        qDebug() << "handling result problem.";
+        //qDebug() << "handling result problem.";
     }
 }
 
@@ -180,25 +172,27 @@ void multiThread::formatRow_canparser_thread(canframe frame)
     {
         emit popToRoot(Item);
     }
-
-    for (int k = 0; k < containspdus.size(); k++) {
-        canpdu current_pdu = containspdus[k];
-        QString pdu_name = QString::fromStdString(current_pdu.name());
-        QString pdu_size = QString::number(current_pdu.zone_signals().size());
-        QStringList str_pdu = {};
-        str_pdu.append(pdu_name);
-        str_pdu.append(pdu_size);
-        QTreeWidgetItem* item_pdu = new QTreeWidgetItem(str_pdu);
-        for (int m = 0; m < current_pdu.zone_signals().size(); m++) {
-            QStringList str_signal = {};
-            cansignal current_signal = current_pdu.zone_signals()[m];
-            str_signal.append(QString::fromStdString(current_signal.name()));
-            str_signal.append(QString::number(current_signal.raw_value()));
-            str_signal.append(QString::fromStdString(current_signal.phy_value()));
-            QTreeWidgetItem* item_signal = new QTreeWidgetItem(str_signal);
-            item_pdu->addChild(item_signal);
+    else {
+        for (int k = 0; k < containspdus.size(); k++) {
+            canpdu current_pdu = containspdus[k];
+            QString pdu_name = QString::fromStdString(current_pdu.name());
+            QString pdu_size = QString::number(current_pdu.zone_signals().size());
+            QStringList str_pdu = {};
+            str_pdu.append(pdu_name);
+            str_pdu.append(pdu_size);
+            QTreeWidgetItem* item_pdu = new QTreeWidgetItem(str_pdu);
+            for (int m = 0; m < current_pdu.zone_signals().size(); m++) {
+                QStringList str_signal = {};
+                cansignal current_signal = current_pdu.zone_signals()[m];
+                str_signal.append(QString::fromStdString(current_signal.name()));
+                str_signal.append(QString::number(current_signal.raw_value()));
+                str_signal.append(QString::fromStdString(current_signal.phy_value()));
+                QTreeWidgetItem* item_signal = new QTreeWidgetItem(str_signal);
+                item_pdu->addChild(item_signal);
+            }
+            Item->addChild(item_pdu);
         }
-        Item->addChild(item_pdu);
+        emit popToRoot(Item);
     }
 }
 

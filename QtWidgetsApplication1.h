@@ -10,6 +10,9 @@
 //#include "demo.h"
 #include "zm_struct.h"
 #include "columnfilter.h"
+#include <QQueue>
+
+#define TIMER_HEARTBEAT 350
 
 class QtWidgetsApplication1 : public QMainWindow
 {
@@ -25,8 +28,8 @@ protected:
 private:
     void init();
     void setupTreeTrace();
-    void setupdatamodel();
-    void setupdatamodel_canparser();
+    //void setupdatamodel();
+    //void setupdatamodel_canparser();
     void initialHeaders();
     void _updateCurrentState();
     void hide_filtered_items(int idx, QList<QList<QString>> items);
@@ -37,8 +40,9 @@ private:
     multiThread* calc_thread = nullptr;
     //TreeModel* model = nullptr;
     //Demo* demo_model = nullptr;
-    QVector<can_frame> full_canframes;
-    QVector<canframe> full_canparserdata;
+    //QVector<can_frame> full_canframes;
+    //QVector<canframe> full_canparserdata;
+    QQueue<QTreeWidgetItem*> item_queue;
     uint64_t last_timestamp = 0;
     uint64_t last_timestamp_canparser = 0;
     uint64_t full_count_canframes = 0;
@@ -46,6 +50,7 @@ private:
     uint64_t count_per_page = 3000;
     uint64_t current_page = 0;
     bool isHex = true; // repr in hex
+    
 
     QStringList initialHeader = { "Time[ms]", "Chn", "ID", "Name", "Dir", "DLC", "Data", "EventType", "DataLength", "BusType" };
     QStringList CurrentHeader = initialHeader;

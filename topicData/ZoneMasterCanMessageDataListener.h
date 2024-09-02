@@ -66,13 +66,11 @@ public:
             if (info.valid_data)
             {
                 samples_++;
-                //emit traceItemUpdate_internal(can_messages_.len());
                 for (int i = 0; i < can_messages_.len(); i++ ) {
                     canMessage msg = can_messages_.canMsgs()[i];
                     QString repr = QString::number(msg.id());
                     QDateTime timestamp = QDateTime::fromSecsSinceEpoch(msg.timeStamp()/1000000000);
                     repr += "-" + timestamp.toString("yyyy-MM-dd hh:mm:ss");
-                    //emit traceItemUpdate_internal_str(repr);
                     can_frame cf;                    
                     cf.Timestamp = msg.timeStamp();
                     cf.Chn = msg.channel();

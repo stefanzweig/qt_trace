@@ -9,11 +9,14 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 
 bool ZoneMasterCanParserSubscriber::init()
 {
     DomainParticipantQos participantQos;
     participantQos.name("Participant_canParser_ZWEIG");
+    std::shared_ptr<eprosima::fastdds::rtps::SharedMemTransportDescriptor> shm_transport = std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
+    participantQos.transport().user_transports.push_back(shm_transport);
     participant_ = DomainParticipantFactory::get_instance()->create_participant(90, participantQos);
     if (participant_ == nullptr)
     {
@@ -67,7 +70,7 @@ void ZoneMasterCanParserSubscriber::run(uint32_t samples)
 {
     while (listener_.samples_ < samples)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }
 
