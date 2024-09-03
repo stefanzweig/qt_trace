@@ -27,24 +27,22 @@ protected:
     void createActions();
 
 private:
+    Ui::QtWidgetsApplication1Class ui;
     void init();
     void setupTreeTrace();
-    //void setupdatamodel();
-    //void setupdatamodel_canparser();
     void initialHeaders();
     void _updateCurrentState();
     void hide_filtered_items(int idx, QList<QList<QString>> items);
-    Ui::QtWidgetsApplication1Class ui;
+    void get_default_configurations();
+
     QTimer* timer = nullptr;
     QTimer* timer_dustbin = nullptr;
     ZoneMasterCanMessageDataSubscriber* mysub_can_frames = nullptr;
     ZoneMasterCanParserSubscriber* mysub_can_parser = nullptr;
     multiThread* calc_thread = nullptr;
-    //TreeModel* model = nullptr;
-    //Demo* demo_model = nullptr;
-    //QVector<can_frame> full_canframes;
-    //QVector<canframe> full_canparserdata;
     QQueue<QTreeWidgetItem*> item_queue;
+    QQueue<QTreeWidgetItem*> trace_items;
+
     uint64_t last_timestamp = 0;
     uint64_t last_timestamp_canparser = 0;
     uint64_t full_count_canframes = 0;
@@ -52,7 +50,6 @@ private:
     uint64_t count_per_page = 3000;
     uint64_t current_page = 0;
     bool isHex = true; // repr in hex
-    
 
     QStringList initialHeader = { "Time[ms]", "Chn", "ID", "Name", "Dir", "DLC", "Data", "EventType", "DataLength", "BusType" };
     QStringList CurrentHeader = initialHeader;
@@ -62,13 +59,20 @@ private:
     QComboBox* datachoice = nullptr;
 
     QList<QPushButton*> headerButtonList;
-    columnFilterDialog* filter = nullptr;
+    columnFilterDialog* filter = nullptr;  // filter dialog
     QHash<QString, QString> filterConfig;
     QVector<QVector<bool>> selectedStates;
-    QQueue<QTreeWidgetItem*> trace_items;
-    
+
+    // further configurations
+    int display_mode = 0; // 0 - append, 1 - update
 
 private slots:
+    void startTrace();
+    void stopTrace();
+    void pauseTrace();
+    void resetLayout();
+    void display_mode_switch();
+
     void updateState();
     void onActionTriggered();
     void formatRow(int x);
@@ -79,15 +83,11 @@ private slots:
     void applyFilter(QList<QList<QString>> items, int count);
     void on_pop_to_root(QTreeWidgetItem* item);
 
-    void startTrace();
-    void stopTrace();
-    void pauseTrace();
-    void resetLayout();
-
     void headerButtonClicked();
     void prepareMenu(const QPoint& pos);
     void newDev();
     void ChangeHeader(const QString& text);
     void ButtonSearchClicked();
     void dustbin();
+    void updateToolbar();
 };

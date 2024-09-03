@@ -3,6 +3,7 @@
 #include <QDebug>
 #include "multiThread.h"
 #include "columnfilter.h"
+#include <QSettings>
 
 
 QtWidgetsApplication1::QtWidgetsApplication1(QWidget *parent)
@@ -54,6 +55,8 @@ void QtWidgetsApplication1::init()
     sizePolicy.setHeightForWidth(ui.widget->sizePolicy().hasHeightForWidth());
     ui.Lower->setSizePolicy(sizePolicy);
     //ui.toolbar_search->setVisible(true);
+
+    get_default_configurations();
     
     // 定义动作，菜单和工具栏
     createActions();
@@ -81,6 +84,13 @@ void QtWidgetsApplication1::init()
     showMaximized();
 }
 
+void QtWidgetsApplication1::get_default_configurations()
+{
+    QSettings settings("settings.ini", QSettings::IniFormat);
+    int kv = settings.value("App/key", 800).toInt();
+    qDebug() << "Setting -> " << kv;
+}
+
 void QtWidgetsApplication1::_updateCurrentState()
 {
     QString runStatus = "";
@@ -102,6 +112,7 @@ void QtWidgetsApplication1::updateState()
         ui.treetrace->addTopLevelItem(item);
         trace_items.enqueue(item);
     }
+    ui.treetrace->scrollToBottom();
     _updateCurrentState();
 }
 
@@ -111,6 +122,7 @@ void QtWidgetsApplication1::createActions()
     connect(ui.actionstart, &QAction::triggered, this, &QtWidgetsApplication1::startTrace);
     connect(ui.actionstop, &QAction::triggered, this, &QtWidgetsApplication1::stopTrace);
     connect(ui.actionpause, &QAction::triggered, this, &QtWidgetsApplication1::pauseTrace);
+    connect(ui.actionmode, &QAction::triggered, this, &QtWidgetsApplication1::display_mode_switch);
     connect(ui.pushButton_search, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonSearchClicked);
 }
 
@@ -129,7 +141,6 @@ void QtWidgetsApplication1::resetLayout()
     ui.actionpause->setIcon(QIcon(":/QtWidgetsApplication1/res/pauseTrace.png"));
     ui.actionstart->setIcon(QIcon(":/QtWidgetsApplication1/res/startTrace.png"));
     ui.actionstop->setIcon(QIcon(":/QtWidgetsApplication1/res/stopTrace.png"));
-    ui.actionmode->setIcon(QIcon(":/QtWidgetsApplication1/res/funnel-icon.ico"));
 
     // toolbar actions
     ui.toolbar->addAction(ui.actionstart);
@@ -142,6 +153,7 @@ void QtWidgetsApplication1::resetLayout()
     connect(ui.treetrace, &QTreeWidget::customContextMenuRequested, this, &QtWidgetsApplication1::prepareMenu);
     datachoice = ui.comboBox;
     connect(datachoice, &QComboBox::currentTextChanged, this, &QtWidgetsApplication1::ChangeHeader);
+    updateToolbar();
 }
 
 void QtWidgetsApplication1::prepareMenu(const QPoint& pos)
@@ -190,6 +202,7 @@ void QtWidgetsApplication1::startTrace()
     calc_thread->start();
     timer->start(TIMER_HEARTBEAT);
     timer_dustbin->start(5000);
+    updateToolbar();
 }
 
 void QtWidgetsApplication1::stopTrace()
@@ -201,6 +214,7 @@ void QtWidgetsApplication1::stopTrace()
     mysub_can_frames = nullptr;
     mysub_can_parser = nullptr;
     updateState();
+    updateToolbar();
 }
 
 void QtWidgetsApplication1::pauseTrace()
@@ -210,6 +224,7 @@ void QtWidgetsApplication1::pauseTrace()
     timer->stop();
     timer_dustbin->stop();
     updateState();
+    updateToolbar();
 }
 
 
@@ -446,4 +461,42 @@ void QtWidgetsApplication1::dustbin()
     ui_count = ui.treetrace->topLevelItemCount();
     qDebug() << "Tree COUNTER -> " << ui_count;
     //ui.treetrace->scrollToBottom();
+}
+
+void QtWidgetsApplication1::updateToolbar()
+{
+    if (display_mode) {
+        ui.actionmode->setIcon(QIcon(":/QtWidgetsApplication1/res/right.png"));
+        ui.actionmode->setToolTip("Updating...");
+    }
+    else
+    {
+        ui.actionmode->setIcon(QIcon(":/QtWidgetsApplication1/res/add.png"));
+        ui.actionmode->setToolTip("Appending...");
+    }
+    if (calc_thread->isSTOPPED()) {
+        ui.actionstart->setEnabled(true);
+        ui.actionstop->setEnabled(true);
+        ui.actionpause->setEnabled(true);
+    }
+    if (!calc_thread->isSTOPPED()) {
+        ui.actionstart->setEnabled(false);
+        ui.actionstop->setEnabled(true);
+        ui.actionpause->setEnabled(true);
+    }
+    if (calc_thread->isPAUSED()) {
+        ui.actionstart->setEnabled(true);
+        ui.actionstop->setEnabled(true);
+        ui.actionpause->setEnabled(false);
+    }
+
+}
+
+void QtWidgetsApplication1::display_mode_switch()
+{
+    if (display_mode)
+        display_mode = 0;
+    else
+        display_mode = 1;
+    updateToolbar();
 }

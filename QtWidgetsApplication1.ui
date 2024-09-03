@@ -312,7 +312,7 @@
   </action>
   <action name="actionmode">
    <property name="text">
-    <string>actionmode</string>
+    <string>display mode</string>
    </property>
   </action>
  </widget>

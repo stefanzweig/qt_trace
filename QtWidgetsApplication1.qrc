@@ -1,6 +1,8 @@
 <RCC>
   <qresource prefix="/QtWidgetsApplication1">
+    <file>res/right.png</file>
     <file>res/funnel-icon.ico</file>
+    <file>res/add.png</file>
     <file>res/pauseTrace.png</file>
     <file>res/startTrace.png</file>
     <file>res/stopTrace.png</file>
