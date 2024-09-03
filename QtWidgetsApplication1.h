@@ -13,6 +13,7 @@
 #include <QQueue>
 
 #define TIMER_HEARTBEAT 350
+#define MAX_ITEM_COUNT 5000
 
 class QtWidgetsApplication1 : public QMainWindow
 {
@@ -35,6 +36,7 @@ private:
     void hide_filtered_items(int idx, QList<QList<QString>> items);
     Ui::QtWidgetsApplication1Class ui;
     QTimer* timer = nullptr;
+    QTimer* timer_dustbin = nullptr;
     ZoneMasterCanMessageDataSubscriber* mysub_can_frames = nullptr;
     ZoneMasterCanParserSubscriber* mysub_can_parser = nullptr;
     multiThread* calc_thread = nullptr;
@@ -63,6 +65,7 @@ private:
     columnFilterDialog* filter = nullptr;
     QHash<QString, QString> filterConfig;
     QVector<QVector<bool>> selectedStates;
+    QQueue<QTreeWidgetItem*> trace_items;
     
 
 private slots:
@@ -86,4 +89,5 @@ private slots:
     void newDev();
     void ChangeHeader(const QString& text);
     void ButtonSearchClicked();
+    void dustbin();
 };

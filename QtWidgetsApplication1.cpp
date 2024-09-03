@@ -19,6 +19,12 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
         delete timer;
         timer = nullptr;
     }
+    if (this->timer_dustbin) {
+        if (timer_dustbin->isActive())
+            timer_dustbin->stop();
+        delete timer_dustbin;
+        timer_dustbin = nullptr;
+    }
     if (mysub_can_frames != nullptr) {
         delete mysub_can_frames;
         mysub_can_frames = nullptr;
@@ -54,7 +60,9 @@ void QtWidgetsApplication1::init()
 
     // 定义定时器
     timer = new QTimer();
+    timer_dustbin = new QTimer();
     connect(timer, &QTimer::timeout, this, &QtWidgetsApplication1::updateState);
+    connect(timer_dustbin, &QTimer::timeout, this, &QtWidgetsApplication1::dustbin);
 
     calc_thread = new multiThread();
     //connect(calc_thread, &multiThread::traceItemUpdate_internal, [=]() {qDebug() << "lambda"; });
@@ -89,12 +97,11 @@ void QtWidgetsApplication1::_updateCurrentState()
 
 void QtWidgetsApplication1::updateState()
 {
-    while (!item_queue.isEmpty())
-        ui.treetrace->addTopLevelItem(item_queue.dequeue());
-    int ui_count = ui.treetrace->topLevelItemCount();
-    qDebug() << "TOP Items Count -> " << ui_count;
-    if (ui_count > 3000) 
-        ui.treetrace->clear();
+    while (!item_queue.isEmpty()) {
+        QTreeWidgetItem* item = item_queue.dequeue();
+        ui.treetrace->addTopLevelItem(item);
+        trace_items.enqueue(item);
+    }
     _updateCurrentState();
 }
 
@@ -182,6 +189,7 @@ void QtWidgetsApplication1::startTrace()
     calc_thread->setCanParserSubscriber(mysub_can_parser, samples, ui.treetrace);
     calc_thread->start();
     timer->start(TIMER_HEARTBEAT);
+    timer_dustbin->start(5000);
 }
 
 void QtWidgetsApplication1::stopTrace()
@@ -189,6 +197,7 @@ void QtWidgetsApplication1::stopTrace()
     qDebug() << "stopTrace...";
     calc_thread->stopThread();
     timer->stop();
+    timer_dustbin->stop();
     mysub_can_frames = nullptr;
     mysub_can_parser = nullptr;
     updateState();
@@ -199,6 +208,7 @@ void QtWidgetsApplication1::pauseTrace()
     qDebug() << "pauseTrace...";
     calc_thread->pauseThread();
     timer->stop();
+    timer_dustbin->stop();
     updateState();
 }
 
@@ -415,4 +425,25 @@ void QtWidgetsApplication1::hide_filtered_items(int column_idx, QList<QList<QStr
         else
             item->setHidden(false);
     }
+}
+
+void QtWidgetsApplication1::dustbin()
+{
+    int ui_count = ui.treetrace->topLevelItemCount();
+    int counter = ui_count - MAX_ITEM_COUNT;
+    if (ui_count > MAX_ITEM_COUNT) {
+        qDebug() << "before dustbin -> " << counter;
+        while (counter>0 && trace_items.size()>0) {
+            QTreeWidgetItem* item = trace_items.dequeue();
+            int index = ui.treetrace->indexOfTopLevelItem(item);
+            if (index != -1) {
+                ui.treetrace->takeTopLevelItem(index);
+                delete item;
+            }
+            counter--;
+        }
+    }
+    ui_count = ui.treetrace->topLevelItemCount();
+    qDebug() << "Tree COUNTER -> " << ui_count;
+    //ui.treetrace->scrollToBottom();
 }

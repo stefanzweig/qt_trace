@@ -62,7 +62,7 @@ void multiThread::run() {
     while (true) {
         if (!is_stop) {
             //qDebug() << "running...";
-            msleep(100); // every 1 second
+            msleep(1000); // every 1 second
         }
         else {
             break;
