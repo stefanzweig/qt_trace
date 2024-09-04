@@ -95,4 +95,5 @@ private slots:
     void dustbin();
     void updateToolbar();
     void update_tracewidget();
+    void update_tracewidget_refresh();
 };

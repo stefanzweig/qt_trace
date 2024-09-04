@@ -23,6 +23,28 @@ QTreeWidgetItem* deepCopyItem(QTreeWidgetItem* item) {
     return newItem;
 }
 
+QList<QTreeWidgetItem*> getVisibleItems(QTreeWidget* tree) {
+    QList<QTreeWidgetItem*> visibleItems;
+    QRect viewportRect = tree->viewport()->rect();  // 获取可视区域
+
+    for (int i = 0; i < tree->topLevelItemCount(); ++i) {
+        QTreeWidgetItem* item = tree->topLevelItem(i);
+        QRect itemRect = tree->visualItemRect(item);  // 获取项的矩形区域
+
+        if (viewportRect.intersects(itemRect)) {
+            visibleItems.append(item);
+        }
+        for (int j = 0; j < item->childCount(); ++j) {
+            QTreeWidgetItem* child = item->child(j);
+            QRect childRect = tree->visualItemRect(child);
+            if (viewportRect.intersects(childRect)) {
+                visibleItems.append(child);
+            }
+        }
+    }
+    return visibleItems;
+}
+
 QtWidgetsApplication1::QtWidgetsApplication1(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -60,7 +82,6 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
         delete calc_thread;
         calc_thread = nullptr;
     }
-
 }
 
 void QtWidgetsApplication1::init()
@@ -231,8 +252,10 @@ void QtWidgetsApplication1::stopTrace()
     timer_dustbin->stop();
     mysub_can_frames = nullptr;
     mysub_can_parser = nullptr;
-    updateState();
+    //updateState();
     updateToolbar();
+    _updateCurrentState();
+
 }
 
 void QtWidgetsApplication1::pauseTrace()
@@ -241,8 +264,9 @@ void QtWidgetsApplication1::pauseTrace()
     calc_thread->pauseThread();
     timer->stop();
     timer_dustbin->stop();
-    updateState();
+    //updateState();
     updateToolbar();
+    _updateCurrentState();
 }
 
 
@@ -259,28 +283,16 @@ void QtWidgetsApplication1::formatRow_str(QString s)
 
 void QtWidgetsApplication1::formatRow_canframe(can_frame cf)
 {
-    //qDebug() << "formatRow...cf->";
-    //qDebug() << cf.ID << endl;
-    //full_canframes.append(cf);
-    //setupdatamodel();
 }
 
 void QtWidgetsApplication1::formatRow_canparser(unsigned long long i)
 {
-    //qDebug() << "canparser id ->" << i;
-    //for (int k = 0; k < full_canframes.size(); k++) {
-    //    if (full_canframes[k].Timestamp == i) {
-    //        qDebug() << "MATCHED ->" << full_canframes[k].ID << "INDEX ->" << k;
-    //    }
-    //}
 }
 
 void QtWidgetsApplication1::internal_canparser(canframe frame)
 {
-    //qDebug() << "canframe ->" << QString::fromStdString(frame.name());
-    //full_canparserdata.append(frame);
-    //setupdatamodel_canparser();
 }
+
 void QtWidgetsApplication1::setupTreeTrace()
 {
     QTreeWidget* t = ui.treetrace;
@@ -289,12 +301,9 @@ void QtWidgetsApplication1::setupTreeTrace()
     t->setFocusPolicy(Qt::NoFocus);
 
     t->header()->setHighlightSections(true);
-    //t->header()->setDefaultAlignment(Qt::AlignCenter);
-    //t->header()->setDefaultSectionSize(100);
     t->header()->setStretchLastSection(true);
     t->header()->setSortIndicator(0, Qt::AscendingOrder);
     t->setWindowTitle(QObject::tr("CAN Frames"));
-    //t->show();
 }
 
 void QtWidgetsApplication1::initialHeaders()
@@ -521,6 +530,12 @@ void QtWidgetsApplication1::display_mode_switch()
     updateToolbar();
     update_tracewidget();
 }
+void QtWidgetsApplication1::update_tracewidget_refresh()
+{
+    QList<QTreeWidgetItem*> visibleItems = 
+        getVisibleItems(ui.treetrace);
+    qDebug() << "Visual Items ->" << visibleItems.size();
+}
 
 void QtWidgetsApplication1::update_tracewidget()
 {
@@ -558,7 +573,7 @@ void QtWidgetsApplication1::update_tracewidget()
         page_capacity = visible_height / itemSize.height() - 1;
 
         int full_count = this->trace_items.size();
-        int m_sliderCurPosion = 40;
+        int m_sliderCurPosion = 0;
         for (int step = 0; step < page_capacity; step++) {
             int index = full_count - m_sliderCurPosion - step - 1;
             if (index < 0 || index >= full_count)//超出范围跳出
@@ -587,4 +602,5 @@ void QtWidgetsApplication1::update_tracewidget()
         }
     }
     ui.treetrace->setUpdatesEnabled(true);
+    ui.treetrace->scrollToBottom();
 }
