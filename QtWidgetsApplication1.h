@@ -12,7 +12,7 @@
 #include "columnfilter.h"
 #include <QQueue>
 
-#define TIMER_HEARTBEAT 350
+#define TIMER_HEARTBEAT 50
 #define MAX_ITEM_COUNT 5000
 
 class QtWidgetsApplication1 : public QMainWindow
@@ -65,6 +65,10 @@ private:
 
     // further configurations
     int display_mode = 0; // 0 - append, 1 - update
+    int visible_height = 700;
+    int item_height = 20;  /* default item height in the trace widget. */
+    int item_width = 20;
+    int page_capacity = 40;
 
 private slots:
     void startTrace();
@@ -90,4 +94,5 @@ private slots:
     void ButtonSearchClicked();
     void dustbin();
     void updateToolbar();
+    void update_tracewidget();
 };

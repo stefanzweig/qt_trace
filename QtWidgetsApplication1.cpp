@@ -6,6 +6,23 @@
 #include <QSettings>
 
 
+QSize getItemSize(QTreeWidgetItem* item, int column, const QFont& font) {
+    QFontMetrics fontMetrics(font);
+    QString text = item->text(column);
+    QSize textSize = fontMetrics.size(Qt::TextSingleLine, text);
+    return QSize(textSize.width() + 20, textSize.height());
+}
+
+QTreeWidgetItem* deepCopyItem(QTreeWidgetItem* item) {
+    QTreeWidgetItem* newItem = new QTreeWidgetItem(*item);
+
+    for (int i = 0; i < item->childCount(); ++i) {
+        QTreeWidgetItem* child = item->child(i);
+        newItem->addChild(deepCopyItem(child)); // 递归复制子项
+    }
+    return newItem;
+}
+
 QtWidgetsApplication1::QtWidgetsApplication1(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -81,6 +98,11 @@ void QtWidgetsApplication1::init()
 
     filter = new columnFilterDialog(this);
 
+    //ui.ZSTraceWindow->setAttribute(Qt::WA_OpaquePaintEvent);
+    //ui.ZSTraceWindow->setAttribute(Qt::WA_NoSystemBackground);
+    ui.treetrace->setAttribute(Qt::WA_OpaquePaintEvent);
+    ui.treetrace->setAttribute(Qt::WA_NoSystemBackground);
+
     showMaximized();
 }
 
@@ -107,11 +129,7 @@ void QtWidgetsApplication1::_updateCurrentState()
 
 void QtWidgetsApplication1::updateState()
 {
-    while (!item_queue.isEmpty()) {
-        QTreeWidgetItem* item = item_queue.dequeue();
-        ui.treetrace->addTopLevelItem(item);
-        trace_items.enqueue(item);
-    }
+    update_tracewidget();
     ui.treetrace->scrollToBottom();
     _updateCurrentState();
 }
@@ -444,6 +462,8 @@ void QtWidgetsApplication1::hide_filtered_items(int column_idx, QList<QList<QStr
 
 void QtWidgetsApplication1::dustbin()
 {
+    return;
+
     int ui_count = ui.treetrace->topLevelItemCount();
     int counter = ui_count - MAX_ITEM_COUNT;
     if (ui_count > MAX_ITEM_COUNT) {
@@ -499,4 +519,72 @@ void QtWidgetsApplication1::display_mode_switch()
     else
         display_mode = 1;
     updateToolbar();
+    update_tracewidget();
+}
+
+void QtWidgetsApplication1::update_tracewidget()
+{
+    int iAlarmCount = ui.treetrace->topLevelItemCount();
+    ui.treetrace->setUpdatesEnabled(false);
+    ui.treetrace->setAnimated(false);
+
+    if (iAlarmCount > 0)
+    {
+        qDebug() << "Item Count -> " << iAlarmCount;
+        QTreeWidgetItem* invisible_root_item = ui.treetrace->invisibleRootItem();
+        QSize itemSize;
+        itemSize = getItemSize(invisible_root_item, 0, ui.treetrace->font());
+        int child_count = invisible_root_item->childCount();
+        for (int i = child_count; i >= 0; --i) {
+            QTreeWidgetItem* item = invisible_root_item->child(i);
+            while (item && item->childCount() > 0) {
+                delete item->takeChild(0);
+            }
+            if(itemSize.width()==20 && item)
+                itemSize = getItemSize(item, 0, ui.treetrace->font());
+            delete item;
+        }
+        // count the the capacity of the widget
+        int v_height = ui.treetrace->viewport()->height();
+        int capacity = visible_height / itemSize.height() - 1;
+        //qDebug() << "Widget HEIGHT -> " << visible_height;
+        //qDebug() << "Item HEIGHT -> " << itemSize.height();
+        //qDebug() << "Item WIDTH -> " << itemSize.width();
+        //qDebug() << "Items COUNT -> " << capacity;
+
+        visible_height = v_height;
+        item_height = itemSize.height();
+        item_width = itemSize.width();
+        page_capacity = visible_height / itemSize.height() - 1;
+
+        int full_count = this->trace_items.size();
+        int m_sliderCurPosion = 40;
+        for (int step = 0; step < page_capacity; step++) {
+            int index = full_count - m_sliderCurPosion - step - 1;
+            if (index < 0 || index >= full_count)//超出范围跳出
+            {
+                break;
+            }
+            QTreeWidgetItem* one_item = trace_items[index];
+            //QTreeWidgetItem* one_item = item_queue[step];
+            ui.treetrace->addTopLevelItem(one_item);
+        }
+    }
+    else {
+        QTreeWidgetItem* item = nullptr;
+        QList<QTreeWidgetItem*> items;
+        int counter = 0;
+        int v_height = ui.treetrace->viewport()->height();
+        int capacity = v_height / item_height - 1;
+        while (!item_queue.isEmpty() && counter < capacity) {
+            item = item_queue.dequeue();
+            trace_items.enqueue(deepCopyItem(item));
+            items.append(item);
+            counter++;
+        }
+        if (items.size()) {
+            ui.treetrace->addTopLevelItems(items);
+        }
+    }
+    ui.treetrace->setUpdatesEnabled(true);
 }
