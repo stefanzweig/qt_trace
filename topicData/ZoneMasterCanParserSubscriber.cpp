@@ -19,7 +19,7 @@ bool ZoneMasterCanMessageDataSubscriber::init()
     //participantQos.transport().user_transports.push_back(shm_transport);
     DomainParticipantFactory*  factory = DomainParticipantFactory::get_instance();
     if (factory)
-        participant_ = factory->create_participant(85, participantQos);
+        participant_ = factory->create_participant(domainid, participantQos);
 
     if (participant_ == nullptr)
     {

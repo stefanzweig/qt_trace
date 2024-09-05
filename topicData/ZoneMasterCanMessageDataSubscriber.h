@@ -29,9 +29,11 @@ private:
 
     Topic* topic_;
 
+    int domainid = 90;
+
     TypeSupport type_;
 public:
-    ZoneMasterCanMessageDataSubscriber()
+    ZoneMasterCanMessageDataSubscriber(int domainid=90)
         : participant_(nullptr)
         , subscriber_(nullptr)
         , topic_(nullptr)
@@ -42,6 +44,7 @@ public:
         canMessagesPubSubType* can_messages_pubsubtype = new canMessagesPubSubType();
         can_messages_pubsubtype->setName("canMessageData");
         type_ = TypeSupport(can_messages_pubsubtype);
+        this->domainid = domainid;
     }
 
     virtual ~ZoneMasterCanMessageDataSubscriber()

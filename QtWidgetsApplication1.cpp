@@ -131,8 +131,9 @@ void QtWidgetsApplication1::init()
 void QtWidgetsApplication1::get_default_configurations()
 {
     QSettings settings("settings.ini", QSettings::IniFormat);
-    int kv = settings.value("App/key", 800).toInt();
+    int kv = settings.value("app/DDS_DomainId", 90).toInt();
     qDebug() << "Setting -> " << kv;
+    dds_domainid = kv;
 }
 
 void QtWidgetsApplication1::_updateCurrentState()
@@ -229,12 +230,12 @@ void QtWidgetsApplication1::startTrace()
     uint32_t samples = 100;
 
     if (mysub_can_frames == nullptr) {
-        mysub_can_frames = new ZoneMasterCanMessageDataSubscriber();
+        mysub_can_frames = new ZoneMasterCanMessageDataSubscriber(dds_domainid);
         qRegisterMetaType <can_frame>("can_frame");
     }
 
     if (mysub_can_parser == nullptr) {
-        mysub_can_parser = new ZoneMasterCanParserSubscriber();
+        mysub_can_parser = new ZoneMasterCanParserSubscriber(dds_domainid);
         qRegisterMetaType <canframe>("canframe");
     }
     calc_thread->restartThread();

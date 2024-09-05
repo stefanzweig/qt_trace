@@ -30,8 +30,9 @@ private:
     Topic* topic_;
 
     TypeSupport type_;
+    int domainid = 90;
 public:
-    ZoneMasterCanParserSubscriber()
+    ZoneMasterCanParserSubscriber(int domainid)
         : participant_(nullptr)
         , subscriber_(nullptr)
         , topic_(nullptr)
@@ -41,6 +42,7 @@ public:
         canframePubSubType* can_frame_pubsubtype = new canframePubSubType();
         can_frame_pubsubtype->setName("canParserData");
         type_ = TypeSupport(can_frame_pubsubtype);
+        this->domainid = domainid;
     }
 
     virtual ~ZoneMasterCanParserSubscriber()
