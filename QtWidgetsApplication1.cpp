@@ -549,6 +549,8 @@ void QtWidgetsApplication1::update_tracewidget()
         itemSize = getItemSize(invisible_root_item, 0, ui.treetrace->font());
         int v_height = ui.treetrace->viewport()->height();
         int capacity = visible_height / itemSize.height() - 1;
+        if (capacity < page_capacity)
+            capacity = page_capacity;
 
         visible_height = v_height;
         item_height = itemSize.height();
@@ -566,7 +568,7 @@ void QtWidgetsApplication1::update_tracewidget()
         }
         if (items.size()) {
             for (int i = 0; i < items.size(); i++) {
-                if (tree_count >= i) {
+                if (tree_count > i) {
                     QTreeWidgetItem* treeitem = invisible_root_item->child(i);
                     QTreeWidgetItem* it = items[i];
                     for (int k = 0; k < it->columnCount(); k++) {
@@ -581,6 +583,9 @@ void QtWidgetsApplication1::update_tracewidget()
         QList<QTreeWidgetItem*> items;
         int v_height = ui.treetrace->viewport()->height();
         int capacity = v_height / item_height - 1;
+        if (capacity < page_capacity)
+            capacity = page_capacity;
+
         int counter = capacity;
         int size = full_queue.size();
         if (size > counter) {

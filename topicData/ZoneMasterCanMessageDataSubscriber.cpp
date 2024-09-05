@@ -15,9 +15,9 @@ bool ZoneMasterCanParserSubscriber::init()
 {
     DomainParticipantQos participantQos;
     participantQos.name("Participant_canParser_ZWEIG");
-    std::shared_ptr<eprosima::fastdds::rtps::SharedMemTransportDescriptor> shm_transport = std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
-    participantQos.transport().user_transports.push_back(shm_transport);
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(90, participantQos);
+    //std::shared_ptr<eprosima::fastdds::rtps::SharedMemTransportDescriptor> shm_transport = std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
+    //participantQos.transport().user_transports.push_back(shm_transport);
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(85, participantQos);
     if (participant_ == nullptr)
     {
         return false;

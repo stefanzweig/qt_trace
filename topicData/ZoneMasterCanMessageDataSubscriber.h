@@ -58,6 +58,7 @@ public:
         {
             participant_->delete_subscriber(subscriber_);
         }
+        participant_->delete_contained_entities();
         DomainParticipantFactory::get_instance()->delete_participant(participant_);
     }
 
