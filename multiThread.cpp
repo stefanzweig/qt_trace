@@ -218,10 +218,12 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
 
     QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(frame.Timestamp / 1000000);
     str.append(timestamp.toString("hh:mm:ss.zzz"));
-    str.append(QString::number(frame.Chn));
-    str.append("0x" + QString::number(frame.ID, 16));
-    str.append(frame.Name);
-    str.append(frame.Dir);
+    str.append("CAN " +QString::number(frame.Chn));
+    str.append(QString::number(frame.ID, 16).toUpper());
+    str.append("CAN Frame");
+    QString sDir = "Rx";
+    if (frame.Dir == "1") sDir = "Tx";
+    str.append(sDir);
     str.append(QString::number(frame.DLC));
     QString myData = frame.Data_Str;
     str.append(myData);
@@ -239,7 +241,7 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
         }
         if (filter_colName == "ID")
         {
-            QString hexv = "0x" + QString::number(frame.ID, 16);
+            QString hexv = QString::number(frame.ID, 16).toUpper();
             if (filter_value.contains(hexv)) {
                 emit(popToRoot(Item));
             }

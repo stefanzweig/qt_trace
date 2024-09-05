@@ -96,4 +96,5 @@ private slots:
     void updateToolbar();
     void update_tracewidget();
     void update_tracewidget_refresh();
+    void trace_scroll_changed(int value);
 };

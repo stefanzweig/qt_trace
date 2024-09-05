@@ -4,6 +4,7 @@
 #include "multiThread.h"
 #include "columnfilter.h"
 #include <QSettings>
+#include <QScrollBar>
 
 
 QSize getItemSize(QTreeWidgetItem* item, int column, const QFont& font) {
@@ -192,6 +193,7 @@ void QtWidgetsApplication1::resetLayout()
     connect(ui.treetrace, &QTreeWidget::customContextMenuRequested, this, &QtWidgetsApplication1::prepareMenu);
     datachoice = ui.comboBox;
     connect(datachoice, &QComboBox::currentTextChanged, this, &QtWidgetsApplication1::ChangeHeader);
+    connect(ui.treetrace->verticalScrollBar(), &QScrollBar::valueChanged, this, &QtWidgetsApplication1::trace_scroll_changed);
     updateToolbar();
 }
 
@@ -600,4 +602,16 @@ void QtWidgetsApplication1::update_tracewidget()
         }
     }
     ui.treetrace->scrollToBottom();
+}
+
+void QtWidgetsApplication1::trace_scroll_changed(int value)
+{
+    qDebug() << "QScrollBar Changed -> " << value;
+    QScrollBar* scrollBar = ui.treetrace->verticalScrollBar();
+    if (scrollBar->value() == scrollBar->maximum()) { return; }
+
+    calc_thread->pauseThread();
+    timer->stop();
+    updateToolbar();
+    _updateCurrentState();
 }
