@@ -130,7 +130,7 @@ void multiThread::setCanParserSubscriber(ZoneMasterCanParserSubscriber* subscrib
 
 void multiThread::formatRow_canparser_thread(canframe frame)
 {
-    full_canparserdata.append(frame);
+    //full_canparserdata.append(frame);
     full_count_canparser++;
 
     if (is_paused) { return; }
@@ -198,7 +198,7 @@ void multiThread::formatRow_canparser_thread(canframe frame)
 
 void multiThread::formatRow_canframe_thread(can_frame frame)
 {
-    full_canframes.append(frame);
+    //full_canframes.append(frame);
     full_count_canframes++; // message counts
 
     if (is_paused) { return; }

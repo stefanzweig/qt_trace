@@ -34,6 +34,7 @@ private:
     void _updateCurrentState();
     void hide_filtered_items(int idx, QList<QList<QString>> items);
     void get_default_configurations();
+    void compare_item();
 
     QTimer* timer = nullptr;
     QTimer* timer_dustbin = nullptr;
@@ -70,6 +71,7 @@ private:
     int item_width = 20;
     int page_capacity = 3000;
     int dds_domainid = 90;
+    int last_data_index = -1;
 
 private slots:
     void startTrace();

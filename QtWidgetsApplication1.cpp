@@ -573,13 +573,15 @@ void QtWidgetsApplication1::update_tracewidget()
             items.append(item);
             counter--;
         }
+        last_data_index = full_queue.size();
         if (items.size()) {
             for (int i = 0; i < items.size(); i++) {
                 if (tree_count > i) {
                     QTreeWidgetItem* treeitem = invisible_root_item->child(i);
                     QTreeWidgetItem* it = items[i];
                     for (int k = 0; k < it->columnCount(); k++) {
-                        treeitem->setText(k,it->text(k));
+                        if (treeitem->text(k) != it->text(k))
+                            treeitem->setText(k,it->text(k));
                     }
                 }
             }
@@ -611,7 +613,7 @@ void QtWidgetsApplication1::update_tracewidget()
 
 void QtWidgetsApplication1::trace_scroll_changed(int value)
 {
-    qDebug() << "QScrollBar Changed -> " << value;
+    //qDebug() << "QScrollBar Changed -> " << value;
     QScrollBar* scrollBar = ui.treetrace->verticalScrollBar();
     if (scrollBar->value() == scrollBar->maximum()) { return; }
 
@@ -619,4 +621,26 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
     timer->stop();
     updateToolbar();
     _updateCurrentState();
+}
+
+void QtWidgetsApplication1::compare_item()
+{
+    qDebug() << "the full data count ->" << last_data_index;
+    QTreeWidgetItem* last = full_queue[last_data_index - 1];
+    qDebug() << "item data ->";
+    for (int i = 0; i < last->columnCount(); i++) {
+        qDebug() << "item col ->" << i << last->text(i);
+    }
+    qDebug() << "item data DONE";
+
+    QTreeWidgetItem* invisible_root_item = ui.treetrace->invisibleRootItem();
+    int child_count = invisible_root_item->childCount();
+    QTreeWidgetItem* lastchild = invisible_root_item->child(child_count - 1);
+    qDebug() << "item data ->";
+    for (int i = 0; i < lastchild->columnCount(); i++) {
+        qDebug() << "item col ->" << i << lastchild->text(i);
+    }
+    qDebug() << "item data DONE";
+
+
 }
