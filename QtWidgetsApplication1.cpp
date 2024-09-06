@@ -134,6 +134,8 @@ void QtWidgetsApplication1::get_default_configurations()
     int kv = settings.value("app/DDS_DomainId", 90).toInt();
     qDebug() << "Setting -> " << kv;
     dds_domainid = kv;
+    kv = settings.value("app/page_capacity", 300).toInt();
+    page_capacity = kv;
 }
 
 void QtWidgetsApplication1::_updateCurrentState()
@@ -179,9 +181,9 @@ void QtWidgetsApplication1::resetLayout()
     // icons
     //ui.menu->setIcon(QIcon(":/QtWidgetsApplication1/res/sqlitestudio.ico"));
 
-    ui.actionpause->setIcon(QIcon(":/QtWidgetsApplication1/res/pauseTrace.png"));
-    ui.actionstart->setIcon(QIcon(":/QtWidgetsApplication1/res/startTrace.png"));
-    ui.actionstop->setIcon(QIcon(":/QtWidgetsApplication1/res/stopTrace.png"));
+    ui.actionpause->setIcon(QIcon(":/QtWidgetsApplication1/res/pause.svg"));
+    ui.actionstart->setIcon(QIcon(":/QtWidgetsApplication1/res/play.svg"));
+    ui.actionstop->setIcon(QIcon(":/QtWidgetsApplication1/res/tick.svg"));
 
     // toolbar actions
     ui.toolbar->addAction(ui.actionstart);
@@ -473,50 +475,51 @@ void QtWidgetsApplication1::dustbin()
 {
     return;
 
-    int ui_count = ui.treetrace->topLevelItemCount();
-    int counter = ui_count - MAX_ITEM_COUNT;
-    if (ui_count > MAX_ITEM_COUNT) {
-        qDebug() << "before dustbin -> " << counter;
-        while (counter>0 && trace_items.size()>0) {
-            QTreeWidgetItem* item = trace_items.dequeue();
-            int index = ui.treetrace->indexOfTopLevelItem(item);
-            if (index != -1) {
-                ui.treetrace->takeTopLevelItem(index);
-                delete item;
-            }
-            counter--;
-        }
-    }
-    ui_count = ui.treetrace->topLevelItemCount();
-    qDebug() << "Tree COUNTER -> " << ui_count;
+    //int ui_count = ui.treetrace->topLevelItemCount();
+    //int counter = ui_count - MAX_ITEM_COUNT;
+    //if (ui_count > MAX_ITEM_COUNT) {
+    //    qDebug() << "before dustbin -> " << counter;
+    //    while (counter>0 && trace_items.size()>0) {
+    //        QTreeWidgetItem* item = trace_items.dequeue();
+    //        int index = ui.treetrace->indexOfTopLevelItem(item);
+    //        if (index != -1) {
+    //            ui.treetrace->takeTopLevelItem(index);
+    //            delete item;
+    //        }
+    //        counter--;
+    //    }
+    //}
+    //ui_count = ui.treetrace->topLevelItemCount();
+    //qDebug() << "Tree COUNTER -> " << ui_count;
     //ui.treetrace->scrollToBottom();
 }
 
 void QtWidgetsApplication1::updateToolbar()
 {
     if (display_mode) {
-        ui.actionmode->setIcon(QIcon(":/QtWidgetsApplication1/res/right.png"));
+        ui.actionmode->setIcon(QIcon(":/QtWidgetsApplication1/res/process.svg"));
         ui.actionmode->setToolTip("Updating...");
     }
     else
     {
-        ui.actionmode->setIcon(QIcon(":/QtWidgetsApplication1/res/add.png"));
+        ui.actionmode->setIcon(QIcon(":/QtWidgetsApplication1/res/plus.svg"));
         ui.actionmode->setToolTip("Appending...");
     }
     if (calc_thread->isSTOPPED()) {
         ui.actionstart->setEnabled(true);
         ui.actionstop->setEnabled(true);
-        ui.actionpause->setEnabled(true);
     }
     if (!calc_thread->isSTOPPED()) {
         ui.actionstart->setEnabled(false);
         ui.actionstop->setEnabled(true);
-        ui.actionpause->setEnabled(true);
     }
     if (calc_thread->isPAUSED()) {
         ui.actionstart->setEnabled(true);
         ui.actionstop->setEnabled(true);
-        ui.actionpause->setEnabled(false);
+        ui.actionpause->setIcon(QIcon(":/QtWidgetsApplication1/res/pause-a.svg"));
+    }
+    else {
+        ui.actionpause->setIcon(QIcon(":/QtWidgetsApplication1/res/pause.svg"));
     }
 
 }
@@ -541,6 +544,7 @@ void QtWidgetsApplication1::update_tracewidget()
 {
     //ui.treetrace->setUpdatesEnabled(false);
     //ui.treetrace->setAnimated(false);
+    //return;
 
     int tree_count = ui.treetrace->topLevelItemCount();
     if (tree_count > 0)

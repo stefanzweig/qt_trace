@@ -1,5 +1,13 @@
 <RCC>
   <qresource prefix="/QtWidgetsApplication1">
+    <file>res/plus.svg</file>
+    <file>res/pause-a.svg</file>
+    <file>res/pause_active.svg</file>
+    <file>res/process.svg</file>
+    <file>res/pause.svg</file>
+    <file>res/play.svg</file>
+    <file>res/tick.svg</file>
+    <file>res/pauseTrace_selected.png</file>
     <file>res/right.png</file>
     <file>res/funnel-icon.ico</file>
     <file>res/add.png</file>

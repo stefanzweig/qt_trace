@@ -68,7 +68,7 @@ private:
     int visible_height = 700;
     int item_height = 20;  /* default item height in the trace widget. */
     int item_width = 20;
-    int page_capacity = 300;
+    int page_capacity = 3000;
     int dds_domainid = 90;
 
 private slots:
