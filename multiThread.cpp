@@ -45,17 +45,13 @@ void multiThread::restartThread() {
 void multiThread::run() {
     // key function
     
-    // from_t = get_timestamp();
     if (mysub_can_frames != nullptr) {
-            if (mysub_can_frames->init()) {
-            //    mysub_can_frames->run(samples_);
-            }
+        if (mysub_can_frames->init()) {
+        }
     }
-
 
     if (mysub_can_parser != nullptr) {
         if (mysub_can_parser->init()) {
-            //mysub_can_parser->run(samples_);
         }
     }
 
@@ -132,6 +128,7 @@ void multiThread::formatRow_canparser_thread(canframe frame)
 {
     //full_canparserdata.append(frame);
     full_count_canparser++;
+    //return;
 
     if (is_paused) { return; }
 
@@ -200,6 +197,7 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
 {
     //full_canframes.append(frame);
     full_count_canframes++; // message counts
+    //return;
 
     if (is_paused) { return; }
 
@@ -225,11 +223,11 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
     if (frame.Dir == "1") sDir = "Tx";
     str.append(sDir);
     str.append(QString::number(frame.DLC));
-    QString myData = frame.Data_Str;
-    str.append(myData);
     str.append(frame.EventType);
     str.append(QString::number(frame.DataLength));
     str.append(frame.BusType);
+    QString myData = frame.Data_Str;
+    str.append(myData);
     QTreeWidgetItem* Item = new QTreeWidgetItem(str);
 
     if (bFilter) {

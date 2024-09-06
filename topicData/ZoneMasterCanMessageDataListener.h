@@ -67,6 +67,7 @@ public:
             {
                 samples_++;
                 for (int i = 0; i < can_messages_.len(); i++ ) {
+                    //continue;
                     canMessage msg = can_messages_.canMsgs()[i];
                     QString repr = QString::number(msg.id());
                     QDateTime timestamp = QDateTime::fromSecsSinceEpoch(msg.timeStamp()/1000000000);
