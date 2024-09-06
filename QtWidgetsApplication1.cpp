@@ -303,10 +303,22 @@ void QtWidgetsApplication1::setupTreeTrace()
     t->setSelectionBehavior(QTreeView::SelectRows);
     t->setSelectionMode(QTreeView::SingleSelection);
     t->setFocusPolicy(Qt::NoFocus);
-
     t->header()->setHighlightSections(true);
     t->header()->setStretchLastSection(true);
     t->header()->setSortIndicator(0, Qt::AscendingOrder);
+
+    // setting the widths of the columns
+
+    /*
+    int width = t->viewport()->width();
+    int col_count = t->columnCount();
+    for (int i = 0; i < col_count; i++) {
+        t->resizeColumnToContents(i);
+    }
+    */
+    
+    // end of setting
+
     t->setWindowTitle(QObject::tr("CAN Frames"));
     QFont font("SimSun", 8);
     t->setFont(font);

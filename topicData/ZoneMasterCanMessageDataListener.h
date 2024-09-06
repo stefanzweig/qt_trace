@@ -104,8 +104,8 @@ public:
 
     std::atomic_int samples_;
 
-    QThread* outerThread;
-    QTreeView* tree_;
+    QThread* outerThread = nullptr;
+    QTreeView* tree_ = nullptr;
 
 signals:
     void traceItemUpdate_internal(int i);
