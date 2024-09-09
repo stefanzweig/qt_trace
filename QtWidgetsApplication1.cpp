@@ -257,6 +257,11 @@ bool QtWidgetsApplication1::new_session()
     if (ncount) {
         leftLabel->setText(QString("Previous Count: %1").arg(ncount));
     }
+    if (true) {
+        calc_thread->full_count_canframes = 0;
+        calc_thread->full_count_canparser = 0;
+        full_queue.clear();
+    }
     return true;
 }
 
@@ -302,6 +307,7 @@ void QtWidgetsApplication1::stopTrace()
     updateToolbar();
     _updateCurrentState();
     qDebug() << "stopTrace...DONE";
+    frozen = true;
     freeze_treetrace_items(count_per_page);
 
 }
@@ -309,6 +315,9 @@ void QtWidgetsApplication1::stopTrace()
 void QtWidgetsApplication1::pauseTrace()
 {
     if (calc_thread->isPAUSED()) {
+        frozen = false;
+        //freeze_treetrace_items(page_capacity);
+        ui.treetrace->clear();
         resumeTrace();
         return;
     }
@@ -627,26 +636,37 @@ void QtWidgetsApplication1::update_tracewidget()
         QList<QTreeWidgetItem*> items;
         int size = full_queue.size();
         int counter = std::min(capacity, size);
+        qDebug() << "FULL ITEM SIZE -> " << size;
         while (!full_queue.isEmpty() && counter > 0) {
+            qDebug() << "FULL ITEM INDEX -> " << size - counter;
             item = full_queue[size - counter];
             items.append(item);
             counter--;
         }
         last_data_index = full_queue.size()-1;
+        int item_size = items.size();
         qDebug() << "FULL ITEM LAST INDEX -> " << last_data_index;
-        if (items.size()) {
-            for (int i = 0; i < items.size(); i++) {
-                if (tree_count > i) {
+        qDebug() << "ITEM TO CHANGE -> " << item_size;
+        int t_count = ui.treetrace->topLevelItemCount();
+        qDebug() << "ITEMS IN TREE -> " << t_count;
+        int changes = std::min(item_size, t_count);
+        if (item_size) {
+            for (int i = 0; i < t_count; i++) {
+                //if (tree_count > i) {
                     QTreeWidgetItem* treeitem = invisible_root_item->child(i);
                     QTreeWidgetItem* it = items[i];
+                    
                     if (it) {
-                        for (int k = 0; k < it->columnCount(); k++) {
-                            qDebug() << "Item COL index -> " << k;
-                            if (treeitem->text(k) != it->text(k))
-                                treeitem->setText(k, it->text(k));
+                        int colCount = it->columnCount();
+                        if (colCount) {
+                            for (int k = 0; k < it->columnCount(); k++) {
+                                //qDebug() << "Item COL index -> " << k;
+                                if (treeitem->text(k) != it->text(k))
+                                    treeitem->setText(k, it->text(k));
+                            }
                         }
                     }
-                }
+                //}
             }
         }
     }
@@ -662,7 +682,7 @@ void QtWidgetsApplication1::update_tracewidget()
         int size = full_queue.size();
         if (size > counter) {
             while (!full_queue.isEmpty() && counter > 0) {
-                item = full_queue[size - counter - 1];
+                item = full_queue[size-counter];
                 items.append(item);
                 counter--;
             }
@@ -726,9 +746,17 @@ void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
         qDebug() << "freeze count -> " << items.size();
     }
     else {
-        items = QList<QTreeWidgetItem*>(full_queue.begin(), full_queue.end());
+        int size = full_queue.size();
+        int counter = full_queue.size();
+        while (!full_queue.isEmpty() && counter > 0) {
+            QTreeWidgetItem* item = full_queue.at(size - counter);
+            items.append(item);
+            counter--;
+        }
         qDebug() << "partially freeze count -> " << items.size();
     }
-    ui.treetrace->addTopLevelItems(items);
-    frozen = true;
+    if (items.size()) {
+        ui.treetrace->addTopLevelItems(items);
+        frozen = true;
+    }
 }
