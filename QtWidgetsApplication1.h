@@ -47,7 +47,7 @@ private:
     uint64_t last_timestamp_canparser = 0;
     uint64_t full_count_canframes = 0;
     uint64_t full_count_canparser = 0;
-    uint64_t count_per_page = 3000;
+    uint64_t count_per_page = 500;
     uint64_t current_page = 0;
     bool isHex = true; // repr in hex
 
@@ -78,6 +78,7 @@ private:
     int page_capacity = 3000;
     int dds_domainid = 90;
     int last_data_index = -1;
+    bool frozen = false;
 
 private slots:
     void startTrace();
@@ -108,4 +109,5 @@ private slots:
     void update_tracewidget_refresh();
     void trace_scroll_changed(int value);
     bool new_session();
+    void freeze_treetrace_items(int ncount);
 };

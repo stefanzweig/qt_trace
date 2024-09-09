@@ -138,6 +138,8 @@ void QtWidgetsApplication1::get_default_configurations()
     dds_domainid = kv;
     kv = settings.value("app/page_capacity", 300).toInt();
     page_capacity = kv;
+    kv = settings.value("app/count_per_page", 300).toInt();
+    count_per_page = kv;
 }
 
 void QtWidgetsApplication1::_updateCurrentState()
@@ -277,6 +279,7 @@ void QtWidgetsApplication1::startTrace()
     calc_thread->setCanParserSubscriber(mysub_can_parser, samples, ui.treetrace);
     calc_thread->start();
     timer->start(TIMER_HEARTBEAT);
+    frozen = false;
     //timer_dustbin->start(5000);
     updateToolbar();
 }
@@ -291,6 +294,7 @@ void QtWidgetsApplication1::stopTrace()
     updateToolbar();
     _updateCurrentState();
     qDebug() << "stopTrace...DONE";
+    freeze_treetrace_items(count_per_page);
 
 }
 
@@ -617,14 +621,17 @@ void QtWidgetsApplication1::update_tracewidget()
             counter--;
         }
         last_data_index = full_queue.size();
+        qDebug() << "FULL ITEM LAST INDEX -> " << last_data_index;
         if (items.size()) {
             for (int i = 0; i < items.size(); i++) {
                 if (tree_count > i) {
                     QTreeWidgetItem* treeitem = invisible_root_item->child(i);
                     QTreeWidgetItem* it = items[i];
-                    for (int k = 0; k < it->columnCount(); k++) {
-                        if (treeitem->text(k) != it->text(k))
-                            treeitem->setText(k,it->text(k));
+                    if (it) {
+                        for (int k = 0; k < it->columnCount(); k++) {
+                            if (treeitem->text(k) != it->text(k))
+                                treeitem->setText(k, it->text(k));
+                        }
                     }
                 }
             }
@@ -667,6 +674,7 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
     timer->stop();
     updateToolbar();
     _updateCurrentState();
+    freeze_treetrace_items(count_per_page);
 }
 
 void QtWidgetsApplication1::compare_item()
@@ -687,6 +695,24 @@ void QtWidgetsApplication1::compare_item()
         qDebug() << "item col ->" << i << lastchild->text(i);
     }
     qDebug() << "item data DONE";
+}
 
-
+void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
+{
+    if (frozen) return;
+    ui.treetrace->clear();
+    QList<QTreeWidgetItem*> items;
+    if (full_queue.size() >= ncount) {
+        for (int i = full_queue.size()-ncount; i < full_queue.size(); ++i) {
+            QTreeWidgetItem* item = full_queue.at(i);
+            items.append(item);
+        }
+        qDebug() << "freeze count -> " << items.size();
+    }
+    else {
+        items = QList<QTreeWidgetItem*>(full_queue.begin(), full_queue.end());
+        qDebug() << "partially freeze count -> " << items.size();
+    }
+    ui.treetrace->addTopLevelItems(items);
+    frozen = true;
 }
