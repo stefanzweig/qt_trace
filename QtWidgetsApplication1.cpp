@@ -5,6 +5,7 @@
 #include "columnfilter.h"
 #include <QSettings>
 #include <QScrollBar>
+#include <QLabel>
 
 
 QSize getItemSize(QTreeWidgetItem* item, int column, const QFont& font) {
@@ -113,6 +114,7 @@ void QtWidgetsApplication1::init()
 
     // 重置布局 todo
     resetLayout();
+    resetStatusBar();
 
     // 更新状态 todo
     _updateCurrentState();
@@ -200,6 +202,24 @@ void QtWidgetsApplication1::resetLayout()
     updateToolbar();
 }
 
+void QtWidgetsApplication1::resetStatusBar()
+{
+    leftLabel = new QLabel("Left Information", this);
+    leftWidget = new QWidget(this);
+    leftLayout = new QHBoxLayout(leftWidget);
+    leftLayout->addWidget(leftLabel);
+    leftLayout->addStretch();
+
+    rightLabel = new QLabel("Right Information", this);
+    rightWidget = new QWidget(this);
+    rightLayout = new QHBoxLayout(rightWidget);
+    rightLayout->addStretch();
+    rightLayout->addWidget(rightLabel);
+
+    ui.statusBar->addPermanentWidget(leftWidget);
+    ui.statusBar->addPermanentWidget(rightWidget);
+}
+
 void QtWidgetsApplication1::prepareMenu(const QPoint& pos)
 {
     QTreeWidget* tree = ui.treetrace;
@@ -224,12 +244,24 @@ void QtWidgetsApplication1::onActionTriggered()
     qDebug() << tr("菜单项已触发！");
 }
 
+bool QtWidgetsApplication1::new_session()
+{
+    int ncount = ui.treetrace->topLevelItemCount();
+    if (ncount) {
+        // a pop up dialog
+        leftLabel->setText(QString("Previous Count: %1").arg(ncount));
+    }
+    return true;
+}
+
 void QtWidgetsApplication1::startTrace()
 {
     qDebug() << "startTrace...";
     std::cout << "Starting subscriber." << std::endl;
 
     uint32_t samples = 100;
+    if (!new_session())
+        return;
 
     if (mysub_can_frames == nullptr) {
         mysub_can_frames = new ZoneMasterCanMessageDataSubscriber(dds_domainid);
@@ -533,7 +565,6 @@ void QtWidgetsApplication1::updateToolbar()
     else {
         ui.actionpause->setIcon(QIcon(":/QtWidgetsApplication1/res/pause.svg"));
     }
-
 }
 
 void QtWidgetsApplication1::display_mode_switch()
@@ -618,6 +649,9 @@ void QtWidgetsApplication1::update_tracewidget()
             if (items.size()) {
                 ui.treetrace->addTopLevelItems(items);
             }
+            //for (QTreeWidgetItem* item:items) {
+            //    delete item;
+            //}
         }
     }
     ui.treetrace->scrollToBottom();

@@ -3,14 +3,13 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_QtWidgetsApplication1.h"
 #include <QTimer>
+#include <QQueue>
+#include <QLabel>
 #include "topicData/ZoneMasterCanMessageDataSubscriber.h"
 #include "topicData/ZoneMasterCanParserSubscriber.h"
 #include "multiThread.h"
-//#include "treemodel.h"
-//#include "demo.h"
 #include "zm_struct.h"
 #include "columnfilter.h"
-#include <QQueue>
 
 #define TIMER_HEARTBEAT 50
 #define MAX_ITEM_COUNT 5000
@@ -64,6 +63,13 @@ private:
     QHash<QString, QString> filterConfig;
     QVector<QVector<bool>> selectedStates;
 
+    QLabel* leftLabel = nullptr;
+    QWidget* leftWidget = nullptr;
+    QHBoxLayout* leftLayout = nullptr;
+    QLabel* rightLabel = nullptr;
+    QWidget* rightWidget = nullptr;
+    QHBoxLayout* rightLayout = nullptr;
+
     // further configurations
     int display_mode = 0; // 0 - append, 1 - update
     int visible_height = 700;
@@ -79,6 +85,7 @@ private slots:
     void pauseTrace();
     void resetLayout();
     void display_mode_switch();
+    void resetStatusBar();
 
     void updateState();
     void onActionTriggered();
@@ -100,4 +107,5 @@ private slots:
     void update_tracewidget();
     void update_tracewidget_refresh();
     void trace_scroll_changed(int value);
+    bool new_session();
 };
