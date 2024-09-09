@@ -154,6 +154,11 @@ void QtWidgetsApplication1::_updateCurrentState()
     QString status_string = runStatus + "CAN Frames: " + QString::number(this->calc_thread->full_count_canframes)
         + ". PDUs: " + QString::number(this->calc_thread->full_count_canparser);
     ui.statusBar->showMessage(status_string);
+
+    int ncount = ui.treetrace->topLevelItemCount();
+    leftLabel->setText(QString("Previous Count: %1").arg(ncount));
+    QString strRight = QString("Page Capacity: %1").arg(page_capacity);
+    rightLabel->setText(strRight);
 }
 
 void QtWidgetsApplication1::updateState()
@@ -250,7 +255,6 @@ bool QtWidgetsApplication1::new_session()
 {
     int ncount = ui.treetrace->topLevelItemCount();
     if (ncount) {
-        // a pop up dialog
         leftLabel->setText(QString("Previous Count: %1").arg(ncount));
     }
     return true;
@@ -259,12 +263,16 @@ bool QtWidgetsApplication1::new_session()
 void QtWidgetsApplication1::startTrace()
 {
     qDebug() << "startTrace...";
-    std::cout << "Starting subscriber." << std::endl;
 
-    uint32_t samples = 100;
     if (!new_session())
         return;
 
+    ui.treetrace->clear();
+    resumeTrace();
+}
+void QtWidgetsApplication1::resumeTrace()
+{
+    uint32_t samples = 100;
     if (mysub_can_frames == nullptr) {
         mysub_can_frames = new ZoneMasterCanMessageDataSubscriber(dds_domainid);
         qRegisterMetaType <can_frame>("can_frame");
@@ -300,6 +308,10 @@ void QtWidgetsApplication1::stopTrace()
 
 void QtWidgetsApplication1::pauseTrace()
 {
+    if (calc_thread->isPAUSED()) {
+        resumeTrace();
+        return;
+    }
     qDebug() << "pauseTrace...";
     calc_thread->pauseThread();
     timer->stop();
@@ -562,7 +574,7 @@ void QtWidgetsApplication1::updateToolbar()
         ui.actionstop->setEnabled(true);
     }
     if (calc_thread->isPAUSED()) {
-        ui.actionstart->setEnabled(true);
+        ui.actionstart->setEnabled(false);
         ui.actionstop->setEnabled(true);
         ui.actionpause->setIcon(QIcon(":/QtWidgetsApplication1/res/pause-a.svg"));
     }
@@ -603,24 +615,24 @@ void QtWidgetsApplication1::update_tracewidget()
         itemSize = getItemSize(invisible_root_item, 0, ui.treetrace->font());
         int v_height = ui.treetrace->viewport()->height();
         int capacity = visible_height / itemSize.height() - 1;
-        if (capacity < page_capacity)
-            capacity = page_capacity;
+        //if (capacity < page_capacity)
+            //capacity = page_capacity;
 
         visible_height = v_height;
         item_height = itemSize.height();
         item_width = itemSize.width();
-        page_capacity = capacity;
+        //page_capacity = capacity;
 
         QTreeWidgetItem* item = nullptr;
         QList<QTreeWidgetItem*> items;
-        int counter = capacity;
         int size = full_queue.size();
+        int counter = std::min(capacity, size);
         while (!full_queue.isEmpty() && counter > 0) {
-            item = full_queue[size - counter - 1];
+            item = full_queue[size - counter];
             items.append(item);
             counter--;
         }
-        last_data_index = full_queue.size();
+        last_data_index = full_queue.size()-1;
         qDebug() << "FULL ITEM LAST INDEX -> " << last_data_index;
         if (items.size()) {
             for (int i = 0; i < items.size(); i++) {
@@ -629,6 +641,7 @@ void QtWidgetsApplication1::update_tracewidget()
                     QTreeWidgetItem* it = items[i];
                     if (it) {
                         for (int k = 0; k < it->columnCount(); k++) {
+                            qDebug() << "Item COL index -> " << k;
                             if (treeitem->text(k) != it->text(k))
                                 treeitem->setText(k, it->text(k));
                         }
@@ -674,7 +687,10 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
     timer->stop();
     updateToolbar();
     _updateCurrentState();
-    freeze_treetrace_items(count_per_page);
+    if (frozen)
+        return;
+    else
+        freeze_treetrace_items(count_per_page);
 }
 
 void QtWidgetsApplication1::compare_item()

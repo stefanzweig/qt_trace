@@ -87,6 +87,7 @@ private slots:
     void resetLayout();
     void display_mode_switch();
     void resetStatusBar();
+    void resumeTrace();
 
     void updateState();
     void onActionTriggered();
