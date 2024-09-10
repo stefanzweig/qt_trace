@@ -164,7 +164,7 @@ void QtWidgetsApplication1::_updateCurrentState()
 void QtWidgetsApplication1::updateState()
 {
     update_tracewidget();
-    ui.treetrace->scrollToBottom();
+    //ui.treetrace->scrollToBottom();
     _updateCurrentState();
 }
 
@@ -650,23 +650,30 @@ void QtWidgetsApplication1::update_tracewidget()
         int t_count = ui.treetrace->topLevelItemCount();
         qDebug() << "ITEMS IN TREE -> " << t_count;
         int changes = std::min(item_size, t_count);
+        qDebug() << "CHANGES -> " << changes;
         if (item_size) {
-            for (int i = 0; i < t_count; i++) {
-                //if (tree_count > i) {
+            for (int i = 0; i < changes; i++) {
+                qDebug() << "CHANGES-I -> " << i;
+                if (tree_count > i) {
+                    qDebug() << "CHANGES-I-ITEM -> " << i;
                     QTreeWidgetItem* treeitem = invisible_root_item->child(i);
                     QTreeWidgetItem* it = items[i];
                     
                     if (it) {
-                        int colCount = it->columnCount();
-                        if (colCount) {
-                            for (int k = 0; k < it->columnCount(); k++) {
-                                //qDebug() << "Item COL index -> " << k;
-                                if (treeitem->text(k) != it->text(k))
-                                    treeitem->setText(k, it->text(k));
+                        try {
+                            int colCount = it->columnCount();
+                            if (colCount) {
+                                for (int k = 0; k < it->columnCount(); k++) {
+                                    //qDebug() << "Item COL index -> " << k;
+                                    if (treeitem->text(k) != it->text(k))
+                                        treeitem->setText(k, it->text(k));
+                                }
                             }
                         }
+                        catch (...) {
+                        }
                     }
-                //}
+                }
             }
         }
     }
