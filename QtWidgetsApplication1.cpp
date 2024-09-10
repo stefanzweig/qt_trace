@@ -363,6 +363,8 @@ void QtWidgetsApplication1::setupTreeTrace()
     t->header()->setHighlightSections(true);
     t->header()->setStretchLastSection(true);
     t->header()->setSortIndicator(0, Qt::AscendingOrder);
+    //t->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+
 
     // setting the widths of the columns
 
