@@ -111,4 +111,7 @@ private slots:
     void trace_scroll_changed(int value);
     bool new_session();
     void freeze_treetrace_items(int ncount);
+    void adjust_filter_buttons();
+    void on_header_section_resized();
+    void on_horizontal_scroll();
 };

@@ -203,6 +203,9 @@ void QtWidgetsApplication1::resetLayout()
 
     ui.treetrace->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui.treetrace, &QTreeWidget::customContextMenuRequested, this, &QtWidgetsApplication1::prepareMenu);
+    connect(ui.treetrace->header(), &QHeaderView::sectionResized, this, &QtWidgetsApplication1::on_header_section_resized);
+    connect(ui.treetrace->horizontalScrollBar(), &QScrollBar::valueChanged, this, &QtWidgetsApplication1::on_horizontal_scroll);
+
     datachoice = ui.comboBox;
     connect(datachoice, &QComboBox::currentTextChanged, this, &QtWidgetsApplication1::ChangeHeader);
     connect(ui.treetrace->verticalScrollBar(), &QScrollBar::valueChanged, this, &QtWidgetsApplication1::trace_scroll_changed);
@@ -387,14 +390,14 @@ void QtWidgetsApplication1::initialHeaders()
 {
     QTreeWidget* tree = ui.treetrace;
     QHeaderView* header = tree->header();
-    header->setDefaultSectionSize(200);
+    header->setDefaultSectionSize(150);
     header->setSectionResizeMode(QHeaderView::Interactive);
     tree->setHeaderLabels(initialHeader);
     tree->setSortingEnabled(true);
-    tree->setColumnWidth(0, 250);
+    tree->setColumnWidth(0, 150);
+    tree->header()->setStretchLastSection(true);
     tree->sortByColumn(0, Qt::SortOrder::AscendingOrder);
     tree->invisibleRootItem()->setHidden(true);
-
 
     for (int i = 0; i < header->count(); i++) {
         QPushButton* button;
@@ -402,9 +405,9 @@ void QtWidgetsApplication1::initialHeaders()
         connect(button, &QPushButton::clicked, this, &QtWidgetsApplication1::headerButtonClicked);
         button->setIcon(QIcon(":/QtWidgetsApplication1/res/funnel-icon.ico"));
         headerButtonList << button;
-        int length = header->sectionPosition(i) + header->sectionSize(i);
-        button->setGeometry(length - 20, 3, 17, 18);
     }
+    
+    adjust_filter_buttons();
 }
 
 void QtWidgetsApplication1::headerButtonClicked()
@@ -778,4 +781,25 @@ void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
         ui.treetrace->addTopLevelItems(items);
         frozen = true;
     }
+}
+
+void QtWidgetsApplication1::adjust_filter_buttons()
+{
+    QTreeWidget* tree = ui.treetrace;
+    QHeaderView* header = tree->header();
+    for (int i = 0; i < headerButtonList.count(); i++) {
+        QPushButton* button = headerButtonList[i];
+        int length = header->sectionPosition(i) + header->sectionSize(i);
+        button->setGeometry(length-20, 2, 17, 17);
+    }
+}
+
+void QtWidgetsApplication1::on_header_section_resized()
+{
+    adjust_filter_buttons();
+}
+
+void QtWidgetsApplication1::on_horizontal_scroll()
+{
+    adjust_filter_buttons();
 }
