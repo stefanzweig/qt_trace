@@ -67,7 +67,7 @@ private:
     void formatRow_canframe_thread(can_frame frame);
 
 signals:
-    void popToRoot(QTreeWidgetItem* item);
+    void popToRoot(QTreeWidgetItem* item, QString item_type="canframe");
 };
 
 #endif // MULTITHREAD_H

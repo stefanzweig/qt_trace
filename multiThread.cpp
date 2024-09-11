@@ -110,8 +110,8 @@ void multiThread::setSubscriber(ZoneMasterCanMessageDataSubscriber* subscriber, 
         mysub_can_frames = subscriber;
     samples_ = samples;
     subscriber->setOuterThread(this, treeview);
-        QObject::connect(&mysub_can_frames->listener_, &SubListener::traceItemUpdate_internal_cf, this, &multiThread::formatRow_canframe_thread); 
-        bconnected_cf = true;
+    QObject::connect(&mysub_can_frames->listener_, &SubListener::traceItemUpdate_internal_cf, this, &multiThread::formatRow_canframe_thread); 
+    bconnected_cf = true;
     }
     
 }
@@ -122,8 +122,8 @@ void multiThread::setCanParserSubscriber(ZoneMasterCanParserSubscriber* subscrib
         mysub_can_parser = subscriber;
     samples_ = samples;
     subscriber->setOuterThread(this, treeview);
-        QObject::connect(&mysub_can_parser->listener_, &CanParserListener::traceItemUpdate_internal_canparser, this, &multiThread::formatRow_canparser_thread);
-        bconnected_cp = true;
+    QObject::connect(&mysub_can_parser->listener_, &CanParserListener::traceItemUpdate_internal_canparser, this, &multiThread::formatRow_canparser_thread);
+    bconnected_cp = true;
     }
 }
 

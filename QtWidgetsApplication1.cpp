@@ -292,7 +292,6 @@ void QtWidgetsApplication1::resumeTrace()
     calc_thread->start();
     timer->start(TIMER_HEARTBEAT);
     frozen = false;
-    //timer_dustbin->start(5000);
     updateToolbar();
 }
 
