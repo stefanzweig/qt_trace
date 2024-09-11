@@ -108,6 +108,9 @@ void QtWidgetsApplication1::init()
     connect(timer_dustbin, &QTimer::timeout, this, &QtWidgetsApplication1::dustbin);
 
     calc_thread = new multiThread();
+    calc_thread->monitor_modules = monitor_modules;
+    qDebug() << "Copied List 1:" << calc_thread->monitor_modules;
+
     //connect(calc_thread, &multiThread::traceItemUpdate_internal, [=]() {qDebug() << "lambda"; });
     connect(calc_thread, &multiThread::popToRoot, this, &QtWidgetsApplication1::on_pop_to_root);
 
@@ -140,6 +143,11 @@ void QtWidgetsApplication1::get_default_configurations()
     page_capacity = kv;
     kv = settings.value("app/count_per_page", 300).toInt();
     count_per_page = kv;
+    QList<QVariant> modules = settings.value("app/modules").toList();
+    qDebug() << "Modules -> " << modules;
+    for (QVariant m : modules) {
+        monitor_modules.append(m.toString());
+    }
 }
 
 void QtWidgetsApplication1::_updateCurrentState()
