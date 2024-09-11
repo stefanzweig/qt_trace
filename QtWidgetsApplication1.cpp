@@ -307,7 +307,7 @@ void QtWidgetsApplication1::stopTrace()
     _updateCurrentState();
     qDebug() << "stopTrace...DONE";
     frozen = true;
-    //freeze_treetrace_items(count_per_page);
+    freeze_treetrace_items(count_per_page);
 
 }
 
@@ -315,8 +315,8 @@ void QtWidgetsApplication1::pauseTrace()
 {
     if (calc_thread->isPAUSED()) {
         frozen = false;
-        //freeze_treetrace_items(page_capacity);
-        //ui.treetrace->clear();
+        ui.treetrace->clear();
+        initial_trace = true;
         resumeTrace();
         return;
     }
@@ -325,6 +325,7 @@ void QtWidgetsApplication1::pauseTrace()
     timer->stop();
     //timer_dustbin->stop();
     //updateState();
+    freeze_treetrace_items(count_per_page);
     updateToolbar();
     _updateCurrentState();
 }
@@ -544,24 +545,6 @@ void QtWidgetsApplication1::hide_filtered_items(int column_idx, QList<QList<QStr
 void QtWidgetsApplication1::dustbin()
 {
     return;
-
-    //int ui_count = ui.treetrace->topLevelItemCount();
-    //int counter = ui_count - MAX_ITEM_COUNT;
-    //if (ui_count > MAX_ITEM_COUNT) {
-    //    qDebug() << "before dustbin -> " << counter;
-    //    while (counter>0 && trace_items.size()>0) {
-    //        QTreeWidgetItem* item = trace_items.dequeue();
-    //        int index = ui.treetrace->indexOfTopLevelItem(item);
-    //        if (index != -1) {
-    //            ui.treetrace->takeTopLevelItem(index);
-    //            delete item;
-    //        }
-    //        counter--;
-    //    }
-    //}
-    //ui_count = ui.treetrace->topLevelItemCount();
-    //qDebug() << "Tree COUNTER -> " << ui_count;
-    //ui.treetrace->scrollToBottom();
 }
 
 void QtWidgetsApplication1::updateToolbar()
@@ -764,32 +747,46 @@ void QtWidgetsApplication1::compare_item()
 
 void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
 {
-    return;
-
     if (frozen) return;
+    qDebug() << "BEFORE CLEARING -> " << full_queue.size();
     ui.treetrace->clear();
+    qDebug() << "AFETR CLEARING -> " << full_queue.size();
+    int size = full_queue.size();
+    int total = std::min(size, ncount);
+    QTreeWidgetItem* item;
     QList<QTreeWidgetItem*> items;
-    if (full_queue.size() >= ncount) {
-        for (int i = full_queue.size()-ncount; i < full_queue.size(); ++i) {
-            QTreeWidgetItem* item = full_queue.at(i);
-            items.append(item);
-        }
-        qDebug() << "freeze count -> " << items.size();
-    }
-    else {
-        int size = full_queue.size();
-        int counter = full_queue.size();
-        while (!full_queue.isEmpty() && counter > 0) {
-            QTreeWidgetItem* item = full_queue.at(size - counter);
-            items.append(item);
-            counter--;
-        }
-        qDebug() << "partially freeze count -> " << items.size();
+    while (!full_queue.isEmpty() && total > 0) {
+        item = full_queue[size - total];
+        items.append(item);
+        total--;
     }
     if (items.size()) {
         ui.treetrace->addTopLevelItems(items);
-        frozen = true;
+        qDebug() << "FROZEN -> " << items.size();
     }
+
+    //QList<QTreeWidgetItem*> items;
+    //if (full_queue.size() >= ncount) {
+    //    for (int i = full_queue.size()-ncount; i < full_queue.size(); ++i) {
+    //        QTreeWidgetItem* item = full_queue.at(i);
+    //        items.append(item);
+    //    }
+    //    qDebug() << "freeze count -> " << items.size();
+    //}
+    //else {
+    //    int size = full_queue.size();
+    //    int counter = full_queue.size();
+    //    while (!full_queue.isEmpty() && counter > 0) {
+    //        QTreeWidgetItem* item = full_queue.at(size - counter);
+    //        items.append(item);
+    //        counter--;
+    //    }
+    //    qDebug() << "partially freeze count -> " << items.size();
+    //}
+    //if (items.size()) {
+    //    ui.treetrace->addTopLevelItems(items);
+    //    frozen = true;
+    //}
 }
 
 void QtWidgetsApplication1::adjust_filter_buttons()

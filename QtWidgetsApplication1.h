@@ -41,7 +41,6 @@ private:
     ZoneMasterCanParserSubscriber* mysub_can_parser = nullptr;
     multiThread* calc_thread = nullptr;
     QQueue<QTreeWidgetItem*> full_queue;
-    QQueue<QTreeWidgetItem*> trace_items;
 
     uint64_t last_timestamp = 0;
     uint64_t last_timestamp_canparser = 0;
