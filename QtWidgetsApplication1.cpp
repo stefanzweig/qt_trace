@@ -303,7 +303,7 @@ void QtWidgetsApplication1::stopTrace()
     timer->stop();
     mysub_can_frames = nullptr;
     mysub_can_parser = nullptr;
-    inittrace = true;
+    initial_trace = true;
     updateToolbar();
     _updateCurrentState();
     qDebug() << "stopTrace...DONE";
@@ -617,7 +617,7 @@ void QtWidgetsApplication1::update_tracewidget()
     //return;
 
     int tree_count = ui.treetrace->topLevelItemCount();
-    if (tree_count > 0 && !inittrace)
+    if (tree_count > 0 && !initial_trace)
     {
         qDebug() << "Item Count -> " << tree_count;
         // count the the capacity of the widget
@@ -701,7 +701,7 @@ void QtWidgetsApplication1::update_tracewidget()
         int counter = capacity;
         int size = full_queue.size();
         int counter1 = 0;
-        if (inittrace) {
+        if (initial_trace) {
             while (!full_queue.isEmpty() && counter1 < capacity) {
                 //int index = counter1 - capacity + full_queue.size();
                 if (counter1 < full_queue.size()) {
@@ -712,7 +712,7 @@ void QtWidgetsApplication1::update_tracewidget()
                 else { break; }
             }
             if (counter1 >= capacity)
-                inittrace = false;
+                initial_trace = false;
         } else if (size > counter) {
             while (!full_queue.isEmpty() && counter > 0) {
                 item = full_queue[size-counter];
