@@ -44,14 +44,17 @@ void multiThread::restartThread() {
 
 void multiThread::run() {
     // key function
-    
-    if (mysub_can_frames != nullptr) {
-        if (mysub_can_frames->init()) {
+    if (monitor_modules.contains("can")) {
+        if (mysub_can_frames != nullptr) {
+            if (mysub_can_frames->init()) {
+            }
         }
     }
 
-    if (mysub_can_parser != nullptr) {
-        if (mysub_can_parser->init()) {
+    if (monitor_modules.contains("canpdu")) {
+        if (mysub_can_parser != nullptr) {
+            if (mysub_can_parser->init()) {
+            }
         }
     }
 

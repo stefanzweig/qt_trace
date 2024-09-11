@@ -97,11 +97,8 @@ void QtWidgetsApplication1::init()
     //ui.toolbar_search->setVisible(true);
 
     get_default_configurations();
-    
-    // 定义动作，菜单和工具栏
     createActions();
 
-    // 定义定时器
     timer = new QTimer();
     timer_dustbin = new QTimer();
     connect(timer, &QTimer::timeout, this, &QtWidgetsApplication1::updateState);
@@ -111,25 +108,16 @@ void QtWidgetsApplication1::init()
     calc_thread->monitor_modules = monitor_modules;
     qDebug() << "Copied List 1:" << calc_thread->monitor_modules;
 
-    //connect(calc_thread, &multiThread::traceItemUpdate_internal, [=]() {qDebug() << "lambda"; });
     connect(calc_thread, &multiThread::popToRoot, this, &QtWidgetsApplication1::on_pop_to_root);
 
-
-    // 重置布局 todo
     resetLayout();
     resetStatusBar();
-
-    // 更新状态 todo
     _updateCurrentState();
+
     setupTreeTrace();
-
     filter = new columnFilterDialog(this);
-
-    //ui.ZSTraceWindow->setAttribute(Qt::WA_OpaquePaintEvent);
-    //ui.ZSTraceWindow->setAttribute(Qt::WA_NoSystemBackground);
     ui.treetrace->setAttribute(Qt::WA_OpaquePaintEvent);
     ui.treetrace->setAttribute(Qt::WA_NoSystemBackground);
-
     showMaximized();
 }
 
@@ -315,6 +303,7 @@ void QtWidgetsApplication1::stopTrace()
     timer->stop();
     mysub_can_frames = nullptr;
     mysub_can_parser = nullptr;
+    inittrace = true;
     updateToolbar();
     _updateCurrentState();
     qDebug() << "stopTrace...DONE";
@@ -328,7 +317,7 @@ void QtWidgetsApplication1::pauseTrace()
     if (calc_thread->isPAUSED()) {
         frozen = false;
         //freeze_treetrace_items(page_capacity);
-        ui.treetrace->clear();
+        //ui.treetrace->clear();
         resumeTrace();
         return;
     }
@@ -628,7 +617,7 @@ void QtWidgetsApplication1::update_tracewidget()
     //return;
 
     int tree_count = ui.treetrace->topLevelItemCount();
-    if (tree_count > 0)
+    if (tree_count > 0 && !inittrace)
     {
         qDebug() << "Item Count -> " << tree_count;
         // count the the capacity of the widget
@@ -711,7 +700,20 @@ void QtWidgetsApplication1::update_tracewidget()
 
         int counter = capacity;
         int size = full_queue.size();
-        if (size > counter) {
+        int counter1 = 0;
+        if (inittrace) {
+            while (!full_queue.isEmpty() && counter1 < capacity) {
+                //int index = counter1 - capacity + full_queue.size();
+                if (counter1 < full_queue.size()) {
+                    item = full_queue[counter1];
+                    ui.treetrace->addTopLevelItem(item);
+                    counter1++;
+                }
+                else { break; }
+            }
+            if (counter1 >= capacity)
+                inittrace = false;
+        } else if (size > counter) {
             while (!full_queue.isEmpty() && counter > 0) {
                 item = full_queue[size-counter];
                 items.append(item);

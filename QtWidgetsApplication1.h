@@ -79,6 +79,7 @@ private:
     int dds_domainid = 90;
     int last_data_index = -1;
     bool frozen = false;
+    bool inittrace = true;
     QList<QString> monitor_modules;
 
 private slots:
