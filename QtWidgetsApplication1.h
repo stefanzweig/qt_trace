@@ -115,4 +115,5 @@ private slots:
     void adjust_filter_buttons();
     void on_header_section_resized();
     void on_horizontal_scroll();
+    void about();
 };

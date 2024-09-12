@@ -6,6 +6,7 @@
 #include <QSettings>
 #include <QScrollBar>
 #include <QLabel>
+#include <QMessageBox>
 
 
 QSize getItemSize(QTreeWidgetItem* item, int column, const QFont& font) {
@@ -172,6 +173,7 @@ void QtWidgetsApplication1::createActions()
     connect(ui.actionpause, &QAction::triggered, this, &QtWidgetsApplication1::pauseTrace);
     connect(ui.actionmode, &QAction::triggered, this, &QtWidgetsApplication1::display_mode_switch);
     connect(ui.pushButton_search, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonSearchClicked);
+    connect(ui.actionAbout, &QAction::triggered, this, &QtWidgetsApplication1::about);
 }
 
 void QtWidgetsApplication1::resetLayout()
@@ -808,4 +810,22 @@ void QtWidgetsApplication1::on_header_section_resized()
 void QtWidgetsApplication1::on_horizontal_scroll()
 {
     adjust_filter_buttons();
+}
+
+void QtWidgetsApplication1::about()
+{
+    QMessageBox::about(this, tr("ZoneTracer"),
+       tr("<center><b>ZoneTracer</b> \n"
+            "version 0.1a</center>"));
+
+    //QDialog dialog;
+    //dialog.setWindowTitle("About");
+
+    //QLabel* label = new QLabel("<b>ZoneTracer</b> v0.1a");
+    //label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+
+    //QVBoxLayout* layout = new QVBoxLayout;
+    //layout->addWidget(label);
+    //dialog.setLayout(layout);
+    //dialog.exec();
 }
