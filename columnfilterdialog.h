@@ -47,7 +47,6 @@ public:
 
         verticalLayout->addWidget(resetFilterButton);
 
-        //dgm
         confirmFilterButton = new QPushButton(columnFilterDialog);
         confirmFilterButton->setObjectName(QString::fromUtf8("resetFilterButton"));
         confirmFilterButton->setContextMenuPolicy(Qt::ActionsContextMenu);
@@ -55,7 +54,6 @@ public:
         confirmFilterButton->setAutoDefault(false);
         confirmFilterButton->setFlat(true);
         verticalLayout->addWidget(confirmFilterButton);
-        //dgm
 
         line = new QFrame(columnFilterDialog);
         line->setObjectName(QString::fromUtf8("line"));
@@ -66,25 +64,17 @@ public:
 
         tableWidget = new QTableWidget(columnFilterDialog);
         tableWidget->setObjectName(QString::fromUtf8("tableWidget"));
-
         verticalLayout->addWidget(tableWidget);
-
-
         retranslateUi(columnFilterDialog);
-
         resetFilterButton->setDefault(false);
-
-
         QMetaObject::connectSlotsByName(columnFilterDialog);
     } // setupUi
 
     void retranslateUi(QDialog *columnFilterDialog)
     {
         columnFilterDialog->setWindowTitle(QCoreApplication::translate("columnFilterDialog", "Dialog", nullptr));
-        resetFilterButton->setText(QCoreApplication::translate("columnFilterDialog", "Reset Filter", nullptr));
-        //dgm
-        confirmFilterButton->setText(QCoreApplication::translate("columnFilterDialog", "Confirm Filter", nullptr));
-        //dgm
+        resetFilterButton->setText(QCoreApplication::translate("columnFilterDialog", "Reset", nullptr));
+        confirmFilterButton->setText(QCoreApplication::translate("columnFilterDialog", "Confirm", nullptr));
     } // retranslateUi
 
 };

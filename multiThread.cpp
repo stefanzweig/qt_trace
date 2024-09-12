@@ -233,7 +233,7 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
     str.append(myData);
     QTreeWidgetItem* Item = new QTreeWidgetItem(str);
 
-    if (bFilter) {
+    if (/*bFilter*/ 0) {
         if (filter_colName == "Chn")
         {
             if (filter_value.contains(QString::number(frame.Chn))) {
@@ -247,7 +247,6 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
                 emit(popToRoot(Item));
             }
         }
-
 
         if (filter_colName == "Dir")
         {

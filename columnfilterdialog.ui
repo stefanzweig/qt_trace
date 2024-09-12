@@ -23,7 +23,7 @@
       <string notr="true">QPushButton{text-align:left;}</string>
      </property>
      <property name="text">
-      <string>Reset Filter</string>
+      <string>Reset</string>
      </property>
      <property name="autoDefault">
       <bool>false</bool>

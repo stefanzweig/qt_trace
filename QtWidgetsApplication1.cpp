@@ -190,13 +190,15 @@ void QtWidgetsApplication1::resetLayout()
 
     ui.actionpause->setIcon(QIcon(":/QtWidgetsApplication1/res/pause.svg"));
     ui.actionstart->setIcon(QIcon(":/QtWidgetsApplication1/res/play.svg"));
-    ui.actionstop->setIcon(QIcon(":/QtWidgetsApplication1/res/tick.svg"));
+    ui.actionstop->setIcon(QIcon(":/QtWidgetsApplication1/res/maximize.svg"));
+    ui.actionreset->setIcon(QIcon(":/QtWidgetsApplication1/res/tick.svg"));
 
     // toolbar actions
     ui.toolbar->addAction(ui.actionstart);
     ui.toolbar->addAction(ui.actionstop);
     ui.toolbar->addAction(ui.actionpause);
     ui.toolbar->addAction(ui.actionmode);
+    ui.toolbar->addAction(ui.actionreset);
     initialHeaders();
 
     ui.treetrace->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -457,22 +459,23 @@ void QtWidgetsApplication1::headerButtonClicked()
 
 void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
 {
-    bool judgement = false;
     int column_index = filter->columnIndex;
-    QString colName = this->initialHeader[column_index];
+    QString colName = initialHeader[column_index];
     if (items.size() == 0) {
         colName = "";
         headerButtonList[column_index]->setIcon(QIcon(":/QtWidgetsApplication1/res/funnel-icon.ico"));
     }
     else {
         headerButtonList[column_index]->setIcon(QIcon(":/QtWidgetsApplication1/res/funnel_icon_selected.ico"));
-        //for (int k = 0; k < items.size(); k++) {
-        //    for (int i = 0; i < 1; i++) {
-        //        QString s = items[k][i];
-        //        qDebug() << "FILTER -> " << s;
-        //    }
-        //}
     }
+
+    //for (int k = 0; k < items.size(); k++) {
+    //    for (int i = 0; i < 1; i++) {
+    //        QString s = items[k][i];
+    //        qDebug() << "FILTER -> " << s;
+    //    }
+    //}
+
     this->calc_thread->setFilterOption(colName, items);
     hide_filtered_items(column_index, items);
 }

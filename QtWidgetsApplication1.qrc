@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="/QtWidgetsApplication1">
+    <file>res/maximize.svg</file>
+    <file>res/stop.svg</file>
     <file>res/plus.svg</file>
     <file>res/pause-a.svg</file>
     <file>res/pause_active.svg</file>
