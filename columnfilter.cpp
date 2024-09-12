@@ -45,8 +45,8 @@ void columnFilterDialog::on_resetFilterButton_clicked() {
 
     for (int i = 0; i < ui->tableWidget->rowCount(); ++i)
         m_selectedStates[columnButton][i] = false;
-    accept();
     emit filter_apply(twoSelectedItems, selectedItemscount);
+    accept();
 }
 
 void columnFilterDialog::on_confirmFilterButton_clicked() {

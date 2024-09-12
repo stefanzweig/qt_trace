@@ -454,7 +454,10 @@ void QtWidgetsApplication1::headerButtonClicked()
         pItem->setCheckState(filter->m_selectedStates[columnButton].at(i) ? Qt::Checked : Qt::Unchecked);
     }
     filter->columnIndex = columnButton;
-    connect(filter, &columnFilterDialog::filter_apply, this, &QtWidgetsApplication1::applyFilter);
+    if (!filter_pop) {
+        connect(filter, &columnFilterDialog::filter_apply, this, &QtWidgetsApplication1::applyFilter);
+        filter_pop = true;
+    }
     filter->exec();
 }
 
@@ -463,7 +466,6 @@ void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
     int column_index = filter->columnIndex;
     QString colName = initialHeader[column_index];
     if (items.size() == 0) {
-        colName = "";
         headerButtonList[column_index]->setIcon(QIcon(":/QtWidgetsApplication1/res/funnel-icon.ico"));
     }
     else {
@@ -478,10 +480,15 @@ void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
             single_config.append(s);
         }
     }
+    if (single_config.size() == 1) { 
+        new_filters.remove(colName); 
+        return; 
+    }
+    new_filters.insert(colName, single_config);
 
     //this->calc_thread->setFilterOption(colName, items);
     //hide_filtered_items(column_index, items);
-    new_filters.insert(colName, single_config);
+    //if (single_config.size() == 1) { new_filters.erase(); }
 }
 
 
@@ -651,20 +658,20 @@ void QtWidgetsApplication1::update_tracewidget()
         int t_count = ui.treetrace->topLevelItemCount();
         int changes = std::min(item_size, t_count);
 
-        qDebug() << "FULL QUEUE LAST INDEX -> " << last_data_index;
-        qDebug() << "ITEM TO CHANGE -> " << item_size;
-        qDebug() << "ITEMS IN TREE -> " << t_count;
-        qDebug() << "CHANGES -> " << changes;
+        //qDebug() << "FULL QUEUE LAST INDEX -> " << last_data_index;
+        //qDebug() << "ITEM TO CHANGE -> " << item_size;
+        //qDebug() << "ITEMS IN TREE -> " << t_count;
+        //qDebug() << "CHANGES -> " << changes;
 
         if (item_size) {
             for (int i = 0; i < changes; i++) {
-                qDebug() << "CHANGES-I -> " << i;
+                //qDebug() << "CHANGES-I -> " << i;
                 if (tree_count > i) {
-                    qDebug() << "CHANGES-I-ITEM -> " << i;
+                    //qDebug() << "CHANGES-I-ITEM -> " << i;
                     QTreeWidgetItem* treeitem = invisible_root_item->child(i);
                     QTreeWidgetItem* it = items[i];
                     
-                    if (it) {
+                    if (it && filter_pass_item(it)) {
                         try {
                             int colCount = it->columnCount();
                             if (colCount) {
@@ -697,7 +704,8 @@ void QtWidgetsApplication1::update_tracewidget()
                 //int index = counter1 - capacity + full_queue.size();
                 if (counter1 < full_queue.size()) {
                     item = full_queue[counter1];
-                    ui.treetrace->addTopLevelItem(item);
+                    if (filter_pass_item(item))
+                        ui.treetrace->addTopLevelItem(item);
                     counter1++;
                 }
                 else { break; }
@@ -707,7 +715,8 @@ void QtWidgetsApplication1::update_tracewidget()
         } else if (size > counter) {
             while (!full_queue.isEmpty() && counter > 0) {
                 item = full_queue[size-counter];
-                items.append(item);
+                if (filter_pass_item(item))
+                    items.append(item);
                 counter--;
             }
             if (items.size()) {
@@ -730,8 +739,10 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
     _updateCurrentState();
     if (frozen)
         return;
-    else {}
-        //freeze_treetrace_items(count_per_page);
+    else {
+        freeze_treetrace_items(count_per_page);
+    }
+        
 }
 
 void QtWidgetsApplication1::compare_item()
@@ -766,7 +777,8 @@ void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
     QList<QTreeWidgetItem*> items;
     while (!full_queue.isEmpty() && total > 0) {
         item = full_queue[size - total];
-        items.append(item);
+        if (filter_pass_item(item))
+            items.append(item);
         total--;
     }
     if (items.size()) {
@@ -819,6 +831,26 @@ void QtWidgetsApplication1::reset_all_filters()
 {
     qDebug() << "reset_all_filters";
     if (!new_filters.isEmpty()) {
+        for (auto it = new_filters.begin(); it != new_filters.end(); ++it) {
+            int col_index = it.value()[0].toInt();
+            headerButtonList[col_index]->setIcon(QIcon(":/QtWidgetsApplication1/res/funnel-icon.ico"));
+        }
         new_filters.clear();
     }
+}
+
+bool QtWidgetsApplication1::filter_pass_item(QTreeWidgetItem* it)
+{
+    if (new_filters.isEmpty())
+        return true;
+    bool matched = true;
+    for (const auto& key : new_filters.keys()) {
+        QList<QVariant> vlist = new_filters.value(key);
+        int col_index = vlist[0].toInt();
+        int length = vlist.length();
+        QList<QVariant> slice = vlist.mid(1, length);
+        if (!slice.contains(it->text(col_index)))
+            matched = false;
+    }
+    return matched;
 }

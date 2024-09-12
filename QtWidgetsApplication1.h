@@ -81,6 +81,7 @@ private:
     bool initial_trace = true;
     QList<QString> monitor_modules;
     QHash<QString, QList<QVariant>> new_filters;
+    bool filter_pop = false;
 
 private slots:
     void startTrace();
@@ -118,4 +119,5 @@ private slots:
     void on_horizontal_scroll();
     void about();
     void reset_all_filters();
+    bool filter_pass_item(QTreeWidgetItem* it);
 };
