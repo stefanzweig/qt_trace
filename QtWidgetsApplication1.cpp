@@ -174,6 +174,7 @@ void QtWidgetsApplication1::createActions()
     connect(ui.actionmode, &QAction::triggered, this, &QtWidgetsApplication1::display_mode_switch);
     connect(ui.pushButton_search, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonSearchClicked);
     connect(ui.actionAbout, &QAction::triggered, this, &QtWidgetsApplication1::about);
+    connect(ui.actionreset, &QAction::triggered, this, &QtWidgetsApplication1::reset_all_filters);
 }
 
 void QtWidgetsApplication1::resetLayout()
@@ -468,16 +469,19 @@ void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
     else {
         headerButtonList[column_index]->setIcon(QIcon(":/QtWidgetsApplication1/res/funnel_icon_selected.ico"));
     }
+    QList<QVariant> single_config;
+    single_config.append(column_index);
+    for (int k = 0; k < items.size(); k++) {
+        for (int i = 0; i < 1; i++) {
+            QString s = items[k][i];
+            //qDebug() << "FILTER -> " << s;
+            single_config.append(s);
+        }
+    }
 
-    //for (int k = 0; k < items.size(); k++) {
-    //    for (int i = 0; i < 1; i++) {
-    //        QString s = items[k][i];
-    //        qDebug() << "FILTER -> " << s;
-    //    }
-    //}
-
-    this->calc_thread->setFilterOption(colName, items);
-    hide_filtered_items(column_index, items);
+    //this->calc_thread->setFilterOption(colName, items);
+    //hide_filtered_items(column_index, items);
+    new_filters.insert(colName, single_config);
 }
 
 
@@ -770,28 +774,6 @@ void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
         qDebug() << "FROZEN -> " << items.size();
     }
 
-    //QList<QTreeWidgetItem*> items;
-    //if (full_queue.size() >= ncount) {
-    //    for (int i = full_queue.size()-ncount; i < full_queue.size(); ++i) {
-    //        QTreeWidgetItem* item = full_queue.at(i);
-    //        items.append(item);
-    //    }
-    //    qDebug() << "freeze count -> " << items.size();
-    //}
-    //else {
-    //    int size = full_queue.size();
-    //    int counter = full_queue.size();
-    //    while (!full_queue.isEmpty() && counter > 0) {
-    //        QTreeWidgetItem* item = full_queue.at(size - counter);
-    //        items.append(item);
-    //        counter--;
-    //    }
-    //    qDebug() << "partially freeze count -> " << items.size();
-    //}
-    //if (items.size()) {
-    //    ui.treetrace->addTopLevelItems(items);
-    //    frozen = true;
-    //}
 }
 
 void QtWidgetsApplication1::adjust_filter_buttons()
@@ -831,4 +813,12 @@ void QtWidgetsApplication1::about()
     //layout->addWidget(label);
     //dialog.setLayout(layout);
     //dialog.exec();
+}
+
+void QtWidgetsApplication1::reset_all_filters()
+{
+    qDebug() << "reset_all_filters";
+    if (!new_filters.isEmpty()) {
+        new_filters.clear();
+    }
 }
