@@ -203,8 +203,9 @@ void QtWidgetsApplication1::resetLayout()
     ui.toolbar->addAction(ui.actionreset);
     initialHeaders();
 
-    ui.treetrace->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(ui.treetrace, &QTreeWidget::customContextMenuRequested, this, &QtWidgetsApplication1::prepareMenu);
+    //ui.treetrace->setContextMenuPolicy(Qt::CustomContextMenu);
+    // connect(ui.treetrace, &QTreeWidget::customContextMenuRequested, this, &QtWidgetsApplication1::prepareMenu);
+    
     connect(ui.treetrace->header(), &QHeaderView::sectionResized, this, &QtWidgetsApplication1::on_header_section_resized);
     connect(ui.treetrace->horizontalScrollBar(), &QScrollBar::valueChanged, this, &QtWidgetsApplication1::on_horizontal_scroll);
 
