@@ -646,15 +646,6 @@ void QtWidgetsApplication1::update_tracewidget()
             counter--;
         }
 
-        //if (!full_queue.isEmpty()) {
-        //    for (int i = 0; i < counter; i++) {
-        //        qDebug() << "ITEM INDEX -> " << size-i-1;
-        //        item = full_queue[size-i-1];
-        //        qDebug() << "ITEM COL 0 ->" << item->text(0);
-        //        items.append(item);
-        //    }
-        //}
-
         last_data_index = full_queue.size()-1;
         int item_size = items.size();
         int t_count = ui.treetrace->topLevelItemCount();
@@ -706,9 +697,10 @@ void QtWidgetsApplication1::update_tracewidget()
                 //int index = counter1 - capacity + full_queue.size();
                 if (counter1 < full_queue.size()) {
                     item = full_queue[counter1];
-                    if (filter_pass_item(item))
+                    if (filter_pass_item(item)) {
                         ui.treetrace->addTopLevelItem(item);
-                    counter1++;
+                        counter1++;
+                    }
                 }
                 else { break; }
             }
