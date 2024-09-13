@@ -691,20 +691,21 @@ void QtWidgetsApplication1::update_tracewidget()
 
         int counter = capacity;
         int size = full_queue.size();
-        int counter1 = 0;
+        int counter1 = 0, a=0;
         if (initial_trace) {
-            while (!full_queue.isEmpty() && counter1 < capacity) {
+            while (!full_queue.isEmpty() && a < capacity) {
                 //int index = counter1 - capacity + full_queue.size();
                 if (counter1 < full_queue.size()) {
                     item = full_queue[counter1];
                     if (filter_pass_item(item)) {
                         ui.treetrace->addTopLevelItem(item);
-                        counter1++;
+                        a++;
                     }
+                    counter1++;
                 }
                 else { break; }
             }
-            if (counter1 >= capacity)
+            if (a >= capacity)
                 initial_trace = false;
         } else if (size > counter) {
             while (!full_queue.isEmpty() && counter > 0) {
