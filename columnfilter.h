@@ -21,6 +21,7 @@ public:
     int selectedItemscount = 0;
     int columnind;
     QVector<QVector<bool>> m_selectedStates;
+    QHash<QString, QList<QVariant>> new_checks;
     int header_count = 0;
     //dgm
     

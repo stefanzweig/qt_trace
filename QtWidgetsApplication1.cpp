@@ -431,6 +431,15 @@ void QtWidgetsApplication1::headerButtonClicked()
             filter->m_selectedStates.append(QVector<bool>(distinct_count, false));
         }
     }
+
+    filter->columnIndex = columnButton;
+    filter->new_checks;
+    int column_index = filter->columnIndex;
+    QString colName = initialHeader[column_index];
+    filter->colName = colName;
+    QList<QVariant> vlist = filter->new_checks.value(colName);
+    qDebug() << vlist.length();
+
     for (int i = 0; i < ui.treetrace->invisibleRootItem()->childCount(); i++)
     {
 
@@ -453,9 +462,17 @@ void QtWidgetsApplication1::headerButtonClicked()
         QTableWidgetItem* pItem = new QTableWidgetItem(filterConfig.at(i));
         pItem->setCheckState(Qt::Unchecked);
         filter->ui->tableWidget->setItem(i, 0, pItem);
-        pItem->setCheckState(filter->m_selectedStates[columnButton].at(i) ? Qt::Checked : Qt::Unchecked);
+        QString text = pItem->text();
+        if (vlist.contains(text)) {
+            pItem->setCheckState(Qt::Checked);
+        }
+        else {
+            pItem->setCheckState(Qt::Unchecked);
+            
+        }
+        //pItem->setCheckState(filter->m_selectedStates[columnButton].at(i) ? Qt::Checked : Qt::Unchecked);
     }
-    filter->columnIndex = columnButton;
+    
     if (!filter_pop) {
         connect(filter, &columnFilterDialog::filter_apply, this, &QtWidgetsApplication1::applyFilter);
         filter_pop = true;

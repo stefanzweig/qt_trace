@@ -52,13 +52,15 @@ void columnFilterDialog::on_resetFilterButton_clicked() {
 void columnFilterDialog::on_confirmFilterButton_clicked() {
 
     QList<QList<QString>>  selectedItems;
-    for (int i = 0; i < ui->tableWidget->rowCount(); ++i) 
+    QList<QVariant> newChecks;
+    for (int i = 0; i < ui->tableWidget->rowCount(); ++i)
     {
         QTableWidgetItem* item = ui->tableWidget->item(i, 0);
         if (item->checkState() == Qt::Checked) 
         {
             QList<QString> newRow;
             newRow.append(item->text());
+            newChecks.append(item->text());
             selectedItems.append(newRow);
             m_selectedStates[columnButton][i] = true;
         }
@@ -66,6 +68,7 @@ void columnFilterDialog::on_confirmFilterButton_clicked() {
             m_selectedStates[columnButton][i] = false;
         }
     }
+    new_checks.insert(colName, newChecks);
     accept();
     emit filter_apply(selectedItems, selectedItemscount);
 }
