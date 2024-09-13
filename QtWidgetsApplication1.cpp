@@ -153,9 +153,10 @@ void QtWidgetsApplication1::_updateCurrentState()
     ui.statusBar->showMessage(status_string);
 
     int ncount = ui.treetrace->topLevelItemCount();
-    leftLabel->setText(QString("Previous Count: %1").arg(ncount));
     QString strRight = QString("Page Capacity: %1").arg(page_capacity);
+    QString strLeft = QString("Current: %1").arg(ncount);
     rightLabel->setText(strRight);
+    leftLabel->setText(strLeft);
 }
 
 void QtWidgetsApplication1::updateState()
@@ -739,9 +740,8 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
     _updateCurrentState();
     if (frozen)
         return;
-    else {
-        freeze_treetrace_items(count_per_page);
-    }
+    else {}
+    //freeze_treetrace_items(count_per_page);
         
 }
 
