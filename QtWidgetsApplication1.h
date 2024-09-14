@@ -109,8 +109,8 @@ private slots:
     void ButtonSearchClicked();
     void dustbin();
     void updateToolbar();
-    void update_tracewidget();
-    void update_tracewidget_refresh();
+    void update_tracewindow();
+    void get_refreshed_items();
     void trace_scroll_changed(int value);
     bool new_session();
     void freeze_treetrace_items(int ncount);
@@ -120,4 +120,10 @@ private slots:
     void about();
     void reset_all_filters();
     bool filter_pass_item(QTreeWidgetItem* it);
+    void update_tracewidget_outdate();
+    void refresh_full_tree(int capacity);
+    void fill_partial_tree(int capacity);
+    void fill_empty_tree(int capacity);
+    void fill_up_to_count(int count);
+    void draw_trace_window(int capacity);
 };
