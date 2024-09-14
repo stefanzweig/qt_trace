@@ -663,7 +663,7 @@ void QtWidgetsApplication1::update_tracewidget()
             counter--;
         }
 
-        last_data_index = full_queue.size()-1;
+        last_data_index = size-1;
         int item_size = items.size();
         int t_count = ui.treetrace->topLevelItemCount();
         int changes = std::min(item_size, t_count);
@@ -711,8 +711,7 @@ void QtWidgetsApplication1::update_tracewidget()
         int counter1 = 0, a=0;
         if (initial_trace) {
             while (!full_queue.isEmpty() && a < capacity) {
-                //int index = counter1 - capacity + full_queue.size();
-                if (counter1 < full_queue.size()) {
+                if (counter1 < size) {
                     item = full_queue[counter1];
                     if (filter_pass_item(item)) {
                         ui.treetrace->addTopLevelItem(item);
@@ -824,7 +823,7 @@ void QtWidgetsApplication1::about()
 {
     QMessageBox::about(this, tr("ZoneTracer"),
        tr("<center><b>ZoneTracer</b> \n"
-            "version 0.1a</center>"));
+            "v0.1a</center>"));
 
     //QDialog dialog;
     //dialog.setWindowTitle("About");
@@ -848,6 +847,7 @@ void QtWidgetsApplication1::reset_all_filters()
         }
         new_filters.clear();
     }
+    filter->new_checks.clear();
 }
 
 bool QtWidgetsApplication1::filter_pass_item(QTreeWidgetItem* it)
