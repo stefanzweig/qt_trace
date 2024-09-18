@@ -333,7 +333,6 @@ void QtWidgetsApplication1::stopTrace()
     qDebug() << "stopTrace...DONE";
     frozen = true;
     freeze_treetrace_items(count_per_page);
-
 }
 
 void QtWidgetsApplication1::pauseTrace()
