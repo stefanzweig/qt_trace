@@ -180,16 +180,12 @@ void QtWidgetsApplication1::createActions()
 
 void QtWidgetsApplication1::resetLayout()
 {
-    //qDebug() << "resetLayout...";
-
     // will be removed later.
     //QAction* action = new QAction("Temp Action");
     //ui.menu->addAction(action);
     //connect(action, &QAction::triggered, this, &QtWidgetsApplication1::onActionTriggered);
 
     // icons
-    //ui.menu->setIcon(QIcon(":/QtWidgetsApplication1/res/sqlitestudio.ico"));
-
     ui.actionpause->setIcon(QIcon(":/QtWidgetsApplication1/res/pause.svg"));
     ui.actionstart->setIcon(QIcon(":/QtWidgetsApplication1/res/play.svg"));
     ui.actionstop->setIcon(QIcon(":/QtWidgetsApplication1/res/maximize.svg"));
@@ -212,6 +208,7 @@ void QtWidgetsApplication1::resetLayout()
     datachoice = ui.comboBox;
     connect(datachoice, &QComboBox::currentTextChanged, this, &QtWidgetsApplication1::ChangeHeader);
     connect(ui.treetrace->verticalScrollBar(), &QScrollBar::valueChanged, this, &QtWidgetsApplication1::trace_scroll_changed);
+    setWindowIcon(QIcon(":/QtWidgetsApplication1/res/spreadsheet.png"));
     updateToolbar();
 }
 
@@ -630,8 +627,8 @@ void QtWidgetsApplication1::get_refreshed_items()
 void QtWidgetsApplication1::update_tracewindow()
 {
     int queue_size = full_queue.size()-1;
-    if (queue_size)
-        qDebug() << "QUEUE_SIZE -> " << queue_size << "LAST ITEM COLUMN COUNTS" << full_queue[queue_size - 1]->columnCount();
+    if (queue_size > 0)
+        qDebug() << "QUEUE_SIZE -> " << queue_size << "LAST ITEM COLUMN COUNTS" << full_queue[queue_size-1]->columnCount();
 
      QSize itemSize;
      QTreeWidget* tree = ui.treetrace;
@@ -657,6 +654,7 @@ void QtWidgetsApplication1::update_tracewindow()
          fill_empty_tree(capacity);
      }
      ui.treetrace->scrollToBottom();
+     ui.treetrace->setCurrentItem(invisible_root_item);
 }
 
 void QtWidgetsApplication1::refresh_full_tree(int capacity)

@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/QtWidgetsApplication1">
+    <file>res/spreadsheet.png</file>
     <file>res/maximize.svg</file>
     <file>res/stop.svg</file>
     <file>res/plus.svg</file>
