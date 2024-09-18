@@ -903,6 +903,12 @@ void QtWidgetsApplication1::reset_all_filters()
 
 bool QtWidgetsApplication1::filter_pass_item(QTreeWidgetItem* it)
 {
+    if (calc_thread->isRUN() && it) {
+        int children_count = it->childCount();
+        if (children_count>0) {
+            return false;
+        }
+    }
     if (new_filters.isEmpty())
         return true;
     bool matched = true;

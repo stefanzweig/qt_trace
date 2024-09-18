@@ -26,6 +26,7 @@ public:
     uint64_t full_count_canframes = 0;
     bool isSTOPPED() { return is_stop; };
     bool isPAUSED() { return is_paused; }
+    bool isRUN() { return (!is_stop && !is_paused); }
     QList<QString> monitor_modules;
 
 public slots:
