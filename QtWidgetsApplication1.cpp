@@ -629,7 +629,7 @@ void QtWidgetsApplication1::get_refreshed_items()
 
 void QtWidgetsApplication1::update_tracewindow()
 {
-    int queue_size = full_queue.size();
+    int queue_size = full_queue.size()-1;
     if (queue_size)
         qDebug() << "QUEUE_SIZE -> " << queue_size << "LAST ITEM COLUMN COUNTS" << full_queue[queue_size - 1]->columnCount();
 
@@ -678,7 +678,7 @@ void QtWidgetsApplication1::draw_trace_window(int capacity)
 {
     qDebug() << "DRAW TRACE WINDOW ->" << capacity;
 
-    int queue_size = full_queue.size();
+    int queue_size = full_queue.size()-1;
     if (!queue_size) return;
 
     QTreeWidget* tree = ui.treetrace;
@@ -709,7 +709,7 @@ void QtWidgetsApplication1::fill_up_to_count(int count)
 {
     qDebug() << "UPTO ->" << count;
 
-    int queue_size = full_queue.size();
+    int queue_size = full_queue.size()-1;
     if (!queue_size) return;
 
     QTreeWidget* tree = ui.treetrace;
@@ -733,7 +733,7 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 {
     qDebug() << "PARTIAL ->" << capacity;
 
-    int queue_size = full_queue.size();
+    int queue_size = full_queue.size()-1;
     if (!queue_size) return;
     
     QTreeWidget* tree = ui.treetrace;
@@ -756,7 +756,7 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 void QtWidgetsApplication1::fill_empty_tree(int capacity)
 {
     qDebug() << "EMPTY ->"<< capacity;
-    int queue_size = full_queue.size();
+    int queue_size = full_queue.size()-1;
     if (!queue_size) return;
     QTreeWidgetItem* it=nullptr;
     int changes = std::min(queue_size, capacity);
@@ -813,10 +813,10 @@ void QtWidgetsApplication1::compare_item()
 void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
 {
     if (frozen) return;
-    qDebug() << "BEFORE CLEARING -> " << full_queue.size();
+    qDebug() << "BEFORE CLEARING -> " << full_queue.size()-1;
     ui.treetrace->clear();
-    qDebug() << "AFETR CLEARING -> " << full_queue.size();
-    int size = full_queue.size();
+    qDebug() << "AFETR CLEARING -> " << full_queue.size()-1;
+    int size = full_queue.size()-1;
     int total = std::min(size, ncount);
     QTreeWidgetItem* item;
     QList<QTreeWidgetItem*> items;
@@ -912,7 +912,7 @@ void QtWidgetsApplication1::update_tracewidget_outdate()
 
         QTreeWidgetItem* item = nullptr;
         QList<QTreeWidgetItem*> items;
-        int size = full_queue.size();
+        int size = full_queue.size()-1;
         int counter = std::min(capacity, size);
 
         qDebug() << "CAPACITY -> " << capacity;
@@ -963,7 +963,7 @@ void QtWidgetsApplication1::update_tracewidget_outdate()
             capacity = page_capacity;
 
         int counter = capacity;
-        int size = full_queue.size();
+        int size = full_queue.size()-1;
         int counter1 = 0, a = 0;
         if (initial_trace) {
             while (size && a < capacity) {
