@@ -125,13 +125,20 @@ void QtWidgetsApplication1::init()
 void QtWidgetsApplication1::get_default_configurations()
 {
     QSettings settings("settings.ini", QSettings::IniFormat);
+
     int kv = settings.value("app/DDS_DomainId", 90).toInt();
     qDebug() << "Setting -> " << kv;
     dds_domainid = kv;
+
     kv = settings.value("app/page_capacity", 300).toInt();
     page_capacity = kv;
+
     kv = settings.value("app/count_per_page", 300).toInt();
     count_per_page = kv;
+
+    kv = settings.value("app/padding", 1).toInt();
+    padding = kv;
+
     QList<QVariant> modules = settings.value("app/modules").toList();
     qDebug() << "Modules -> " << modules;
     for (QVariant m : modules) {
@@ -626,7 +633,7 @@ void QtWidgetsApplication1::get_refreshed_items()
 
 void QtWidgetsApplication1::update_tracewindow()
 {
-    int queue_size = full_queue.size()-1;
+    int queue_size = full_queue.size()-padding;
     if (queue_size > 0)
         qDebug() << "QUEUE_SIZE -> " << queue_size << "LAST ITEM COLUMN COUNTS" << full_queue[queue_size-1]->columnCount();
 
@@ -676,7 +683,7 @@ void QtWidgetsApplication1::draw_trace_window(int capacity)
 {
     qDebug() << "DRAW TRACE WINDOW ->" << capacity;
 
-    int queue_size = full_queue.size()-1;
+    int queue_size = full_queue.size()-padding;
     if (!queue_size) return;
 
     QTreeWidget* tree = ui.treetrace;
@@ -707,7 +714,7 @@ void QtWidgetsApplication1::fill_up_to_count(int count)
 {
     qDebug() << "UPTO ->" << count;
 
-    int queue_size = full_queue.size()-1;
+    int queue_size = full_queue.size()-padding;
     if (!queue_size) return;
 
     QTreeWidget* tree = ui.treetrace;
@@ -731,7 +738,7 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 {
     qDebug() << "PARTIAL ->" << capacity;
 
-    int queue_size = full_queue.size()-1;
+    int queue_size = full_queue.size()-padding;
     if (!queue_size) return;
     
     QTreeWidget* tree = ui.treetrace;
@@ -754,7 +761,7 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 void QtWidgetsApplication1::fill_empty_tree(int capacity)
 {
     qDebug() << "EMPTY ->"<< capacity;
-    int queue_size = full_queue.size()-1;
+    int queue_size = full_queue.size()-padding;
     if (!queue_size) return;
     QTreeWidgetItem* it=nullptr;
     int changes = std::min(queue_size, capacity);
@@ -811,10 +818,10 @@ void QtWidgetsApplication1::compare_item()
 void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
 {
     if (frozen) return;
-    qDebug() << "BEFORE CLEARING -> " << full_queue.size()-1;
+    qDebug() << "BEFORE CLEARING -> " << full_queue.size()-padding;
     ui.treetrace->clear();
-    qDebug() << "AFETR CLEARING -> " << full_queue.size()-1;
-    int size = full_queue.size()-1;
+    qDebug() << "AFETR CLEARING -> " << full_queue.size()-padding;
+    int size = full_queue.size()-padding;
     int total = std::min(size, ncount);
     QTreeWidgetItem* item;
     QList<QTreeWidgetItem*> items;
@@ -910,7 +917,7 @@ void QtWidgetsApplication1::update_tracewidget_outdate()
 
         QTreeWidgetItem* item = nullptr;
         QList<QTreeWidgetItem*> items;
-        int size = full_queue.size()-1;
+        int size = full_queue.size()-padding;
         int counter = std::min(capacity, size);
 
         qDebug() << "CAPACITY -> " << capacity;
@@ -961,7 +968,7 @@ void QtWidgetsApplication1::update_tracewidget_outdate()
             capacity = page_capacity;
 
         int counter = capacity;
-        int size = full_queue.size()-1;
+        int size = full_queue.size()-padding;
         int counter1 = 0, a = 0;
         if (initial_trace) {
             while (size && a < capacity) {

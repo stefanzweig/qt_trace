@@ -77,6 +77,7 @@ private:
     int page_capacity = 4000;
     int dds_domainid = 90;
     int last_data_index = -1;
+    int padding = 1;
     bool frozen = false;
     bool initial_trace = true;
     QList<QString> monitor_modules;
