@@ -7,7 +7,8 @@
 #include <QScrollBar>
 #include <QLabel>
 #include <QMessageBox>
-
+#include <QDateTime>
+#include <QTime>
 
 QSize getItemSize(QTreeWidgetItem* item, int column, const QFont& font) {
     QFontMetrics fontMetrics(font);
@@ -113,7 +114,7 @@ void QtWidgetsApplication1::init()
 
     resetLayout();
     resetStatusBar();
-    _updateCurrentState();
+    
 
     setupTreeTrace();
     filter = new columnFilterDialog(this);
@@ -148,6 +149,10 @@ void QtWidgetsApplication1::get_default_configurations()
 
 void QtWidgetsApplication1::_updateCurrentState()
 {
+}
+
+void QtWidgetsApplication1::updateProgressTimer() 
+{
     QString runStatus = "";
     if (calc_thread->isSTOPPED())
         runStatus = "READY. ";
@@ -160,17 +165,22 @@ void QtWidgetsApplication1::_updateCurrentState()
     ui.statusBar->showMessage(status_string);
 
     int ncount = ui.treetrace->topLevelItemCount();
-    QString strRight = QString("Page Capacity: %1").arg(page_capacity);
     QString strLeft = QString("Current: %1").arg(ncount);
-    rightLabel->setText(strRight);
     leftLabel->setText(strLeft);
+
+    QString strRight; //  = QString("Page Capacity: %1").arg(page_capacity);
+    QDateTime end_time = QDateTime::currentDateTime();
+    qint64 secondsDifference = start_time.secsTo(end_time);
+    QTime time = QTime::fromMSecsSinceStartOfDay(secondsDifference * 1000);
+    strRight = time.toString("hh:mm:ss");    
+    rightLabel->setText(strRight);
 }
 
 void QtWidgetsApplication1::updateState()
 {
     update_tracewindow();
     //ui.treetrace->scrollToBottom();
-    _updateCurrentState();
+    
 }
 
 void QtWidgetsApplication1::createActions()
@@ -279,10 +289,11 @@ void QtWidgetsApplication1::startTrace()
 {
     qDebug() << "startTrace...";
 
-    if (!new_session())
+    if (!new_session()) 
         return;
 
     ui.treetrace->clear();
+    start_time = QDateTime::currentDateTime();
     resumeTrace();
 }
 void QtWidgetsApplication1::resumeTrace()
@@ -302,7 +313,9 @@ void QtWidgetsApplication1::resumeTrace()
     calc_thread->setCanParserSubscriber(mysub_can_parser, samples, ui.treetrace);
     calc_thread->start();
     timer->start(TIMER_HEARTBEAT);
+    timer_dustbin->start(TIMER_HEARTBEAT);
     frozen = false;
+    progress_secs = start_time.secsTo(end_time);
     updateToolbar();
 }
 
@@ -311,11 +324,12 @@ void QtWidgetsApplication1::stopTrace()
     qDebug() << "stopTrace...";
     calc_thread->stopThread();
     timer->stop();
+    timer_dustbin->stop();
     mysub_can_frames = nullptr;
     mysub_can_parser = nullptr;
     initial_trace = true;
     updateToolbar();
-    _updateCurrentState();
+    
     qDebug() << "stopTrace...DONE";
     frozen = true;
     freeze_treetrace_items(count_per_page);
@@ -338,7 +352,7 @@ void QtWidgetsApplication1::pauseTrace()
     //updateState();
     freeze_treetrace_items(count_per_page);
     updateToolbar();
-    _updateCurrentState();
+    
 }
 
 
@@ -583,7 +597,7 @@ void QtWidgetsApplication1::hide_filtered_items(int column_idx, QList<QList<QStr
 
 void QtWidgetsApplication1::dustbin()
 {
-    return;
+    updateProgressTimer();
 }
 
 void QtWidgetsApplication1::updateToolbar()
@@ -785,7 +799,7 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
     calc_thread->pauseThread();
     timer->stop();
     updateToolbar();
-    _updateCurrentState();
+    
     if (frozen)
         return;
     else {

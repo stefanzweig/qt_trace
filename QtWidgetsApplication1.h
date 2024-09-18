@@ -83,6 +83,9 @@ private:
     QList<QString> monitor_modules;
     QHash<QString, QList<QVariant>> new_filters;
     bool filter_pop = false;
+    QDateTime start_time;
+    QDateTime end_time;
+    qint64 progress_secs;
 
 private slots:
     void startTrace();
@@ -127,4 +130,5 @@ private slots:
     void fill_empty_tree(int capacity);
     void fill_up_to_count(int count);
     void draw_trace_window(int capacity);
+    void updateProgressTimer();
 };
