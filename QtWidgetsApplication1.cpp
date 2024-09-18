@@ -731,13 +731,12 @@ void QtWidgetsApplication1::draw_trace_window(int capacity)
 
 }
 
-
 void QtWidgetsApplication1::fill_up_to_count(int count)
 {
     qDebug() << "UPTO ->" << count;
 
     int queue_size = full_queue.size()-padding;
-    if (!queue_size) return;
+    if (queue_size <= 0) return;
 
     QTreeWidget* tree = ui.treetrace;
     QTreeWidgetItem* it = nullptr;
@@ -749,7 +748,7 @@ void QtWidgetsApplication1::fill_up_to_count(int count)
         qDebug() << "UPTO PAGE CHANGES ->" << changes;
         for (int i = 1; i <= changes; i++) {
             it = full_queue.at(queue_size - i);
-            if (filter_pass_item(it)) {
+            if (it != nullptr && filter_pass_item(it)) {
                 ui.treetrace->addTopLevelItem(it);
             }
         }

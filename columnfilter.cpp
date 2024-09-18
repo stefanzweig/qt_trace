@@ -19,6 +19,19 @@ void columnFilterDialog::init() {
     if (!connected) {
         connect(ui->confirmFilterButton, &QPushButton::clicked, this, &columnFilterDialog::on_confirmFilterButton_clicked);
         connect(ui->resetFilterButton, &QPushButton::clicked, this, &columnFilterDialog::on_resetFilterButton_clicked);
+        ui->resetFilterButton->setIcon(QIcon(":/QtWidgetsApplication1/res/tick.svg"));
+        ui->confirmFilterButton->setIcon(QIcon(":/QtWidgetsApplication1/res/info.svg"));
+
+        ui->resetFilterButton->setStyleSheet("QPushButton { background-color: #4CAF50; color: white; border-radius: 3px; }"
+            "QPushButton:hover { background-color: #45a049; }"
+            "QPushButton:pressed { background-color: #397d3b; }");
+
+        ui->confirmFilterButton->setStyleSheet("QPushButton { background-color: #4CAF50; color: white; border-radius: 3px; }"
+            "QPushButton:hover { background-color: #45a049; }"
+            "QPushButton:pressed { background-color: #397d3b; }");
+
+        ui->confirmFilterButton->setAutoDefault(true);
+        setWindowTitle(tr("Filter"));
         connected = true;
     }
 }
