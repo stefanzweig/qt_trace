@@ -810,8 +810,8 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
     if (frozen)
         return;
     else {
-        //freeze_treetrace_items(count_per_page);
-        //frozen = true;
+        freeze_treetrace_items(count_per_page);
+        frozen = true;
     }
         
 }
@@ -839,24 +839,39 @@ void QtWidgetsApplication1::compare_item()
 void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
 {
     if (frozen) return;
-    qDebug() << "BEFORE CLEARING -> " << full_queue.size()-padding;
+    int size = full_queue.size() - padding;
+    qDebug() << "TARGET COUNT -> " << ncount;
+    qDebug() << "BEFORE CLEARING -> " << size;
     ui.treetrace->clear();
     qDebug() << "AFETR CLEARING -> " << full_queue.size()-padding;
-    int size = full_queue.size()-padding;
     int total = std::min(size, ncount);
-    QTreeWidgetItem* item;
-    QList<QTreeWidgetItem*> items;
-    while (total > 0) {
-        item = full_queue[size - total];
-        if (filter_pass_item(item))
-            items.append(item);
-        total--;
+    qDebug() << "TOTAL -> " << total;
+    QTreeWidgetItem* item = nullptr;
+    QList<QTreeWidgetItem*> item_list;
+    item_list.clear();
+    for (int i = 1; i <= total; i++)
+    {
+        item = full_queue[size - i];
+        if (filter_pass_item(item)) {
+            item_list.append(item);
+        }
     }
-    if (items.size()) {
-        ui.treetrace->addTopLevelItems(items);
-        qDebug() << "FROZEN -> " << items.size();
+    if (item_list.size()) 
+    {
+        ui.treetrace->addTopLevelItems(item_list);
+        qDebug() << "FROZEN -> " << item_list.size();
     }
 
+    //while (total > 0) {
+    //    item = full_queue[size - total];
+    //    if (filter_pass_item(item))
+    //        items.append(item);
+    //    total--;
+    //}
+    //if (items.size()) {
+    //    ui.treetrace->addTopLevelItems(items);
+    //    qDebug() << "FROZEN -> " << items.size();
+    //}
 }
 
 void QtWidgetsApplication1::adjust_filter_buttons()
@@ -904,9 +919,15 @@ void QtWidgetsApplication1::reset_all_filters()
 bool QtWidgetsApplication1::filter_pass_item(QTreeWidgetItem* it)
 {
     if (calc_thread->isRUN() && it) {
-        int children_count = it->childCount();
-        if (children_count>0) {
-            return false;
+        try 
+        {
+            int children_count = it->childCount();
+            if (children_count > 0) {
+                return false;
+            }
+        }
+        catch (...)
+        {
         }
     }
     if (new_filters.isEmpty())
