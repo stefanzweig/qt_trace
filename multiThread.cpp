@@ -208,14 +208,14 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
     QStringList filter_value = {};
     bool bFilter = false;
     last_timestamp_canframe = frame.Timestamp;
-    if (filter_items.size() > 0) {
-        bFilter = true;
-        for (int k = 0; k < filter_items.size(); k++) {
-            for (int i = 0; i < 1; i++) {
-                filter_value.append(filter_items[k][i]);
-            }
-        }
-    }
+    // if (filter_items.size() > 0) {
+    //     bFilter = true;
+    //     for (int k = 0; k < filter_items.size(); k++) {
+    //         for (int i = 0; i < 1; i++) {
+    //             filter_value.append(filter_items[k][i]);
+    //         }
+    //     }
+    // }
 
     QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(frame.Timestamp / 1000000);
     str.append(timestamp.toString("hh:mm:ss.zzz"));
@@ -234,53 +234,53 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
     QTreeWidgetItem* Item = new QTreeWidgetItem(str);
 
     if (/*bFilter*/ 0) {
-        if (filter_colName == "Chn")
-        {
-            if (filter_value.contains(QString::number(frame.Chn))) {
-                emit(popToRoot(Item));
-            }                
-        }
-        if (filter_colName == "ID")
-        {
-            QString hexv = QString::number(frame.ID, 16).toUpper();
-            if (filter_value.contains(hexv)) {
-                emit(popToRoot(Item));
-            }
-        }
+        // if (filter_colName == "Chn")
+        // {
+        //     if (filter_value.contains(QString::number(frame.Chn))) {
+        //         emit(popToRoot(Item));
+        //     }                
+        // }
+        // if (filter_colName == "ID")
+        // {
+        //     QString hexv = QString::number(frame.ID, 16).toUpper();
+        //     if (filter_value.contains(hexv)) {
+        //         emit(popToRoot(Item));
+        //     }
+        // }
 
-        if (filter_colName == "Dir")
-        {
-            if (filter_value.contains(frame.Dir)) {
-                emit(popToRoot(Item));
-            }
-        }
+        // if (filter_colName == "Dir")
+        // {
+        //     if (filter_value.contains(frame.Dir)) {
+        //         emit(popToRoot(Item));
+        //     }
+        // }
 
-        if (filter_colName == "DLC")
-        {
-            QString hexv = QString::number(frame.DLC);
-            if (filter_value.contains(hexv)) {
-                emit(popToRoot(Item));
-            }
-        }
-        if (filter_colName == "EventType")
-        {
-            if (filter_value.contains(frame.EventType)) {
-                emit(popToRoot(Item));
-            }
-        }
-        if (filter_colName == "DataLength")
-        {
-            QString hexv = QString::number(frame.DataLength);
-            if (filter_value.contains(hexv)) {
-                emit(popToRoot(Item));
-            }
-        }
-        if (filter_colName == "BusType")
-        {
-            if (filter_value.contains(frame.BusType)) {
-                emit(popToRoot(Item));
-            }
-        }
+        // if (filter_colName == "DLC")
+        // {
+        //     QString hexv = QString::number(frame.DLC);
+        //     if (filter_value.contains(hexv)) {
+        //         emit(popToRoot(Item));
+        //     }
+        // }
+        // if (filter_colName == "EventType")
+        // {
+        //     if (filter_value.contains(frame.EventType)) {
+        //         emit(popToRoot(Item));
+        //     }
+        // }
+        // if (filter_colName == "DataLength")
+        // {
+        //     QString hexv = QString::number(frame.DataLength);
+        //     if (filter_value.contains(hexv)) {
+        //         emit(popToRoot(Item));
+        //     }
+        // }
+        // if (filter_colName == "BusType")
+        // {
+        //     if (filter_value.contains(frame.BusType)) {
+        //         emit(popToRoot(Item));
+        //     }
+        // }
     }
     else {
         emit(popToRoot(Item));
