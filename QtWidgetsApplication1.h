@@ -131,4 +131,6 @@ private slots:
     void fill_up_to_count(int count);
     void draw_trace_window(int capacity);
     void updateProgressTimer();
+    bool showNewSession();
+    void clearance();
 };

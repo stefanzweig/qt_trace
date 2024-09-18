@@ -137,6 +137,7 @@
     <ClInclude Include="columnfilterdialog.h" />
     <ClInclude Include="core_global.h" />
     <QtMoc Include="topicData\ZoneMasterCanMessageDataListener.h" />
+    <ClInclude Include="newsession_dialog.h" />
     <ClInclude Include="topicData\ZoneMasterCanMessageDataSubscriber.h" />
     <QtMoc Include="DataTreeView.h" />
     <QtMoc Include="DataTreeItemDelegate.h" />

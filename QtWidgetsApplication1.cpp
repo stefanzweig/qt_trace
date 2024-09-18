@@ -9,6 +9,8 @@
 #include <QMessageBox>
 #include <QDateTime>
 #include <QTime>
+#include "newsession_dialog.h"
+
 
 QSize getItemSize(QTreeWidgetItem* item, int column, const QFont& font) {
     QFontMetrics fontMetrics(font);
@@ -271,16 +273,24 @@ void QtWidgetsApplication1::onActionTriggered()
     qDebug() << tr("菜单项已触发！");
 }
 
+
+void QtWidgetsApplication1::clearance()
+{
+    calc_thread->full_count_canframes = 0;
+    calc_thread->full_count_canparser = 0;
+    full_queue.clear();
+    ui.treetrace->clear();
+}
+
 bool QtWidgetsApplication1::new_session()
 {
     int ncount = ui.treetrace->topLevelItemCount();
+    if (!ncount) return true;
     if (ncount) {
         leftLabel->setText(QString("Previous Count: %1").arg(ncount));
     }
-    if (true) {
-        calc_thread->full_count_canframes = 0;
-        calc_thread->full_count_canparser = 0;
-        full_queue.clear();
+    if (showNewSession()) {
+        clearance();
     }
     return true;
 }
@@ -292,7 +302,6 @@ void QtWidgetsApplication1::startTrace()
     if (!new_session()) 
         return;
 
-    ui.treetrace->clear();
     start_time = QDateTime::currentDateTime();
     resumeTrace();
 }
@@ -858,7 +867,8 @@ void QtWidgetsApplication1::adjust_filter_buttons()
     for (int i = 0; i < headerButtonList.count(); i++) {
         QPushButton* button = headerButtonList[i];
         int length = header->sectionPosition(i) + header->sectionSize(i);
-        button->setGeometry(length-20, 2, 17, 17);
+        button->setGeometry(length-20, 2, 16, 16);
+        //qDebug() << "Length -> " << length << "COL -> " << i;
     }
 }
 
@@ -1015,3 +1025,17 @@ void QtWidgetsApplication1::update_tracewidget_outdate()
     ui.treetrace->scrollToBottom();
 }
 
+bool QtWidgetsApplication1::showNewSession() 
+{
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::warning(this, "Warning",
+        tr("New Session?"),
+        QMessageBox::Yes | QMessageBox::No);
+
+    if (reply == QMessageBox::Yes) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
