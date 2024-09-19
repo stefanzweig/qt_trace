@@ -204,88 +204,31 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
 
     if (is_paused) { return; }
 
-    QStringList str = {};
+    QStringList can_list = {};
     QStringList filter_value = {};
     bool bFilter = false;
     last_timestamp_canframe = frame.Timestamp;
-    // if (filter_items.size() > 0) {
-    //     bFilter = true;
-    //     for (int k = 0; k < filter_items.size(); k++) {
-    //         for (int i = 0; i < 1; i++) {
-    //             filter_value.append(filter_items[k][i]);
-    //         }
-    //     }
-    // }
 
     QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(frame.Timestamp / 1000000);
-    str.append(timestamp.toString("hh:mm:ss.zzz"));
-    str.append("CAN " +QString::number(frame.Chn));
-    str.append(QString::number(frame.ID, 16).toUpper());
-    str.append("CAN Frame");
+    can_list.append(timestamp.toString("hh:mm:ss.zzz"));
+    can_list.append("CAN " +QString::number(frame.Chn));
+    can_list.append(QString::number(frame.ID, 16).toUpper());
+    can_list.append("CAN Frame");
+
     QString sDir = "Rx";
     if (frame.Dir == "1") sDir = "Tx";
-    str.append(sDir);
-    str.append(QString::number(frame.DLC));
-    str.append(frame.EventType);
-    str.append(QString::number(frame.DataLength));
-    str.append(frame.BusType);
+    can_list.append(sDir);
+    
+    can_list.append(QString::number(frame.DLC));
+    can_list.append(frame.EventType);
+    can_list.append(QString::number(frame.DataLength));
+    can_list.append(frame.BusType);
+    
     QString myData = frame.Data_Str;
-    str.append(myData);
-    //QTreeWidgetItem* Item = new QTreeWidgetItem(str);
-    QTreeWidgetItem Item(str);
-
-    if (/*bFilter*/ 0) {
-        // if (filter_colName == "Chn")
-        // {
-        //     if (filter_value.contains(QString::number(frame.Chn))) {
-        //         emit(popToRoot(Item));
-        //     }                
-        // }
-        // if (filter_colName == "ID")
-        // {
-        //     QString hexv = QString::number(frame.ID, 16).toUpper();
-        //     if (filter_value.contains(hexv)) {
-        //         emit(popToRoot(Item));
-        //     }
-        // }
-
-        // if (filter_colName == "Dir")
-        // {
-        //     if (filter_value.contains(frame.Dir)) {
-        //         emit(popToRoot(Item));
-        //     }
-        // }
-
-        // if (filter_colName == "DLC")
-        // {
-        //     QString hexv = QString::number(frame.DLC);
-        //     if (filter_value.contains(hexv)) {
-        //         emit(popToRoot(Item));
-        //     }
-        // }
-        // if (filter_colName == "EventType")
-        // {
-        //     if (filter_value.contains(frame.EventType)) {
-        //         emit(popToRoot(Item));
-        //     }
-        // }
-        // if (filter_colName == "DataLength")
-        // {
-        //     QString hexv = QString::number(frame.DataLength);
-        //     if (filter_value.contains(hexv)) {
-        //         emit(popToRoot(Item));
-        //     }
-        // }
-        // if (filter_colName == "BusType")
-        // {
-        //     if (filter_value.contains(frame.BusType)) {
-        //         emit(popToRoot(Item));
-        //     }
-        // }
-    }
-    else {
-        emit(popToRoot(&Item));
-    }
+    can_list.append(myData);
+    
+    QTreeWidgetItem* Item = new QTreeWidgetItem(can_list);
+    emit(popToRoot(Item));
 }
 
 void multiThread::setFilterOption(QString colName, QList<QList<QString>> items)

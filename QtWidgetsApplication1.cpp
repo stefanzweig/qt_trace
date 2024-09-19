@@ -10,7 +10,8 @@
 #include <QDateTime>
 #include <QTime>
 #include "newsession_dialog.h"
-
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/basic_file_sink.h"
 
 QSize getItemSize(QTreeWidgetItem* item, int column, const QFont& font) {
     QFontMetrics fontMetrics(font);
@@ -131,6 +132,18 @@ void QtWidgetsApplication1::init()
     filter = new columnFilterDialog(this);
     ui.treetrace->setAttribute(Qt::WA_OpaquePaintEvent);
     ui.treetrace->setAttribute(Qt::WA_NoSystemBackground);
+
+    try
+    {
+        auto logger = spdlog::basic_logger_mt("basic_logger", "logs/basic-log.txt");
+        logger->info("Welcome to spdlog!");
+        logger->error("Some error message with arg: {}", 1);
+    }
+    catch (const spdlog::spdlog_ex& ex)
+    {
+        std::cout << "Log init failed: " << ex.what() << std::endl;
+    }
+
     showMaximized();
 }
 
@@ -365,8 +378,6 @@ void QtWidgetsApplication1::pauseTrace()
     qDebug() << "pauseTrace...";
     calc_thread->pauseThread();
     timer->stop();
-    //timer_dustbin->stop();
-    //updateState();
     freeze_treetrace_items(count_per_page);
     updateToolbar();
     
@@ -679,20 +690,22 @@ void QtWidgetsApplication1::update_tracewindow()
      visible_height = v_height;
      item_height = itemSize.height();
      item_width = itemSize.width();
-     //qDebug() << "CAPACITY -> " << capacity;
+     qDebug() << "CAPACITY -> " << capacity;
 
      int tree_count = tree->topLevelItemCount();
      if (tree_count >= capacity) {
+         qDebug() << "==== REDRAW TREE ====";
          refresh_full_tree(capacity);
      }
      else if (tree_count) {
+         qDebug() << "==== HALF TREE ====";
          fill_partial_tree(capacity);
      }
      else if (!tree_count) {
+         qDebug() << "==== EMPTY TREE ====";
          fill_empty_tree(capacity);
      }
      ui.treetrace->scrollToBottom();
-     ui.treetrace->setCurrentItem(invisible_root_item);
 }
 
 void QtWidgetsApplication1::refresh_full_tree(int capacity)
@@ -790,7 +803,7 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 
 void QtWidgetsApplication1::fill_empty_tree(int capacity)
 {
-    qDebug() << "EMPTY -> "<< capacity;
+    qDebug() << "EMPTY TREE -> "<< capacity;
     int queue_size = full_queue.size()-padding;
     if (queue_size<=0) return;
     QTreeWidgetItem* it=nullptr;
@@ -801,10 +814,12 @@ void QtWidgetsApplication1::fill_empty_tree(int capacity)
         for (int i = 1; i <= changes; i++) {
             int idx = queue_size - i;
             it = full_queue.at(idx);
-            qDebug() << "ITEM INDEX ->" << idx;
-            qDebug() << "ITEM  TIMESTAMP ->" << it->text(0);
-            if (filter_pass_item(it)) {
-                ui.treetrace->addTopLevelItem(it);
+            if (it) {
+                qDebug() << "ITEM INDEX ->" << idx;
+                qDebug() << "ITEM  TIMESTAMP ->" << it->text(0);
+                if (filter_pass_item(it)) {
+                    ui.treetrace->addTopLevelItem(it);
+                }
             }
         }
     }
