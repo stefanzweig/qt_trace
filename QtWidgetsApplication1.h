@@ -124,7 +124,7 @@ private slots:
     void about();
     void reset_all_filters();
     bool filter_pass_item(QTreeWidgetItem* it);
-    void update_tracewidget_outdate();
+    //void update_tracewidget_outdate();
     void refresh_full_tree(int capacity);
     void fill_partial_tree(int capacity);
     void fill_empty_tree(int capacity);

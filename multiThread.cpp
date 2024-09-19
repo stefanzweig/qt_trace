@@ -231,7 +231,8 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
     str.append(frame.BusType);
     QString myData = frame.Data_Str;
     str.append(myData);
-    QTreeWidgetItem* Item = new QTreeWidgetItem(str);
+    //QTreeWidgetItem* Item = new QTreeWidgetItem(str);
+    QTreeWidgetItem Item(str);
 
     if (/*bFilter*/ 0) {
         // if (filter_colName == "Chn")
@@ -283,7 +284,7 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
         // }
     }
     else {
-        emit(popToRoot(Item));
+        emit(popToRoot(&Item));
     }
 }
 
