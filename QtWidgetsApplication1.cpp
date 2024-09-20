@@ -374,12 +374,14 @@ void QtWidgetsApplication1::stopTrace()
     updateToolbar();
     
     qDebug() << "stopTrace...DONE";
+    last_status = "STOPPED";
     frozen = true;
     freeze_treetrace_items(count_per_page);
 }
 
 void QtWidgetsApplication1::pauseTrace()
 {
+    auto log_paused = GETLOG("PAUSE_TREE");
     if (calc_thread->isPAUSED()) {
         frozen = false;
         ui.treetrace->clear();
@@ -392,7 +394,11 @@ void QtWidgetsApplication1::pauseTrace()
     calc_thread->pauseThread();
     timer->stop();
     pause_index = full_queue.size();
+    LOGGER_INFO(log_paused, "PAUSED FULL QUEUE ->", pause_index);
+    last_status = "PAUSED";
+    LOGGER_INFO(log_paused, "BEFORE FREEZING");
     freeze_treetrace_items(count_per_page);
+    LOGGER_INFO(log_paused, "AFTER FREEZING");
     updateToolbar();
     
 }
@@ -831,11 +837,22 @@ void QtWidgetsApplication1::fill_empty_tree(int capacity)
     if (changes>0) {
         changes = 1;
         qDebug() << "EMPTY CHANGES ->" << changes;
+        LOGGER_INFO(log_empty, "EMPTY CHANGES -> {}", changes);
+
         for (int i = 0; i < changes; i++) {
             QTreeWidgetItem* it = nullptr;
             int idx = queue_size - i;
-            if (idx > pause_index)
+            if (last_status == "PAUSED")
+            {
+                if (idx > pause_index) {
+                    it = full_queue.at(idx);
+                    LOGGER_INFO(log_empty, "PAUSED INDEX -> {}", idx);
+                }
+            }
+            else 
+            {
                 it = full_queue.at(idx);
+            }
             if (it!=nullptr) {
                 qDebug() << "ITEM INDEX ->" << idx;
                 LOGGER_INFO(log_empty, "ITEM INDEX -> {}", idx);
@@ -854,16 +871,21 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
     QScrollBar* scrollBar = ui.treetrace->verticalScrollBar();
     if (scrollBar->value() == scrollBar->maximum()) { return; }
 
+    auto log_paused = GETLOG("PAUSE_TREE");
     calc_thread->pauseThread();
     timer->stop();
     pause_index = full_queue.size();
+    LOGGER_INFO(log_paused, "SCROLLED FULL QUEUE ->", pause_index);
+    last_status = "PAUSED";
     updateToolbar();
     
     if (frozen)
         return;
     else {
+        LOGGER_INFO(log_paused, "SCROLLED BEFORE FREEZING");
         freeze_treetrace_items(count_per_page);
         frozen = true;
+        LOGGER_INFO(log_paused, "SCROLLED AFTER FREEZING");
     }
         
 }

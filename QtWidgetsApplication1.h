@@ -89,6 +89,7 @@ private:
     QDateTime end_time;
     qint64 progress_secs;
     int pause_index = 0;
+    QString last_status = "READY";
     
 
 private slots:
