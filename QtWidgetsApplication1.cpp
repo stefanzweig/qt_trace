@@ -871,7 +871,7 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
     QScrollBar* scrollBar = ui.treetrace->verticalScrollBar();
     if (scrollBar->value() == scrollBar->maximum()) { return; }
 
-    auto log_paused = GETLOG("PAUSE_TREE");
+    auto log_paused = GETLOG("SCROLLED_TREE");
     calc_thread->pauseThread();
     timer->stop();
     pause_index = full_queue.size();
@@ -934,6 +934,7 @@ void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
         int idx = size-i;
         LOGGER_INFO(log_frozen, "INDEX -> {}", idx);
         it = full_queue.at(idx);
+        LOGGER_INFO(log_frozen, "ITEM_COL -> {}", it->text(0).toStdString());
         if (it != nullptr && filter_pass_item(it)) {
             item_list.append(it);
         }
@@ -941,7 +942,9 @@ void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
     if (item_list.size()) 
     {
         ui.treetrace->addTopLevelItems(item_list);
-        qDebug() << "FROZEN -> " << item_list.size();
+        int frozen_size = item_list.size();
+        qDebug() << "FROZEN -> " << frozen_size;
+        LOGGER_INFO(log_frozen, "FRONZEN -> {}", frozen_size);
     }
 }
 
