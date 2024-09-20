@@ -307,6 +307,11 @@ void QtWidgetsApplication1::clearance()
 {
     calc_thread->full_count_canframes = 0;
     calc_thread->full_count_canparser = 0;
+    for (QTreeWidgetItem* it : full_queue)
+    {
+        delete it;
+        it = nullptr;
+    }
     full_queue.clear();
     ui.treetrace->clear();
 }
@@ -336,7 +341,7 @@ void QtWidgetsApplication1::startTrace()
 }
 void QtWidgetsApplication1::resumeTrace()
 {
-    uint32_t samples = 100;
+    uint32_t samples = 1000;
     if (mysub_can_frames == nullptr) {
         mysub_can_frames = new ZoneMasterCanMessageDataSubscriber(dds_domainid);
         qRegisterMetaType <can_frame>("can_frame");
@@ -378,6 +383,7 @@ void QtWidgetsApplication1::pauseTrace()
     if (calc_thread->isPAUSED()) {
         frozen = false;
         ui.treetrace->clear();
+        //clearance();
         initial_trace = true;
         resumeTrace();
         return;
@@ -385,6 +391,7 @@ void QtWidgetsApplication1::pauseTrace()
     qDebug() << "pauseTrace...";
     calc_thread->pauseThread();
     timer->stop();
+    pause_index = full_queue.size();
     freeze_treetrace_items(count_per_page);
     updateToolbar();
     
@@ -806,7 +813,7 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
         qDebug() << "PARTIAL CHANGES ->" << changes;
         for (int i = 1; i <= changes; i++) {
             it = full_queue.at(queue_size - i);
-            if (filter_pass_item(it)) {
+            if (it != nullptr && filter_pass_item(it)) {
                 ui.treetrace->addTopLevelItem(it);
             }
         }
@@ -819,17 +826,19 @@ void QtWidgetsApplication1::fill_empty_tree(int capacity)
     qDebug() << "EMPTY TREE -> "<< capacity;
     int queue_size = full_queue.size()-padding;
     if (queue_size<=0) return;
-    QTreeWidgetItem* it=nullptr;
     qDebug() << "FULLQUEUE SIZE ->" << queue_size;
     int changes = std::min(queue_size, capacity);
-    if (changes) {
+    if (changes>0) {
+        changes = 1;
         qDebug() << "EMPTY CHANGES ->" << changes;
-        for (int i = 1; i < changes; i++) {
+        for (int i = 0; i < changes; i++) {
+            QTreeWidgetItem* it = nullptr;
             int idx = queue_size - i;
-            it = full_queue.at(idx);
-            if (it) {
+            if (idx > pause_index)
+                it = full_queue.at(idx);
+            if (it!=nullptr) {
                 qDebug() << "ITEM INDEX ->" << idx;
-                LOGGER_INFO(log_empty, std::to_string(idx));
+                LOGGER_INFO(log_empty, "ITEM INDEX -> {}", idx);
                 qDebug() << "ITEM  TIMESTAMP ->" << it->text(0);
                 if (filter_pass_item(it)) {
                     ui.treetrace->addTopLevelItem(it);
@@ -847,6 +856,7 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
 
     calc_thread->pauseThread();
     timer->stop();
+    pause_index = full_queue.size();
     updateToolbar();
     
     if (frozen)
@@ -881,23 +891,29 @@ void QtWidgetsApplication1::compare_item()
 void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
 {
     if (frozen) return;
+    auto log_frozen = GETLOG("FROZEN_TREE");
     int size = full_queue.size() - padding;
+    LOGGER_INFO(log_frozen, "SIZE -> {}", size);
     if (size <= 0) return;
 
     qDebug() << "TARGET COUNT -> " << ncount;
+    LOGGER_INFO(log_frozen, "TARGET -> {}", ncount);
     qDebug() << "BEFORE CLEARING -> " << size;
     ui.treetrace->clear();
     qDebug() << "AFETR CLEARING -> " << full_queue.size()-padding;
-    int total = std::min(size, ncount);
+    int total = std::min(size, ncount) -5;
     qDebug() << "TOTAL -> " << total;
-    QTreeWidgetItem* item = nullptr;
+    LOGGER_INFO(log_frozen, "TOTAL -> {}", total);
+    QTreeWidgetItem* it = nullptr;
     QList<QTreeWidgetItem*> item_list;
     item_list.clear();
-    for (int i = 1; i <= total; i++)
+    for (int i = 0; i < total; i++)
     {
-        item = full_queue.at(size - i);
-        if (filter_pass_item(item)) {
-            item_list.append(item);
+        int idx = size-i;
+        LOGGER_INFO(log_frozen, "INDEX -> {}", idx);
+        it = full_queue.at(idx);
+        if (it != nullptr && filter_pass_item(it)) {
+            item_list.append(it);
         }
     }
     if (item_list.size()) 

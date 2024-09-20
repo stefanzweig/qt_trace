@@ -88,6 +88,7 @@ private:
     QDateTime start_time;
     QDateTime end_time;
     qint64 progress_secs;
+    int pause_index = 0;
     
 
 private slots:

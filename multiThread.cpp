@@ -57,7 +57,6 @@ void multiThread::run() {
             }
         }
     }
-
     while (true) {
         if (!is_stop) {
             //qDebug() << "running...";
@@ -90,7 +89,6 @@ void multiThread::bindDataToTraceTree()
 
     try {
             m_from_id = to_id;
-
             m_lock.unlock();
             msleep(20);
     }
