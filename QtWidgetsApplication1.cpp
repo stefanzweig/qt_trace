@@ -829,7 +829,7 @@ void QtWidgetsApplication1::fill_empty_tree(int capacity)
             it = full_queue.at(idx);
             if (it) {
                 qDebug() << "ITEM INDEX ->" << idx;
-                LOGGER_INFO(log_empty, idx);
+                LOGGER_INFO(log_empty, std::to_string(idx));
                 qDebug() << "ITEM  TIMESTAMP ->" << it->text(0);
                 if (filter_pass_item(it)) {
                     ui.treetrace->addTopLevelItem(it);
