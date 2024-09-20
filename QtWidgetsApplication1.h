@@ -10,6 +10,7 @@
 #include "multiThread.h"
 #include "zm_struct.h"
 #include "columnfilter.h"
+#include "spdlog/spdlog.h"
 
 #define TIMER_HEARTBEAT 50
 #define MAX_ITEM_COUNT 5000
@@ -34,6 +35,7 @@ private:
     void hide_filtered_items(int idx, QList<QList<QString>> items);
     void get_default_configurations();
     void compare_item();
+    void init_mylogger();
 
     QTimer* timer = nullptr;
     QTimer* timer_dustbin = nullptr;
@@ -86,6 +88,7 @@ private:
     QDateTime start_time;
     QDateTime end_time;
     qint64 progress_secs;
+    
 
 private slots:
     void startTrace();

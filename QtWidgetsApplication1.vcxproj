@@ -137,6 +137,7 @@
     <ClInclude Include="columnfilterdialog.h" />
     <ClInclude Include="core_global.h" />
     <QtMoc Include="topicData\ZoneMasterCanMessageDataListener.h" />
+    <ClInclude Include="my_spdlog.h" />
     <ClInclude Include="newsession_dialog.h" />
     <ClInclude Include="spdlog\async.h" />
     <ClInclude Include="spdlog\async_logger-inl.h" />

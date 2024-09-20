@@ -12,6 +12,7 @@
 #include "newsession_dialog.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
+#include "my_spdlog.h"
 
 QSize getItemSize(QTreeWidgetItem* item, int column, const QFont& font) {
     QFontMetrics fontMetrics(font);
@@ -98,6 +99,8 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
     
     delete filter;
     filter = nullptr;
+
+    spdlog::drop_all();
 }
 
 void QtWidgetsApplication1::init()
@@ -129,13 +132,20 @@ void QtWidgetsApplication1::init()
     
 
     setupTreeTrace();
+    //init_mylogger();
+    INITLOG("path");
+
     filter = new columnFilterDialog(this);
     ui.treetrace->setAttribute(Qt::WA_OpaquePaintEvent);
     ui.treetrace->setAttribute(Qt::WA_NoSystemBackground);
+    showMaximized();
+}
 
+void QtWidgetsApplication1::init_mylogger()
+{
     try
     {
-        auto logger = spdlog::basic_logger_mt("basic_logger", "logs/basic-log.txt");
+        auto logger = spdlog::basic_logger_mt("trace_logger", "logs/basic-log.txt");
         logger->info("Welcome to spdlog!");
         logger->error("Some error message with arg: {}", 1);
     }
@@ -143,10 +153,7 @@ void QtWidgetsApplication1::init()
     {
         std::cout << "Log init failed: " << ex.what() << std::endl;
     }
-
-    showMaximized();
 }
-
 void QtWidgetsApplication1::get_default_configurations()
 {
     QSettings settings("settings.ini", QSettings::IniFormat);
@@ -559,7 +566,12 @@ void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
 
 void QtWidgetsApplication1::on_pop_to_root(QTreeWidgetItem* item)
 {
-    full_queue.enqueue(item);
+    auto log_ = GETLOG("POP");
+    if (item!=NULL){
+        //auto log_ = GETLOG("POP");
+        LOGGER_INFO(log_, "ENQUEUING -> {}", item->text(0).toStdString());
+        full_queue.enqueue(item);
+    }
 }
 
 void QtWidgetsApplication1::ChangeHeader(const QString& text)
@@ -803,6 +815,7 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 
 void QtWidgetsApplication1::fill_empty_tree(int capacity)
 {
+    auto log_empty = GETLOG("EMPTY_TREE");
     qDebug() << "EMPTY TREE -> "<< capacity;
     int queue_size = full_queue.size()-padding;
     if (queue_size<=0) return;
@@ -811,11 +824,12 @@ void QtWidgetsApplication1::fill_empty_tree(int capacity)
     int changes = std::min(queue_size, capacity);
     if (changes) {
         qDebug() << "EMPTY CHANGES ->" << changes;
-        for (int i = 1; i <= changes; i++) {
+        for (int i = 1; i < changes; i++) {
             int idx = queue_size - i;
             it = full_queue.at(idx);
             if (it) {
                 qDebug() << "ITEM INDEX ->" << idx;
+                LOGGER_INFO(log_empty, idx);
                 qDebug() << "ITEM  TIMESTAMP ->" << it->text(0);
                 if (filter_pass_item(it)) {
                     ui.treetrace->addTopLevelItem(it);
@@ -924,6 +938,9 @@ void QtWidgetsApplication1::about()
 
 void QtWidgetsApplication1::reset_all_filters()
 {
+    auto log1 = GETLOG("Test1");
+    LOGGER_INFO(log1, "123");
+
     qDebug() << "reset_all_filters";
     if (!new_filters.isEmpty()) {
         for (auto it = new_filters.begin(); it != new_filters.end(); ++it) {
@@ -937,6 +954,7 @@ void QtWidgetsApplication1::reset_all_filters()
 
 bool QtWidgetsApplication1::filter_pass_item(QTreeWidgetItem* it)
 {
+    if (it == NULL) return false;
     if (calc_thread->isRUN() && it) {
         try 
         {

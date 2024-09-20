@@ -144,6 +144,8 @@ void multiThread::formatRow_canparser_thread(canframe frame)
     str_parser.append("");
     str_parser.append(QString::fromStdString(frame.name()));
     QTreeWidgetItem* Item = new QTreeWidgetItem(str_parser);
+    if (Item == nullptr)
+        return;
 
     std::vector<canpdu> pdus = frame.pdus();
     std::vector<canpdu> containspdus = frame.containPdus();
@@ -228,7 +230,8 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
     can_list.append(myData);
     
     QTreeWidgetItem* Item = new QTreeWidgetItem(can_list);
-    emit(popToRoot(Item));
+    if (Item !=nullptr)
+        emit(popToRoot(Item));
 }
 
 void multiThread::setFilterOption(QString colName, QList<QList<QString>> items)

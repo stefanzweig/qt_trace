@@ -418,6 +418,9 @@
     <ClInclude Include="spdlog\sinks\wincolor_sink-inl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="my_spdlog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="demo.h">
