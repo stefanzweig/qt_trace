@@ -381,7 +381,7 @@ void QtWidgetsApplication1::stopTrace()
 
 void QtWidgetsApplication1::pauseTrace()
 {
-    auto log_paused = GETLOG("PAUSE_TREE");
+    auto log_paused = GETLOG("WORKFLOW");
     if (calc_thread->isPAUSED()) {
         frozen = false;
         ui.treetrace->clear();
@@ -394,7 +394,7 @@ void QtWidgetsApplication1::pauseTrace()
     calc_thread->pauseThread();
     timer->stop();
     pause_index = full_queue.size();
-    LOGGER_INFO(log_paused, "PAUSED FULL QUEUE ->", pause_index);
+    LOGGER_INFO(log_paused, "PAUSED FULL QUEUE -> {}", pause_index);
     last_status = "PAUSED";
     LOGGER_INFO(log_paused, "BEFORE FREEZING");
     freeze_treetrace_items(count_per_page);
@@ -700,6 +700,8 @@ void QtWidgetsApplication1::get_refreshed_items()
 
 void QtWidgetsApplication1::update_tracewindow()
 {
+    auto log_workflow = GETLOG("WORKFLOW");
+    LOGGER_INFO(log_workflow, "LAST STATUS -> {}", last_status.toStdString());
     int queue_size = full_queue.size()-padding;
     if (queue_size > 0)
         qDebug() << "QUEUE_SIZE -> " << queue_size << "LAST ITEM COLUMN COUNTS" << full_queue.at(queue_size-1)->columnCount();
@@ -716,21 +718,27 @@ void QtWidgetsApplication1::update_tracewindow()
      item_height = itemSize.height();
      item_width = itemSize.width();
      qDebug() << "CAPACITY -> " << capacity;
+     LOGGER_INFO(log_workflow, "CAPACITY -> {}", capacity);
 
      int tree_count = tree->topLevelItemCount();
+     LOGGER_INFO(log_workflow, "TREE COUNT -> {}", tree_count);
      if (tree_count >= capacity) {
          qDebug() << "==== REDRAW TREE ====";
+         LOGGER_INFO(log_workflow, "==== REDRAW TREE ====");
          refresh_full_tree(capacity);
      }
      else if (tree_count) {
          qDebug() << "==== HALF TREE ====";
+         LOGGER_INFO(log_workflow, "==== HALF TREE ====");
          fill_partial_tree(capacity);
      }
      else if (!tree_count) {
          qDebug() << "==== EMPTY TREE ====";
+         LOGGER_INFO(log_workflow, "==== EMPTY TREE ====");
          fill_empty_tree(capacity);
      }
      ui.treetrace->scrollToBottom();
+     LOGGER_INFO(log_workflow, "=================");
 }
 
 void QtWidgetsApplication1::refresh_full_tree(int capacity)
@@ -828,30 +836,34 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 
 void QtWidgetsApplication1::fill_empty_tree(int capacity)
 {
-    auto log_empty = GETLOG("EMPTY_TREE");
+    //auto log_empty = GETLOG("EMPTY_TREE");
+    auto log_empty = GETLOG("WORKFLOW");
+    
     qDebug() << "EMPTY TREE -> "<< capacity;
     int queue_size = full_queue.size()-padding;
+    LOGGER_INFO(log_empty, "FULL QUEUE SIZE IN EMPTY FUNC -> {}", queue_size);
     if (queue_size<=0) return;
+
     qDebug() << "FULLQUEUE SIZE ->" << queue_size;
     int changes = std::min(queue_size, capacity);
     if (changes>0) {
         changes = 1;
         qDebug() << "EMPTY CHANGES ->" << changes;
         LOGGER_INFO(log_empty, "EMPTY CHANGES -> {}", changes);
-
         for (int i = 0; i < changes; i++) {
             QTreeWidgetItem* it = nullptr;
             int idx = queue_size - i;
-            if (last_status == "PAUSED")
+            if (last_status == "PAUSED") // 从“暂停”状态过来的
             {
                 if (idx > pause_index) {
                     it = full_queue.at(idx);
                     LOGGER_INFO(log_empty, "PAUSED INDEX -> {}", idx);
                 }
             }
-            else 
+            else // 从“空闲”状态过来的。
             {
                 it = full_queue.at(idx);
+                LOGGER_INFO(log_empty, "READY INDEX -> {}", idx);
             }
             if (it!=nullptr) {
                 qDebug() << "ITEM INDEX ->" << idx;
@@ -863,6 +875,7 @@ void QtWidgetsApplication1::fill_empty_tree(int capacity)
             }
         }
     }
+    LOGGER_INFO(log_empty, "EXITING EMPTY TREE.");
 }
 
 void QtWidgetsApplication1::trace_scroll_changed(int value)
@@ -871,17 +884,17 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
     QScrollBar* scrollBar = ui.treetrace->verticalScrollBar();
     if (scrollBar->value() == scrollBar->maximum()) { return; }
 
-    auto log_paused = GETLOG("SCROLLED_TREE");
+    auto log_paused = GETLOG("WORKFLOW");
     calc_thread->pauseThread();
     timer->stop();
     pause_index = full_queue.size();
-    LOGGER_INFO(log_paused, "SCROLLED FULL QUEUE ->", pause_index);
     last_status = "PAUSED";
     updateToolbar();
     
     if (frozen)
         return;
     else {
+        LOGGER_INFO(log_paused, "SCROLLED FULL QUEUE -> {}", pause_index);
         LOGGER_INFO(log_paused, "SCROLLED BEFORE FREEZING");
         freeze_treetrace_items(count_per_page);
         frozen = true;
@@ -912,8 +925,14 @@ void QtWidgetsApplication1::compare_item()
 
 void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
 {
+    auto log_frozen = GETLOG("WORKFLOW");
+    
+    LOGGER_INFO(log_frozen, "NOTHING. EXITING...");
+    LOGGER_INFO(log_frozen, "====================");
+    return;
+
     if (frozen) return;
-    auto log_frozen = GETLOG("FROZEN_TREE");
+
     int size = full_queue.size() - padding;
     LOGGER_INFO(log_frozen, "SIZE -> {}", size);
     if (size <= 0) return;
@@ -979,9 +998,6 @@ void QtWidgetsApplication1::about()
 
 void QtWidgetsApplication1::reset_all_filters()
 {
-    auto log1 = GETLOG("Test1");
-    LOGGER_INFO(log1, "123");
-
     qDebug() << "reset_all_filters";
     if (!new_filters.isEmpty()) {
         for (auto it = new_filters.begin(); it != new_filters.end(); ++it) {
