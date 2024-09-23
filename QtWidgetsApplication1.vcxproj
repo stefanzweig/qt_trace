@@ -122,6 +122,7 @@
     <ClCompile Include="topicData\ZoneMasterCanParserSubscriber.cpp" />
     <ClCompile Include="topicData\ZoneMasterData.cxx" />
     <ClCompile Include="topicData\ZoneMasterDataPubSubTypes.cxx" />
+    <ClCompile Include="TraceTreeWidgetItem.cpp" />
     <ClCompile Include="treeitem.cpp" />
     <ClCompile Include="treemodel.cpp" />
     <ClCompile Include="topicData\ZoneMasterCanMessageDataSubscriber.cpp" />
@@ -133,6 +134,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="TraceTreeWidgetItem.h" />
     <ClInclude Include="uitils.h" />
     <QtMoc Include="columnfilter.h" />
     <ClInclude Include="columnfilterdialog.h" />

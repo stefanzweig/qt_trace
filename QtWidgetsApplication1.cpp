@@ -13,6 +13,7 @@
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "my_spdlog.h"
+#include "TraceTreeWidgetItem.h"
 
 QSize getItemSize(QTreeWidgetItem* item, int column, const QFont& font) {
     QFontMetrics fontMetrics(font);
@@ -747,6 +748,7 @@ void QtWidgetsApplication1::draw_trace_window(int capacity)
         for (int i = 1; i <= changes; i++) {
             int idx = queue_size - i;
             LOGGER_INFO(log_draw, "DRAW ITEM -> {}", idx);
+            bool bchanged = false;
             it = full_queue.at(idx);
             if (filter_pass_item(it)) {
                 if (count > 0) 
@@ -757,7 +759,11 @@ void QtWidgetsApplication1::draw_trace_window(int capacity)
                     for (int k = 0; k < it->columnCount(); k++) {
                         if (lastItem->text(k) != it->text(k)) { 
                             lastItem->setText(k, it->text(k));
+                            bchanged = true;
                         }    
+                    }
+                    if (bchanged) {
+                        LOGGER_INFO(log_draw, "NACH -> {}", lastItem->text(0).toStdString());
                     }
                 }
             }
@@ -793,25 +799,32 @@ void QtWidgetsApplication1::fill_up_to_count(int count)
 void QtWidgetsApplication1::fill_partial_tree(int capacity)
 {
     qDebug() << "PARTIAL ->" << capacity;
-
+    auto log_partial = GETLOG("WORKFLOW");
     int queue_size = full_queue.size()-padding;
+    LOGGER_INFO(log_partial, "FULL QUEUE SIZE IN PARTIAL FUNC -> {}", queue_size);
     if (queue_size<=0) return;
     
     QTreeWidget* tree = ui.treetrace;
     QTreeWidgetItem* it = nullptr;
     int tree_count = tree->topLevelItemCount();
     int gap = capacity - tree_count;
+    LOGGER_INFO(log_partial, "GAP -> {}", gap);
     if (gap <= 0) return;
     int changes = std::min(queue_size, gap);
+    LOGGER_INFO(log_partial, "PARTIAL CHANGES -> {}", changes);
     if (changes) {
         qDebug() << "PARTIAL CHANGES ->" << changes;
         for (int i = 1; i <= changes; i++) {
-            it = full_queue.at(queue_size - i);
+            int idx = queue_size - i;
+            LOGGER_INFO(log_partial, "PARTIAL INDEX -> {}", idx);
+            it = full_queue.at(idx);
             if (it != nullptr && filter_pass_item(it)) {
                 ui.treetrace->addTopLevelItem(it);
             }
         }
     }
+    LOGGER_INFO(log_partial, "END OF PARTIAL FILLING");
+    LOGGER_INFO(log_partial, "====================");
 }
 
 void QtWidgetsApplication1::fill_empty_tree(int capacity)
@@ -849,6 +862,7 @@ void QtWidgetsApplication1::fill_empty_tree(int capacity)
                 qDebug() << "ITEM INDEX ->" << idx;
                 LOGGER_INFO(log_empty, "ITEM INDEX -> {}", idx);
                 qDebug() << "ITEM  TIMESTAMP ->" << it->text(0);
+                LOGGER_INFO(log_empty, "ITEM SOURCE -> {}", ((TraceTreeWidgetItem*)it)->getSource().toStdString());
                 if (filter_pass_item(it)) {
                     ui.treetrace->addTopLevelItem(it);
                 }

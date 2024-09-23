@@ -70,6 +70,9 @@
     <ClCompile Include="columnfilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TraceTreeWidgetItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gui_global.h">
@@ -422,6 +425,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="uitils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TraceTreeWidgetItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

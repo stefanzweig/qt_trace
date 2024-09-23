@@ -1,6 +1,7 @@
 #include "multiThread.h"
 #include <QDebug>
 #include <QTreeWidgetItem>
+#include "TraceTreeWidgetItem.h"
 
 multiThread::multiThread()
     :is_stop(true),is_paused(false)
@@ -227,7 +228,8 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
     QString myData = frame.Data_Str;
     can_list.append(myData);
     
-    QTreeWidgetItem* Item = new QTreeWidgetItem(can_list);
+    //QTreeWidgetItem* Item = new QTreeWidgetItem(can_list);
+    TraceTreeWidgetItem* Item = new TraceTreeWidgetItem(can_list);
     if (Item !=nullptr)
         emit(popToRoot(Item));
 }
