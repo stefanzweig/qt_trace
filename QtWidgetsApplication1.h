@@ -138,4 +138,5 @@ private slots:
     void updateProgressTimer();
     bool showNewSession();
     void clearance();
+    void updateProgressLeft();
 };

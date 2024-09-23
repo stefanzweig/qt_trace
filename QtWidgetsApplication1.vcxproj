@@ -133,6 +133,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="uitils.h" />
     <QtMoc Include="columnfilter.h" />
     <ClInclude Include="columnfilterdialog.h" />
     <ClInclude Include="core_global.h" />
