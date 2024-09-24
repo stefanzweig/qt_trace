@@ -12,7 +12,7 @@
 #include "columnfilter.h"
 #include "spdlog/spdlog.h"
 
-#define TIMER_HEARTBEAT 50
+#define TIMER_HEARTBEAT 100
 #define MAX_ITEM_COUNT 5000
 
 class QtWidgetsApplication1 : public QMainWindow
@@ -90,6 +90,7 @@ private:
     qint64 progress_secs;
     int pause_index = 0;
     QString last_status = "READY";
+    bool timer_isRunning = false;
     
 
 private slots:
