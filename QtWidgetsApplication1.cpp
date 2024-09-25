@@ -287,11 +287,11 @@ void QtWidgetsApplication1::clearance()
 {
     calc_thread->full_count_canframes = 0;
     calc_thread->full_count_canparser = 0;
-    for (QTreeWidgetItem* it : full_queue)
-    {
-        delete it;
-        it = nullptr;
-    }
+    //for (QTreeWidgetItem* it : full_queue)
+    //{
+    //    delete it;
+    //    it = nullptr;
+    //}
     full_queue.clear();
     ui.treetrace->clear();
 }
@@ -312,19 +312,21 @@ bool QtWidgetsApplication1::new_session()
 void QtWidgetsApplication1::startTrace()
 {
     auto log_ = GETLOG("WORKFLOW");
-    LOGGER_INFO(log_, "==== START TRACE ====");
+    LOGGER_INFO(log_, "==== START TRACE CLICKED ====");
+
     if (!new_session())
         return;
-
     start_time = QDateTime::currentDateTime();
     LOGGER_INFO(log_, "==== BEFORE RESUME TRACE ====");
     resumeTrace();
     LOGGER_INFO(log_, "==== AFTER RESUME TRACE ====");
+    LOGGER_INFO(log_, "\n");
 }
 void QtWidgetsApplication1::resumeTrace()
 {
     auto log_ = GETLOG("WORKFLOW");
-    LOGGER_INFO(log_, "==== RESUME TRACE ====");
+    LOGGER_INFO(log_, "==== RESUME TRACE PROCESS ====");
+
     uint32_t samples = 1000;
     if (mysub_can_frames == nullptr) {
         mysub_can_frames = new ZoneMasterCanMessageDataSubscriber(dds_domainid);
@@ -353,42 +355,50 @@ void QtWidgetsApplication1::resumeTrace()
 
 void QtWidgetsApplication1::stopTrace()
 {
-    qDebug() << "stopTrace...";
     auto log_ = GETLOG("WORKFLOW");
-    LOGGER_INFO(log_, "==== STOP TRACE ====");
+    LOGGER_INFO(log_, "==== STOP TRACE CLICKED ====");
 
     calc_thread->stopThread();
     timer->stop();
     timer_dustbin->stop();
+
     mysub_can_frames = nullptr;
     mysub_can_parser = nullptr;
+
     initial_trace = true;
     updateToolbar();
     updateProgressLeft();
     
-    qDebug() << "stopTrace...DONE";
     last_status = "STOPPED";
-    frozen = true;
 
     LOGGER_INFO(log_, "==== GOING TO FREEZE ====");
+
+    frozen = true;
+    LOGGER_INFO(log_, "==== FROZEN STATUS {} ====", frozen);
     freeze_treetrace_items(count_per_page);
     LOGGER_INFO(log_, "==== END OF STOPPING TRACE ====");
+    LOGGER_INFO(log_, "\n");
+
 }
 
 void QtWidgetsApplication1::pauseTrace()
 {
     auto log_paused = GETLOG("WORKFLOW");
+    LOGGER_INFO(log_paused, "==== PAUSE BUTTON CLICKED ====");
     if (calc_thread->isPAUSED()) {
         LOGGER_INFO(log_paused, "==== CONTINUE AFTER PAUSE ====");
         frozen = false;
         ui.treetrace->clear();
-        //clearance();
         initial_trace = true;
+
+        LOGGER_INFO(log_paused, "==== FROZEN STATUS {} ====", frozen);
+        LOGGER_INFO(log_paused, "==== BEFORE RESUME TRACE ====");
         resumeTrace();
+        LOGGER_INFO(log_paused, "==== AFTER RESUME TRACE ====");
+        LOGGER_INFO(log_paused, "\n");
         return;
     }
-    qDebug() << "pauseTrace...";
-    LOGGER_INFO(log_paused, "==== PAUSE BUTTON CLICKED ====");
+    LOGGER_INFO(log_paused, "==== PAUSE TRACE ====");
     calc_thread->pauseThread();
     timer->stop();
     pause_index = full_queue.size();
@@ -839,7 +849,6 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 
     if (changes) {
         QTreeWidgetItem* it = nullptr;
-        LOGGER_INFO(log_partial, "PARTIAL CHANGES -> {}", changes);
         for (int i = 1; i <= changes; i++) {
             int idx = queue_size - i;
             LOGGER_INFO(log_partial, "PARTIAL INDEX -> {}", idx);
@@ -874,14 +883,14 @@ void QtWidgetsApplication1::fill_empty_tree(int capacity)
         for (int i = 0; i < changes; i++) {
             QTreeWidgetItem* it = nullptr;
             int idx = queue_size - i;
-            if (last_status == "PAUSED") // 从“暂停”状态过来的
-            {
-                if (idx > pause_index) {
-                    it = full_queue.at(idx);
-                    LOGGER_INFO(log_empty, "PAUSED INDEX -> {}", idx);
-                }
-            }
-            else // 从“空闲”状态过来的。
+            //if (last_status == "PAUSED") // 从“暂停”状态过来的
+            //{
+            //    if (idx > pause_index) {
+            //        it = full_queue.at(idx);
+            //        LOGGER_INFO(log_empty, "PAUSED INDEX -> {}", idx);
+            //    }
+            //}
+            //else // 从“空闲”状态过来的。
             {
                 it = full_queue.at(idx);
                 LOGGER_INFO(log_empty, "READY INDEX -> {}", idx);
