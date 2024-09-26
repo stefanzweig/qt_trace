@@ -28,6 +28,7 @@ public:
     bool isPAUSED() { return is_paused; }
     bool isRUN() { return (!is_stop && !is_paused); }
     QList<QString> monitor_modules;
+    QQueue<QTreeWidgetItem*> *queue_;
 
 public slots:
     void stopThread();
@@ -60,6 +61,7 @@ private:
     uint64_t last_timestamp_canframe = 0;
     QString filter_colName;
     QList<QList<QString>> filter_items;
+
     bool bconnected_cf = false;
     bool bconnected_cp = false;
 

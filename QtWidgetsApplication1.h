@@ -11,6 +11,7 @@
 #include "zm_struct.h"
 #include "columnfilter.h"
 #include "spdlog/spdlog.h"
+#include <QReadWriteLock>
 
 #define TIMER_HEARTBEAT 100
 #define MAX_ITEM_COUNT 5000
@@ -36,6 +37,7 @@ private:
 	void get_default_configurations();
 	void compare_item();
 	void init_mylogger();
+	QTreeWidgetItem* read_item_from_queue(int index);
 
 	QTimer* timer = nullptr;
 	QTimer* timer_dustbin = nullptr;
@@ -88,11 +90,11 @@ private:
 	QDateTime start_time;
 	QDateTime end_time;
 	qint64 progress_secs;
-	int pause_index = 0;
+	int paused_index = 0;
 	QString last_status = "READY";
 	bool timer_isRunning = false;
-
-
+	QReadWriteLock rwLock;
+	
 private slots:
 	void startTrace();
 	void stopTrace();
