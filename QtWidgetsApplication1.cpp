@@ -599,10 +599,12 @@ void QtWidgetsApplication1::on_pop_to_root(QTreeWidgetItem* item)
 	auto log_ = GETLOG("WORKFLOW");
 	//rwLock.lockForWrite();
 	//LOGGER_INFO(log_, "==== WRITE LOCK ====");
+	timer_isRunning = true;
 	if (item != NULL) {
 		full_queue.enqueue(item);
 		LOGGER_INFO(log_, "ENQUEUING -> {}", item->text(0).toStdString());
 	}
+	timer_isRunning = false;
 	//rwLock.unlock();
 	//LOGGER_INFO(log_, "==== WRITE UNLOCK ====");
 }
@@ -796,7 +798,7 @@ void QtWidgetsApplication1::draw_trace_window(int capacity)
 	if (changes) {
 		int count = tree->topLevelItemCount();
 		LOGGER_INFO(log_, "TREE COUNT -> {}", count);
-		for (int i = 1; i <= changes; i++) {
+		for (int i = 0; i < changes; i++) {
 			int idx = queue_size - changes + i;
 			LOGGER_INFO(log_, "DRAW ITEM -> {}", idx);
 			bool bchanged = false;
@@ -804,7 +806,8 @@ void QtWidgetsApplication1::draw_trace_window(int capacity)
 			if (filter_pass_item(it)) {
 				if (count > 0)
 				{
-					QTreeWidgetItem* lastItem = tree->topLevelItem(count - i);
+					int item_idx = count - changes + i;
+					QTreeWidgetItem* lastItem = tree->topLevelItem(item_idx);
 					LOGGER_INFO(log_, "ORIGINAL -> {}", lastItem->text(0).toStdString());
 					LOGGER_INFO(log_, "REPLACED -> {}", it->text(0).toStdString());
 					for (int k = 0; k < it->columnCount(); k++) {
@@ -838,7 +841,7 @@ void QtWidgetsApplication1::fill_up_to_count(int count)
 	int changes = std::min(queue_size, gap);
 	if (changes) {
 		qDebug() << "UPTO PAGE CHANGES ->" << changes;
-		for (int i = 1; i <= changes; i++) {
+		for (int i = 0; i < changes; i++) {
 			int idx = queue_size - changes + i;
 			it = full_queue.at(idx);
 			if (it != nullptr && filter_pass_item(it)) {
@@ -865,7 +868,7 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 
 	// mark from here
 	if (changes > 0) {
-		for (int i = 1; i <= changes; i++) {
+		for (int i = 0; i < changes; i++) {
 			int idx = queue_size - changes + i;
 			LOGGER_INFO(log_partial, "PARTIAL INDEX -> {}", idx);
 			if (idx >= 0) {
@@ -896,7 +899,7 @@ void QtWidgetsApplication1::fill_empty_tree(int capacity)
 	if (changes > 0) {
 		changes = 1;
 		LOGGER_INFO(log_empty, "EMPTY CHANGES -> {}", changes);
-		for (int i = 1; i <= changes; i++) {
+		for (int i = 0; i < changes; i++) {
 			QTreeWidgetItem* it = nullptr;
 			int idx = queue_size - changes + i;
 			it = this->read_item_from_queue(idx);
