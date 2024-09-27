@@ -38,6 +38,7 @@ private:
 	void compare_item();
 	void init_mylogger();
 	QTreeWidgetItem* read_item_from_queue(int index);
+	QTreeWidgetItem* read_item_from_dumb(int index);
 
 	QTimer* timer = nullptr;
 	QTimer* timer_dustbin = nullptr;

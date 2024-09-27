@@ -142,7 +142,9 @@ void multiThread::formatRow_canparser_thread(canframe frame)
     str_parser.append("");
     str_parser.append("");
     str_parser.append(QString::fromStdString(frame.name()));
-    QTreeWidgetItem* Item = new QTreeWidgetItem(str_parser);
+    //QTreeWidgetItem* Item = new QTreeWidgetItem(str_parser);
+    TraceTreeWidgetItem* Item = new TraceTreeWidgetItem(str_parser);
+    Item->setSource("can_parser");
     if (Item == nullptr)
         return;
 
@@ -156,14 +158,19 @@ void multiThread::formatRow_canparser_thread(canframe frame)
         QStringList str_pdu = {};
         str_pdu.append(pdu_name);
         str_pdu.append(pdu_size);
-        QTreeWidgetItem* item_pdu = new QTreeWidgetItem(str_pdu);
+        //QTreeWidgetItem* item_pdu = new QTreeWidgetItem(str_pdu);
+        TraceTreeWidgetItem* item_pdu = new TraceTreeWidgetItem(str_pdu);
+        item_pdu->setSource("can_pdu");
+        
         for (int m = 0; m < current_pdu.zone_signals().size(); m++) {
             QStringList str_signal = {};
             cansignal current_signal = current_pdu.zone_signals()[m];
             str_signal.append(QString::fromStdString(current_signal.name()));
             str_signal.append(QString::number(current_signal.raw_value()));
             str_signal.append(QString::fromStdString(current_signal.phy_value()));
-            QTreeWidgetItem* item_signal = new QTreeWidgetItem(str_signal);
+            //QTreeWidgetItem* item_signal = new QTreeWidgetItem(str_signal);
+            TraceTreeWidgetItem* item_signal = new TraceTreeWidgetItem(str_pdu);
+            item_signal->setSource("can_pdu_signal");
             item_pdu->addChild(item_signal);
         }
         Item->addChild(item_pdu);
@@ -181,14 +188,18 @@ void multiThread::formatRow_canparser_thread(canframe frame)
             QStringList str_pdu = {};
             str_pdu.append(pdu_name);
             str_pdu.append(pdu_size);
-            QTreeWidgetItem* item_pdu = new QTreeWidgetItem(str_pdu);
+            //QTreeWidgetItem* item_pdu = new QTreeWidgetItem(str_pdu);
+            TraceTreeWidgetItem* item_pdu = new TraceTreeWidgetItem(str_pdu);
+            item_pdu->setSource("can_container_pdu");
             for (int m = 0; m < current_pdu.zone_signals().size(); m++) {
                 QStringList str_signal = {};
                 cansignal current_signal = current_pdu.zone_signals()[m];
                 str_signal.append(QString::fromStdString(current_signal.name()));
                 str_signal.append(QString::number(current_signal.raw_value()));
                 str_signal.append(QString::fromStdString(current_signal.phy_value()));
-                QTreeWidgetItem* item_signal = new QTreeWidgetItem(str_signal);
+                //QTreeWidgetItem* item_signal = new QTreeWidgetItem(str_signal);
+                TraceTreeWidgetItem* item_signal = new TraceTreeWidgetItem(str_pdu);
+                item_signal->setSource("can_container_pdu_signal");
                 item_pdu->addChild(item_signal);
             }
             Item->addChild(item_pdu);
