@@ -1088,10 +1088,10 @@ QTreeWidgetItem* QtWidgetsApplication1::read_item_from_queue(int index)
 	auto log_ = GETLOG("WORKFLOW");
 	QTreeWidgetItem* item = nullptr;
 	rwLock.lockForRead();
-	LOGGER_INFO(log_, "==== READ LOCK ====");
+	//LOGGER_INFO(log_, "==== READ LOCK ====");
 	item = this->full_queue.at(index);
 	//LOGGER_INFO(log_, "ITEM CONTENT -> {}", item->text(0).toStdString());
 	rwLock.unlock();
-	LOGGER_INFO(log_, "==== READ UNLOCK ====");
+	//LOGGER_INFO(log_, "==== READ UNLOCK ====");
 	return item;
 }
