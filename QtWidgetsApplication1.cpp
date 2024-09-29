@@ -288,11 +288,6 @@ void QtWidgetsApplication1::clearance()
 {
 	calc_thread->full_count_canframes = 0;
 	calc_thread->full_count_canparser = 0;
-	//for (QTreeWidgetItem* it : full_queue)
-	//{
-	//    delete it;
-	//    it = nullptr;
-	//}
 	full_queue.clear();
 	ui.treetrace->clear();
 }
@@ -312,25 +307,25 @@ bool QtWidgetsApplication1::new_session()
 
 void QtWidgetsApplication1::startTrace()
 {
-	// auto log_ = GETLOG("WORKFLOW");
-	// LOGGER_INFO(log_, "==== START TRACE CLICKED ====");
+	auto log_ = GETLOG("WORKFLOW");
+	LOGGER_INFO(log_, "==== START TRACE CLICKED ====");
 
 	if (!new_session())
 		return;
 	start_time = QDateTime::currentDateTime();
-	// LOGGER_INFO(log_, "==== BEFORE RESUME TRACE ====");
+	LOGGER_INFO(log_, "==== BEFORE RESUME TRACE ====");
 	resumeTrace();
-	// LOGGER_INFO(log_, "==== AFTER RESUME TRACE ====");
-	// LOGGER_INFO(log_, "\n");
+	LOGGER_INFO(log_, "==== AFTER RESUME TRACE ====");
+	LOGGER_INFO(log_, "\n");
 }
 void QtWidgetsApplication1::resumeTrace()
 {
-	// auto log_ = GETLOG("WORKFLOW");
-	// LOGGER_INFO(log_, "==== RESUME TRACE PROCESS ====");
+	auto log_ = GETLOG("WORKFLOW");
+	LOGGER_INFO(log_, "==== RESUME TRACE PROCESS ====");
 
 	uint32_t samples = 1000;
-	// LOGGER_INFO(log_, "==== mysub_can_frames IS NULL? {} ====", mysub_can_frames == nullptr);
-	// LOGGER_INFO(log_, "==== mysub_can_parser IS NULL? {} ====", mysub_can_parser == nullptr);
+	LOGGER_INFO(log_, "==== mysub_can_frames IS NULL? {} ====", mysub_can_frames == nullptr);
+	LOGGER_INFO(log_, "==== mysub_can_parser IS NULL? {} ====", mysub_can_parser == nullptr);
 
 	if (mysub_can_frames == nullptr) {
 		mysub_can_frames = new ZoneMasterCanMessageDataSubscriber(dds_domainid);
@@ -342,26 +337,26 @@ void QtWidgetsApplication1::resumeTrace()
 		qRegisterMetaType <canframe>("canframe");
 	}
 	calc_thread->restartThread();
-	// LOGGER_INFO(log_, "==== THREAD RESTARTED ====");
+	LOGGER_INFO(log_, "==== THREAD RESTARTED ====");
 	calc_thread->setSubscriber(mysub_can_frames, samples, ui.treetrace);
-	// LOGGER_INFO(log_, "==== CAN SUB SET ====");
+	LOGGER_INFO(log_, "==== CAN SUB SET ====");
 	calc_thread->setCanParserSubscriber(mysub_can_parser, samples, ui.treetrace);
-	// LOGGER_INFO(log_, "==== PDU SUB SET ====");
+	LOGGER_INFO(log_, "==== PDU SUB SET ====");
 	calc_thread->start();
 	timer->start(TIMER_HEARTBEAT);
-	// LOGGER_INFO(log_, "==== HEARTBEAT STARTED ====");
+	LOGGER_INFO(log_, "==== HEARTBEAT STARTED ====");
 	timer_dustbin->start(TIMER_HEARTBEAT);
 	frozen = false;
 	progress_secs = start_time.secsTo(end_time);
 	updateToolbar();
-	// LOGGER_INFO(log_, "==== THREAD PAUSE STATUS -> {} ====", calc_thread->isPAUSED());
-	// LOGGER_INFO(log_, "==== END OF RESUMING ====");
+	LOGGER_INFO(log_, "==== THREAD PAUSE STATUS -> {} ====", calc_thread->isPAUSED());
+	LOGGER_INFO(log_, "==== END OF RESUMING ====");
 }
 
 void QtWidgetsApplication1::stopTrace()
 {
-	// auto log_ = GETLOG("WORKFLOW");
-	// LOGGER_INFO(log_, "==== STOP TRACE CLICKED ====");
+	auto log_ = GETLOG("WORKFLOW");
+	LOGGER_INFO(log_, "==== STOP TRACE CLICKED ====");
 
 	calc_thread->stopThread();
 	timer->stop();
@@ -376,53 +371,53 @@ void QtWidgetsApplication1::stopTrace()
 
 	last_status = "STOPPED";
 
-	// LOGGER_INFO(log_, "==== GOING TO FREEZE ====");
+	LOGGER_INFO(log_, "==== GOING TO FREEZE ====");
 
 	frozen = true;
-	// LOGGER_INFO(log_, "==== FROZEN STATUS {} ====", frozen);
+	LOGGER_INFO(log_, "==== FROZEN STATUS {} ====", frozen);
 	freeze_treetrace_items(count_per_page);
-	// LOGGER_INFO(log_, "==== END OF STOPPING TRACE ====");
-	// LOGGER_INFO(log_, "\n");
+	LOGGER_INFO(log_, "==== END OF STOPPING TRACE ====");
+	LOGGER_INFO(log_, "\n");
 
 }
 
 void QtWidgetsApplication1::pauseTrace()
 {
-	// auto log_ = GETLOG("WORKFLOW");
-	// LOGGER_INFO(log_, "==== PAUSE BUTTON CLICKED ====");
+	auto log_ = GETLOG("WORKFLOW");
+	LOGGER_INFO(log_, "==== PAUSE BUTTON CLICKED ====");
 	//this->stopTrace();
 
 	if (1) {
 		if (calc_thread->isPAUSED()) {
-			// LOGGER_INFO(log_, "==== CONTINUE AFTER PAUSE ====");
+			LOGGER_INFO(log_, "==== CONTINUE AFTER PAUSE ====");
 			frozen = false;
 			//ui.treetrace->clear();
 			initial_trace = true;
 
-			// LOGGER_INFO(log_, "==== FROZEN STATUS {} ====", frozen);
-			// LOGGER_INFO(log_, "==== BEFORE RESUME TRACE ====");
-			// LOGGER_INFO(log_, "==== QUEUE SIZE BEFORE RESUMING {} ====", full_queue.size() - padding);
+			LOGGER_INFO(log_, "==== FROZEN STATUS {} ====", frozen);
+			LOGGER_INFO(log_, "==== BEFORE RESUME TRACE ====");
+			LOGGER_INFO(log_, "==== QUEUE SIZE BEFORE RESUMING {} ====", full_queue.size() - padding);
 			resumeTrace();
-			// LOGGER_INFO(log_, "==== AFTER RESUME TRACE ====");
-			// LOGGER_INFO(log_, "\n");
+			LOGGER_INFO(log_, "==== AFTER RESUME TRACE ====");
+			LOGGER_INFO(log_, "\n");
 			return;
 		}
-		// LOGGER_INFO(log_, "==== PAUSE TRACE ====");
+		LOGGER_INFO(log_, "==== PAUSE TRACE ====");
 		calc_thread->pauseThread();
 		timer->stop();
 		paused_index = full_queue.size() - padding;
-		// LOGGER_INFO(log_, "==== THREAD PAUSE STATUS -> {} ====", calc_thread->isPAUSED());
-		// LOGGER_INFO(log_, "PAUSED FULL QUEUE -> {}", paused_index);
-		// LOGGER_INFO(log_, "==== QUEUE SIZE WHEN PAUSE {} ====", full_queue.size() - padding);
+		LOGGER_INFO(log_, "==== THREAD PAUSE STATUS -> {} ====", calc_thread->isPAUSED());
+		LOGGER_INFO(log_, "PAUSED FULL QUEUE -> {}", paused_index);
+		LOGGER_INFO(log_, "==== QUEUE SIZE WHEN PAUSE {} ====", full_queue.size() - padding);
 		last_status = "PAUSED";
-		// LOGGER_INFO(log_, "BEFORE FREEZING");
+		LOGGER_INFO(log_, "BEFORE FREEZING");
 		freeze_treetrace_items(count_per_page);
-		// LOGGER_INFO(log_, "AFTER FREEZING");
+		LOGGER_INFO(log_, "AFTER FREEZING");
 		updateToolbar();
 		updateProgressLeft();
 	}
-	// LOGGER_INFO(log_, "==== END OF PAUSE BUTTON CLICKED ====");
-	// LOGGER_INFO(log_, "\n");
+	LOGGER_INFO(log_, "==== END OF PAUSE BUTTON CLICKED ====");
+	LOGGER_INFO(log_, "\n");
 }
 
 
@@ -498,7 +493,6 @@ void QtWidgetsApplication1::initialHeaders()
 		button->setIcon(QIcon(":/QtWidgetsApplication1/res/funnel-icon.ico"));
 		headerButtonList << button;
 	}
-
 	adjust_filter_buttons();
 }
 
@@ -558,7 +552,6 @@ void QtWidgetsApplication1::headerButtonClicked()
 			pItem->setCheckState(Qt::Unchecked);
 
 		}
-		//pItem->setCheckState(filter->m_selectedStates[columnButton].at(i) ? Qt::Checked : Qt::Unchecked);
 	}
 
 	if (!filter_pop) {
@@ -596,21 +589,21 @@ void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
 
 void QtWidgetsApplication1::on_pop_to_root(QTreeWidgetItem* item)
 {
-	// auto log_ = GETLOG("WORKFLOW");
+	auto log_ = GETLOG("WORKFLOW");
 	//rwLock.lockForWrite();
-	// LOGGER_INFO(log_, "==== WRITE LOCK ====");
+	LOGGER_INFO(log_, "==== WRITE LOCK ====");
 	timer_isRunning = true;
 	if (item != NULL) {
 		full_queue.enqueue(item);
 		QString source = ((TraceTreeWidgetItem*)item)->getSource();
-		if (source != "canframe") {
+		//if (source != "canframe") {
 			qDebug() << "TraceTreeWidgetItem SOURCE -> " << source;
-		}
-		// LOGGER_INFO(log_, "ENQUEUING -> {}", item->text(0).toStdString());
+		//}
+		LOGGER_INFO(log_, "ENQUEUING -> {}", item->text(0).toStdString());
 	}
 	timer_isRunning = false;
 	//rwLock.unlock();
-	// LOGGER_INFO(log_, "==== WRITE UNLOCK ====");
+	LOGGER_INFO(log_, "==== WRITE UNLOCK ====");
 }
 
 void QtWidgetsApplication1::ChangeHeader(const QString& text)
@@ -728,9 +721,9 @@ void QtWidgetsApplication1::get_refreshed_items()
 
 void QtWidgetsApplication1::update_tracewindow()
 {
-	// auto log_ = GETLOG("WORKFLOW");
-	// LOGGER_INFO(log_, "======= UPDATE_TRACEWINDOW =======");
-	// LOGGER_INFO(log_, "LAST STATUS -> {}", last_status.toStdString());
+	auto log_ = GETLOG("WORKFLOW");
+	LOGGER_INFO(log_, "======= UPDATE_TRACEWINDOW =======");
+	LOGGER_INFO(log_, "LAST STATUS -> {}", last_status.toStdString());
 	int queue_size = full_queue.size()-padding;
 	QTreeWidget* tree = ui.treetrace;
 	QTreeWidgetItem* invisible_root_item = tree->invisibleRootItem();
@@ -743,11 +736,11 @@ void QtWidgetsApplication1::update_tracewindow()
 	visible_height = v_height;
 	item_height = itemSize.height();
 	item_width = itemSize.width();
-	// LOGGER_INFO(log_, "UPDATE_TRACEWINDOW CAPACITY -> {}", window_capacity);
-	// LOGGER_INFO(log_, "PAGE CAPACITY -> {}", page_capacity);
+	LOGGER_INFO(log_, "UPDATE_TRACEWINDOW CAPACITY -> {}", window_capacity);
+	LOGGER_INFO(log_, "PAGE CAPACITY -> {}", page_capacity);
 
 	int tree_count = ui.treetrace->topLevelItemCount();
-	// LOGGER_INFO(log_, "TREE COUNT -> {}", tree_count);
+	LOGGER_INFO(log_, "TREE COUNT -> {}", tree_count);
 
 	/* 
 	一个窗口如果能够存下60行，那么window_capacity就是60。
@@ -757,24 +750,24 @@ void QtWidgetsApplication1::update_tracewindow()
 	 */
 	
 	if (tree_count == 0) {
-		// LOGGER_INFO(log_, "==== EMPTY TREE ====");
+		LOGGER_INFO(log_, "==== EMPTY TREE ====");
 		fill_empty_tree(window_capacity); // 填空一条
 	} else if(tree_count > 0 && tree_count < page_capacity) {
-		// LOGGER_INFO(log_, "==== HALF TREE ====");
+		LOGGER_INFO(log_, "==== HALF TREE ====");
 		fill_partial_tree(page_capacity); // 追加
 	} else {
-		// LOGGER_INFO(log_, "==== REDRAW TREE ====");
+		LOGGER_INFO(log_, "==== REDRAW TREE ====");
 		refresh_full_tree(window_capacity);
 	}
 	ui.treetrace->scrollToBottom();
-	// LOGGER_INFO(log_, "======= END of update_tracewindow =======");
-	// LOGGER_INFO(log_, "\n");
+	LOGGER_INFO(log_, "======= END of update_tracewindow =======");
+	LOGGER_INFO(log_, "\n");
 }
 
 void QtWidgetsApplication1::refresh_full_tree(int capacity)
 {
-	// auto log_ = GETLOG("WORKFLOW");
-	// LOGGER_INFO(log_, "==== REFRESH_FULL_TREE ====");
+	auto log_ = GETLOG("WORKFLOW");
+	LOGGER_INFO(log_, "==== REFRESH_FULL_TREE ====");
 	QTreeWidget* tree = ui.treetrace;
 	int tree_count = tree->topLevelItemCount();
 	//if (tree_count < page_capacity) {
@@ -783,32 +776,32 @@ void QtWidgetsApplication1::refresh_full_tree(int capacity)
 	//}
 	//else {
 		draw_trace_window(capacity);
-		// LOGGER_INFO(log_, "==== END OF REFRESH_FULL_TREE ====");
+		LOGGER_INFO(log_, "==== END OF REFRESH_FULL_TREE ====");
 		return;
 	//}
 }
 
 void QtWidgetsApplication1::draw_trace_window(int capacity)
 {
-	// auto log_ = GETLOG("WORKFLOW");
-	// LOGGER_INFO(log_, "DRAW TRACE WINDOW -> {}", capacity);
+	auto log_ = GETLOG("WORKFLOW");
+	LOGGER_INFO(log_, "DRAW TRACE WINDOW -> {}", capacity);
 
 	int queue_size = full_queue.size()-padding;
-	// LOGGER_INFO(log_, "DRAW QUEUE SIZE -> {}", queue_size);
-	// LOGGER_INFO(log_, "PADDING -> {}", padding);
+	LOGGER_INFO(log_, "DRAW QUEUE SIZE -> {}", queue_size);
+	LOGGER_INFO(log_, "PADDING -> {}", padding);
 
 	if (queue_size <= 0) return;
 
 	QTreeWidget* tree = ui.treetrace;
 	QTreeWidgetItem* it = nullptr;
 	int changes = std::min(queue_size, capacity);
-	// LOGGER_INFO(log_, "DRAW CHANGES -> {}", changes);
+	LOGGER_INFO(log_, "DRAW CHANGES -> {}", changes);
 	if (changes) {
 		int count = tree->topLevelItemCount();
-		// LOGGER_INFO(log_, "TREE COUNT -> {}", count);
+		LOGGER_INFO(log_, "TREE COUNT -> {}", count);
 		for (int i = 0; i < changes; i++) {
 			int idx = queue_size - changes + i;
-			// LOGGER_INFO(log_, "DRAW ITEM -> {}", idx);
+			LOGGER_INFO(log_, "DRAW ITEM -> {}", idx);
 			bool bchanged = false;
 			it = full_queue.at(idx);
 			if (filter_pass_item(it)) {
@@ -816,8 +809,8 @@ void QtWidgetsApplication1::draw_trace_window(int capacity)
 				{
 					int item_idx = count - changes + i;
 					QTreeWidgetItem* lastItem = tree->topLevelItem(item_idx);
-					// LOGGER_INFO(log_, "ORIGINAL -> {}", lastItem->text(0).toStdString());
-					// LOGGER_INFO(log_, "REPLACED -> {}", it->text(0).toStdString());
+					LOGGER_INFO(log_, "ORIGINAL -> {}", lastItem->text(0).toStdString());
+					LOGGER_INFO(log_, "REPLACED -> {}", it->text(0).toStdString());
 					for (int k = 0; k < it->columnCount(); k++) {
 						if (lastItem->text(k) != it->text(k)) {
 							lastItem->setText(k, it->text(k));
@@ -825,7 +818,7 @@ void QtWidgetsApplication1::draw_trace_window(int capacity)
 						}
 					}
 					if (bchanged) {
-						// LOGGER_INFO(log_, "NACH -> {}", lastItem->text(0).toStdString());
+						LOGGER_INFO(log_, "NACH -> {}", lastItem->text(0).toStdString());
 					}
 				}
 			}
@@ -868,10 +861,10 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 	QTreeWidget* tree = ui.treetrace;
 	int tree_count = tree->topLevelItemCount();
 	int gap = capacity - tree_count;
-	// LOGGER_INFO(log_, "GAP -> {}", gap);
+	LOGGER_INFO(log_, "GAP -> {}", gap);
 	if (gap <= 0) return;
 	int changes = std::min(queue_size, gap);
-	// LOGGER_INFO(log_, "PARTIAL CHANGES -> {}", changes);
+	LOGGER_INFO(log_, "PARTIAL CHANGES -> {}", changes);
 
 	// mark from here
 	if (changes > 0) {
@@ -880,7 +873,7 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 		QList<QTreeWidgetItem*> item_list;
 		for (int i = 0; i < changes; i++) {
 			int idx = queue_size-changes+i;
-			// LOGGER_INFO(log_, "PARTIAL INDEX -> {}", idx);
+			LOGGER_INFO(log_, "PARTIAL INDEX -> {}", idx);
 			if (idx >= 0) {
 				if (idx >= queue_original_size)
 				{
@@ -906,36 +899,36 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 	}
 
 	// end of mark
-	// LOGGER_INFO(log_, "END OF PARTIAL FILLING");
-	// LOGGER_INFO(log_, "====================");
+	LOGGER_INFO(log_, "END OF PARTIAL FILLING");
+	LOGGER_INFO(log_, "====================");
 }
 
 void QtWidgetsApplication1::fill_empty_tree(int capacity)
 {
-	// auto log_ = GETLOG("WORKFLOW");
+	auto log_ = GETLOG("WORKFLOW");
 
 	int queue_size = full_queue.size()-padding;
-	// LOGGER_INFO(log_, "FULL QUEUE SIZE IN EMPTY FUNC -> {}", queue_size);
+	LOGGER_INFO(log_, "FULL QUEUE SIZE IN EMPTY FUNC -> {}", queue_size);
 	if (queue_size <= 0) return;
 
 	int changes = std::min(queue_size, capacity);
 	if (changes > 0) {
 		changes = 1;
-		// LOGGER_INFO(log_, "EMPTY CHANGES -> {}", changes);
+		LOGGER_INFO(log_, "EMPTY CHANGES -> {}", changes);
 		for (int i = 0; i < changes; i++) {
 			QTreeWidgetItem* it = nullptr;
 			int idx = queue_size - changes + i;
 			it = this->read_item_from_queue(idx);
-			// LOGGER_INFO(log_, "READY INDEX -> {}", idx);
+			LOGGER_INFO(log_, "READY INDEX -> {}", idx);
 			if (it != nullptr) {
-				// LOGGER_INFO(log_, "ITEM INDEX -> {}", idx);
+				LOGGER_INFO(log_, "ITEM INDEX -> {}", idx);
 				if (filter_pass_item(it)) {
 					ui.treetrace->addTopLevelItem(it);
 				}
 			}
 		}
 	}
-	// LOGGER_INFO(log_, "EXITING EMPTY TREE.");
+	LOGGER_INFO(log_, "EXITING EMPTY TREE.");
 }
 
 void QtWidgetsApplication1::trace_scroll_changed(int value)
@@ -944,7 +937,7 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
 	QScrollBar* scrollBar = ui.treetrace->verticalScrollBar();
 	if (scrollBar->value() == scrollBar->maximum()) { return; }
 
-	// auto log_ = GETLOG("WORKFLOW");
+	auto log_ = GETLOG("WORKFLOW");
 	calc_thread->pauseThread();
 	timer->stop();
 	paused_index = full_queue.size() - padding;
@@ -954,11 +947,11 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
 	if (frozen)
 		return;
 	else {
-		// LOGGER_INFO(log_, "SCROLLED FULL QUEUE -> {}", paused_index);
-		// LOGGER_INFO(log_, "SCROLLED BEFORE FREEZING");
+		LOGGER_INFO(log_, "SCROLLED FULL QUEUE -> {}", paused_index);
+		LOGGER_INFO(log_, "SCROLLED BEFORE FREEZING");
 		freeze_treetrace_items(count_per_page);
 		frozen = true;
-		// LOGGER_INFO(log_, "SCROLLED AFTER FREEZING");
+		LOGGER_INFO(log_, "SCROLLED AFTER FREEZING");
 	}
 
 }
@@ -985,29 +978,29 @@ void QtWidgetsApplication1::compare_item()
 
 void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
 {
-	// auto log_ = GETLOG("WORKFLOW");
+	auto log_ = GETLOG("WORKFLOW");
 
-	// LOGGER_INFO(log_, "NOTHING. EXITING...");
-	// LOGGER_INFO(log_, "====================");
+	LOGGER_INFO(log_, "NOTHING. EXITING...");
+	LOGGER_INFO(log_, "====================");
 	return;
 
 	if (frozen) return;
 
 	int size = full_queue.size() - padding;
-	// LOGGER_INFO(log_, "SIZE -> {}", size);
+	LOGGER_INFO(log_, "SIZE -> {}", size);
 	if (size <= 0) return;
 
-	// LOGGER_INFO(log_, "TARGET -> {}", ncount);
+	LOGGER_INFO(log_, "TARGET -> {}", ncount);
 	ui.treetrace->clear();
 	int total = std::min(size, ncount) - 5;
-	// LOGGER_INFO(log_, "TOTAL -> {}", total);
+	LOGGER_INFO(log_, "TOTAL -> {}", total);
 	QTreeWidgetItem* it = nullptr;
 	QList<QTreeWidgetItem*> item_list;
 	item_list.clear();
 	for (int i = 0; i < total; i++)
 	{
 		int idx = size - i;
-		// LOGGER_INFO(log_, "INDEX -> {}", idx);
+		LOGGER_INFO(log_, "INDEX -> {}", idx);
 		it = full_queue.at(idx);
 		if (it != nullptr && filter_pass_item(it)) {
 			item_list.append(it);
@@ -1017,7 +1010,7 @@ void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
 	{
 		ui.treetrace->addTopLevelItems(item_list);
 		int frozen_size = item_list.size();
-		// LOGGER_INFO(log_, "FRONZEN -> {}", frozen_size);
+		LOGGER_INFO(log_, "FRONZEN -> {}", frozen_size);
 	}
 }
 
@@ -1108,14 +1101,14 @@ bool QtWidgetsApplication1::showNewSession()
 
 QTreeWidgetItem* QtWidgetsApplication1::read_item_from_queue(int index)
 {
-	// auto log_ = GETLOG("WORKFLOW");
+	auto log_ = GETLOG("WORKFLOW");
 	QTreeWidgetItem* item = nullptr;
 	//rwLock.lockForRead();
-	// LOGGER_INFO(log_, "==== READ LOCK ====");
+	LOGGER_INFO(log_, "==== READ LOCK ====");
 	item = this->full_queue.at(index);
-	// LOGGER_INFO(log_, "ITEM CONTENT -> {}", item->text(0).toStdString());
+	LOGGER_INFO(log_, "ITEM CONTENT -> {}", item->text(0).toStdString());
 	//rwLock.unlock();
-	// LOGGER_INFO(log_, "==== READ UNLOCK ====");
+	LOGGER_INFO(log_, "==== READ UNLOCK ====");
 	return item;
 }
 
@@ -1128,5 +1121,5 @@ QTreeWidgetItem* QtWidgetsApplication1::read_item_from_dumb(int index)
 	}
 	//str_pdu << "COL 0" << "COL 1" << "COL 2" << "COL 3";
 	QTreeWidgetItem* item = new QTreeWidgetItem(str_pdu);
-	return item;
+	return (QTreeWidgetItem*) item;
 }

@@ -107,10 +107,10 @@ void multiThread::setSubscriber(ZoneMasterCanMessageDataSubscriber* subscriber, 
 {
     if (!bconnected_cf) {
         mysub_can_frames = subscriber;
-    samples_ = samples;
-    subscriber->setOuterThread(this, treeview);
-    QObject::connect(&mysub_can_frames->listener_, &SubListener::traceItemUpdate_internal_cf, this, &multiThread::formatRow_canframe_thread); 
-    bconnected_cf = true;
+        samples_ = samples;
+        subscriber->setOuterThread(this, treeview);
+        QObject::connect(&mysub_can_frames->listener_, &SubListener::traceItemUpdate_internal_cf, this, &multiThread::formatRow_canframe_thread); 
+        bconnected_cf = true;
     }
     
 }
@@ -119,19 +119,16 @@ void multiThread::setCanParserSubscriber(ZoneMasterCanParserSubscriber* subscrib
 {
     if (!bconnected_cp) {
         mysub_can_parser = subscriber;
-    samples_ = samples;
-    subscriber->setOuterThread(this, treeview);
-    QObject::connect(&mysub_can_parser->listener_, &CanParserListener::traceItemUpdate_internal_canparser, this, &multiThread::formatRow_canparser_thread);
-    bconnected_cp = true;
+        samples_ = samples;
+        subscriber->setOuterThread(this, treeview);
+        QObject::connect(&mysub_can_parser->listener_, &CanParserListener::traceItemUpdate_internal_canparser, this, &multiThread::formatRow_canparser_thread);
+        bconnected_cp = true;
     }
 }
 
 void multiThread::formatRow_canparser_thread(canframe frame)
 {
-    //full_canparserdata.append(frame);
     full_count_canparser++;
-    //return;
-
     if (is_paused) { return; }
 
     last_timestamp_canparser = frame.timeStamp();
@@ -142,7 +139,6 @@ void multiThread::formatRow_canparser_thread(canframe frame)
     str_parser.append("");
     str_parser.append("");
     str_parser.append(QString::fromStdString(frame.name()));
-    //QTreeWidgetItem* Item = new QTreeWidgetItem(str_parser);
     TraceTreeWidgetItem* Item = new TraceTreeWidgetItem(str_parser);
     Item->setSource("can_parser");
     if (Item == nullptr)
@@ -158,7 +154,6 @@ void multiThread::formatRow_canparser_thread(canframe frame)
         QStringList str_pdu = {};
         str_pdu.append(pdu_name);
         str_pdu.append(pdu_size);
-        //QTreeWidgetItem* item_pdu = new QTreeWidgetItem(str_pdu);
         TraceTreeWidgetItem* item_pdu = new TraceTreeWidgetItem(str_pdu);
         item_pdu->setSource("can_pdu");
         
@@ -188,7 +183,6 @@ void multiThread::formatRow_canparser_thread(canframe frame)
             QStringList str_pdu = {};
             str_pdu.append(pdu_name);
             str_pdu.append(pdu_size);
-            //QTreeWidgetItem* item_pdu = new QTreeWidgetItem(str_pdu);
             TraceTreeWidgetItem* item_pdu = new TraceTreeWidgetItem(str_pdu);
             item_pdu->setSource("can_container_pdu");
             for (int m = 0; m < current_pdu.zone_signals().size(); m++) {
@@ -197,7 +191,6 @@ void multiThread::formatRow_canparser_thread(canframe frame)
                 str_signal.append(QString::fromStdString(current_signal.name()));
                 str_signal.append(QString::number(current_signal.raw_value()));
                 str_signal.append(QString::fromStdString(current_signal.phy_value()));
-                //QTreeWidgetItem* item_signal = new QTreeWidgetItem(str_signal);
                 TraceTreeWidgetItem* item_signal = new TraceTreeWidgetItem(str_pdu);
                 item_signal->setSource("can_container_pdu_signal");
                 item_pdu->addChild(item_signal);
