@@ -883,19 +883,11 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 				QTreeWidgetItem* it1 = read_item_from_dumb(idx);
 				int it0colcount = it0->columnCount();
 				int it1colcount = it1->columnCount();
-				if (it0colcount != it1colcount)
-				{
-					qDebug() << it0colcount << it1colcount;
-				}
-				if (filter_pass_item(it1)) {
-					ui.treetrace->addTopLevelItem(it1);
-					//item_list.append(it);
+				if (filter_pass_item(it0)) {
+					ui.treetrace->addTopLevelItem(it0);
 				}
 			}
 		}
-		//if (item_list.size() > 0) {
-		//	ui.treetrace->addTopLevelItems(item_list);
-		//}
 	}
 
 	// end of mark
@@ -1120,6 +1112,6 @@ QTreeWidgetItem* QtWidgetsApplication1::read_item_from_dumb(int index)
 		str_pdu.append(str);
 	}
 	//str_pdu << "COL 0" << "COL 1" << "COL 2" << "COL 3";
-	QTreeWidgetItem* item = new QTreeWidgetItem(str_pdu);
+	TraceTreeWidgetItem* item = new TraceTreeWidgetItem(str_pdu);
 	return (QTreeWidgetItem*) item;
 }

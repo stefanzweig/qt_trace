@@ -14,7 +14,6 @@ public:
     }
 
     QVariant data(int column, int role) const override;
-    bool operator<(const QTreeWidgetItem& other) const override;
     void setSource(QString source) {
         source_ = source;
     }
