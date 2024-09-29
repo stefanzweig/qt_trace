@@ -5,11 +5,11 @@ class TraceTreeWidgetItem :
     public QTreeWidgetItem
 {
 public:
-    TraceTreeWidgetItem(QTreeWidgetItem* parent = nullptr, int type = QTreeWidgetItem::Type) :
+    explicit TraceTreeWidgetItem(QTreeWidgetItem* parent = nullptr, int type = QTreeWidgetItem::Type) :
         QTreeWidgetItem(parent, type) {
         source_ = "canframe";
     }
-    TraceTreeWidgetItem(const QStringList& strings, int type = Type) : QTreeWidgetItem(strings, type) {
+    explicit TraceTreeWidgetItem(const QStringList& strings, int type = Type) : QTreeWidgetItem(strings, type) {
         source_ = "canframe";
     }
 
