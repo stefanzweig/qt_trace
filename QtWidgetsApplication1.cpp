@@ -812,10 +812,8 @@ void QtWidgetsApplication1::draw_trace_window(int capacity)
 					LOGGER_INFO(log_, "ORIGINAL -> {}", lastItem->text(0).toStdString());
 					LOGGER_INFO(log_, "REPLACED -> {}", it->text(0).toStdString());
 					for (int k = 0; k < it->columnCount(); k++) {
-						if (lastItem->text(k) != it->text(k)) {
-							lastItem->setText(k, it->text(k));
-							bchanged = true;
-						}
+						lastItem->setText(k, it->text(k));
+						bchanged = true;
 					}
 					if (bchanged) {
 						LOGGER_INFO(log_, "NACH -> {}", lastItem->text(0).toStdString());
