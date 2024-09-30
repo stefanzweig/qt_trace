@@ -597,7 +597,7 @@ void QtWidgetsApplication1::on_pop_to_root(QTreeWidgetItem* item)
 		full_queue.enqueue(item);
 		QString source = ((TraceTreeWidgetItem*)item)->getSource();
 		//if (source != "canframe") {
-			qDebug() << "TraceTreeWidgetItem SOURCE -> " << source;
+		qDebug() << "TraceTreeWidgetItem SOURCE -> " << source;
 		//}
 		LOGGER_INFO(log_, "ENQUEUING -> {}", item->text(0).toStdString());
 	}
@@ -724,7 +724,7 @@ void QtWidgetsApplication1::update_tracewindow()
 	auto log_ = GETLOG("WORKFLOW");
 	LOGGER_INFO(log_, "======= UPDATE_TRACEWINDOW =======");
 	LOGGER_INFO(log_, "LAST STATUS -> {}", last_status.toStdString());
-	int queue_size = full_queue.size()-padding;
+	int queue_size = full_queue.size() - padding;
 	QTreeWidget* tree = ui.treetrace;
 	QTreeWidgetItem* invisible_root_item = tree->invisibleRootItem();
 
@@ -742,20 +742,22 @@ void QtWidgetsApplication1::update_tracewindow()
 	int tree_count = ui.treetrace->topLevelItemCount();
 	LOGGER_INFO(log_, "TREE COUNT -> {}", tree_count);
 
-	/* 
+	/*
 	一个窗口如果能够存下60行，那么window_capacity就是60。
 	 1.如果目前窗口内为空，则填空一行。
 	 2.如果目前窗口内有内容但是不足当页容量（变量为page_capacity)，则填满到page_capacity行。
 	 3.如果窗口内有page_capacity行，则替换满屏数据。
 	 */
-	
+
 	if (tree_count == 0) {
 		LOGGER_INFO(log_, "==== EMPTY TREE ====");
 		fill_empty_tree(window_capacity); // 填空一条
-	} else if(tree_count > 0 && tree_count < page_capacity) {
+	}
+	else if (tree_count > 0 && tree_count < page_capacity) {
 		LOGGER_INFO(log_, "==== HALF TREE ====");
 		fill_partial_tree(page_capacity); // 追加
-	} else {
+	}
+	else {
 		LOGGER_INFO(log_, "==== REDRAW TREE ====");
 		refresh_full_tree(window_capacity);
 	}
@@ -775,9 +777,9 @@ void QtWidgetsApplication1::refresh_full_tree(int capacity)
 	//	return;
 	//}
 	//else {
-		draw_trace_window(capacity);
-		LOGGER_INFO(log_, "==== END OF REFRESH_FULL_TREE ====");
-		return;
+	draw_trace_window(capacity);
+	LOGGER_INFO(log_, "==== END OF REFRESH_FULL_TREE ====");
+	return;
 	//}
 }
 
@@ -786,7 +788,7 @@ void QtWidgetsApplication1::draw_trace_window(int capacity)
 	auto log_ = GETLOG("WORKFLOW");
 	LOGGER_INFO(log_, "DRAW TRACE WINDOW -> {}", capacity);
 
-	int queue_size = full_queue.size()-padding;
+	int queue_size = full_queue.size() - padding;
 	LOGGER_INFO(log_, "DRAW QUEUE SIZE -> {}", queue_size);
 	LOGGER_INFO(log_, "PADDING -> {}", padding);
 
@@ -808,15 +810,23 @@ void QtWidgetsApplication1::draw_trace_window(int capacity)
 				if (count > 0)
 				{
 					int item_idx = count - changes + i;
-					QTreeWidgetItem* lastItem = tree->topLevelItem(item_idx);
+					TraceTreeWidgetItem* lastItem = (TraceTreeWidgetItem*)tree->topLevelItem(item_idx);
 					LOGGER_INFO(log_, "ORIGINAL -> {}", lastItem->text(0).toStdString());
 					LOGGER_INFO(log_, "REPLACED -> {}", it->text(0).toStdString());
 					for (int k = 0; k < it->columnCount(); k++) {
 						lastItem->setText(k, it->text(k));
+						lastItem->setDirty(true);
+						lastItem->inc_ref();
 						bchanged = true;
 					}
 					if (bchanged) {
 						LOGGER_INFO(log_, "NACH -> {}", lastItem->text(0).toStdString());
+						QStringList original_data = lastItem->get_original_data();
+						int ref = lastItem->get_ref();
+						LOGGER_INFO(log_, "REF COUNTER -> {}", ref);
+						//for (QString s : original_data) {
+						//	LOGGER_INFO(log_, "ORIGIN -> {}", s.toStdString());
+						//}
 					}
 				}
 			}
@@ -870,7 +880,7 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 		qDebug() << "ORIGINAL QUEUE SIZE -> " << queue_original_size;
 		QList<QTreeWidgetItem*> item_list;
 		for (int i = 0; i < changes; i++) {
-			int idx = queue_size-changes+i;
+			int idx = queue_size - changes + i;
 			LOGGER_INFO(log_, "PARTIAL INDEX -> {}", idx);
 			if (idx >= 0) {
 				if (idx >= queue_original_size)
@@ -897,7 +907,7 @@ void QtWidgetsApplication1::fill_empty_tree(int capacity)
 {
 	auto log_ = GETLOG("WORKFLOW");
 
-	int queue_size = full_queue.size()-padding;
+	int queue_size = full_queue.size() - padding;
 	LOGGER_INFO(log_, "FULL QUEUE SIZE IN EMPTY FUNC -> {}", queue_size);
 	if (queue_size <= 0) return;
 
@@ -1111,5 +1121,5 @@ QTreeWidgetItem* QtWidgetsApplication1::read_item_from_dumb(int index)
 	}
 	//str_pdu << "COL 0" << "COL 1" << "COL 2" << "COL 3";
 	TraceTreeWidgetItem* item = new TraceTreeWidgetItem(str_pdu);
-	return (QTreeWidgetItem*) item;
+	return (QTreeWidgetItem*)item;
 }

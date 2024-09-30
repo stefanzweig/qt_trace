@@ -93,7 +93,7 @@ private:
 	qint64 progress_secs;
 	int paused_index = 0;
 	QString last_status = "READY";
-	bool timer_isRunning = false;
+	bool timer_isRunning = false; // whether it is in a process of timer, a lock.
 	QReadWriteLock rwLock;
 	
 private slots:
