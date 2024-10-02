@@ -49,12 +49,6 @@
     <ClCompile Include="treemodel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DataTreeView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DataTreeItemDelegate.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="topicData\ZoneMasterCanMessageDataSubscriber.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -438,16 +432,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="demo.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="treemodel.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="DataTreeView.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="DataTreeItemDelegate.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="topicData\ZoneMasterCanMessageDataListener.h">

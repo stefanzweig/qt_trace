@@ -116,8 +116,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="columnfilter.cpp" />
-    <ClCompile Include="DataTreeItemDelegate.cpp" />
-    <ClCompile Include="DataTreeView.cpp" />
     <ClCompile Include="multiThread.cpp" />
     <ClCompile Include="topicData\ZoneMasterCanParserSubscriber.cpp" />
     <ClCompile Include="topicData\ZoneMasterData.cxx" />
@@ -249,8 +247,6 @@
     <ClInclude Include="spdlog\tweakme.h" />
     <ClInclude Include="spdlog\version.h" />
     <ClInclude Include="topicData\ZoneMasterCanMessageDataSubscriber.h" />
-    <QtMoc Include="DataTreeView.h" />
-    <QtMoc Include="DataTreeItemDelegate.h" />
     <ClInclude Include="gui_global.h" />
     <ClInclude Include="topicData\BaseNodeData.h" />
     <QtMoc Include="topicData\ZoneMasterCanParserListener.h" />
@@ -261,7 +257,6 @@
     <ClInclude Include="topicData\ZoneMasterDataPubSubTypes.h" />
     <ClInclude Include="treeitem.h" />
     <QtMoc Include="treemodel.h" />
-    <QtMoc Include="demo.h" />
     <QtMoc Include="multiThread.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

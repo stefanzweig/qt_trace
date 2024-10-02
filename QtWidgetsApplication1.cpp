@@ -1134,9 +1134,11 @@ void QtWidgetsApplication1::construct_page_data(QTreeWidgetItem* item)
 	*  in order to show the tree in the pause or stopped state.
 	*  in the class there should be a queue of items and limit the size
 	*  to the *page_capacity*.
+	*  because the queue stores the pointers, so this queue do not 
+	*  delete the item manually.
 	*  2024Äê10ÔÂ2ÈÕ 22:06
 	*/
-	if (current_page_queue.size() >= page_capacity)
-		return;
 	current_page_queue.enqueue(item);
+	if (current_page_queue.size() > page_capacity)
+		current_page_queue.dequeue();
 }
