@@ -86,9 +86,19 @@ public:
 		return ref_counter;
 	}
 
+	QString getUUID() const
+	{
+		return uuid_;
+	}
+
+	void setUUID(QString uuid)
+	{
+		this->uuid_ = uuid;
+	}
+
 private:
 	MyItemType item_type = MyItemType::canframe_;
-	QString source_;
+	QString source_, uuid_;
 	QStringList original_data;
 	bool changed = false;
 	int ref_counter = 0;

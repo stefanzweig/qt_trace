@@ -134,8 +134,10 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="endianness.h" />
     <ClInclude Include="TraceTreeWidgetItem.h" />
     <ClInclude Include="uitils.h" />
+    <ClInclude Include="uuid_v4.h" />
     <QtMoc Include="columnfilter.h" />
     <ClInclude Include="columnfilterdialog.h" />
     <ClInclude Include="core_global.h" />

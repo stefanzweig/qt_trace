@@ -141,6 +141,10 @@ void multiThread::formatRow_canparser_thread(canframe frame)
     str_parser.append(QString::fromStdString(frame.name()));
     TraceTreeWidgetItem* Item = new TraceTreeWidgetItem(str_parser);
     Item->setSource("can_parser");
+    UUIDv4::UUID uuid = uuidGenerator.getUUID();
+    std::string s = uuid.str();
+    QString uuid_str = QString::fromStdString(s);
+    Item->setUUID(uuid_str);
     if (Item == nullptr)
         return;
 
@@ -232,10 +236,15 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
     QString myData = frame.Data_Str;
     can_list.append(myData);
     
-    //QTreeWidgetItem* Item = new QTreeWidgetItem(can_list);
     TraceTreeWidgetItem* Item = new TraceTreeWidgetItem(can_list);
-    if (Item !=nullptr)
+    if (Item != nullptr) {
+        UUIDv4::UUID uuid = uuidGenerator.getUUID();
+        std::string s = uuid.str();
+        QString uuid_str = QString::fromStdString(s);
+        Item->setUUID(uuid_str);
         emit(popToRoot(Item));
+    }
+        
 }
 
 void multiThread::setFilterOption(QString colName, QList<QList<QString>> items)

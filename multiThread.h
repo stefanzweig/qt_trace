@@ -10,6 +10,7 @@
 
 #include <QtWidgets/QTreeView>
 #include <QTreeWidgetItem>
+#include "uuid_v4.h"
 
 class multiThread :
     public QThread, public QObject, public SubListener
@@ -64,6 +65,7 @@ private:
 
     bool bconnected_cf = false;
     bool bconnected_cp = false;
+    UUIDv4::UUIDGenerator<std::mt19937_64> uuidGenerator;
 
     void bindDataToTraceTree();
     void formatRow_canparser_thread(canframe frame);

@@ -15,6 +15,7 @@
 #include "my_spdlog.h"
 #include "TraceTreeWidgetItem.h"
 
+
 QSize getItemSize(QTreeWidgetItem* item, int column, const QFont& font) {
 	QFontMetrics fontMetrics(font);
 	QString text = item->text(column);
@@ -596,10 +597,8 @@ void QtWidgetsApplication1::on_pop_to_root(QTreeWidgetItem* item)
 	if (item != NULL) {
 		full_queue.enqueue(item);
 		QString source = ((TraceTreeWidgetItem*)item)->getSource();
-		//if (source != "canframe") {
-		qDebug() << "TraceTreeWidgetItem SOURCE -> " << source;
-		//}
-		LOGGER_INFO(log_, "ENQUEUING -> {}", item->text(0).toStdString());
+		QString uuid = ((TraceTreeWidgetItem*)item)->getUUID();
+		LOGGER_INFO(log_, "ENQUEUING -> {}, UUID -> {}", item->text(0).toStdString(), uuid.toStdString());
 	}
 	timer_isRunning = false;
 	//rwLock.unlock();
