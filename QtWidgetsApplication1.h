@@ -46,6 +46,7 @@ private:
 	ZoneMasterCanParserSubscriber* mysub_can_parser = nullptr;
 	multiThread* calc_thread = nullptr;
 	QQueue<QTreeWidgetItem*> full_queue;
+	QQueue<QTreeWidgetItem*> current_page_queue;
 
 	uint64_t last_timestamp = 0;
 	uint64_t last_timestamp_canparser = 0;
@@ -142,4 +143,5 @@ private slots:
 	bool showNewSession();
 	void clearance();
 	void updateProgressLeft();
+	void construct_page_data(QTreeWidgetItem* item);
 };

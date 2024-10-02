@@ -596,6 +596,7 @@ void QtWidgetsApplication1::on_pop_to_root(QTreeWidgetItem* item)
 	timer_isRunning = true;
 	if (item != NULL) {
 		full_queue.enqueue(item);
+		construct_page_data(item);
 		QString source = ((TraceTreeWidgetItem*)item)->getSource();
 		QString uuid = ((TraceTreeWidgetItem*)item)->getUUID();
 		LOGGER_INFO(log_, "ENQUEUING -> {}, UUID -> {}", item->text(0).toStdString(), uuid.toStdString());
@@ -611,7 +612,7 @@ void QtWidgetsApplication1::ChangeHeader(const QString& text)
 	if (text == "Initial") {
 		ui.treetrace->setColumnCount(initialHeader.count()); //set column number
 		ui.treetrace->setHeaderLabels(initialHeader);        //set header labels
-		CurrentHeader = initialHeader;                        //save current header for data match
+		CurrentHeader = initialHeader;                       //save current header for data match
 	}
 	if (text == "CAN") {
 		ui.treetrace->setColumnCount(headers.count());
@@ -1113,12 +1114,29 @@ QTreeWidgetItem* QtWidgetsApplication1::read_item_from_queue(int index)
 
 QTreeWidgetItem* QtWidgetsApplication1::read_item_from_dumb(int index)
 {
+	/* This function is a mock one to generate 10 rows data
+	*  to the tracewidget to show.
+	*  2024年10月2日 22:14
+	*/
+
 	QStringList str_pdu = {};
 	for (int i = 0; i < 10; i++) {
 		QString str = QString("COL: %1").arg(i);
 		str_pdu.append(str);
 	}
-	//str_pdu << "COL 0" << "COL 1" << "COL 2" << "COL 3";
 	TraceTreeWidgetItem* item = new TraceTreeWidgetItem(str_pdu);
 	return (QTreeWidgetItem*)item;
+}
+
+void QtWidgetsApplication1::construct_page_data(QTreeWidgetItem* item)
+{
+	/* This function construct the current page data.
+	*  in order to show the tree in the pause or stopped state.
+	*  in the class there should be a queue of items and limit the size
+	*  to the *page_capacity*.
+	*  2024年10月2日 22:06
+	*/
+	if (current_page_queue.size() >= page_capacity)
+		return;
+	current_page_queue.enqueue(item);
 }
