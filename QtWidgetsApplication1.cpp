@@ -276,7 +276,8 @@ void QtWidgetsApplication1::prepareMenu(const QPoint& pos)
 void QtWidgetsApplication1::newDev()
 {
 	qDebug() << tr("Clean All");
-	ui.treetrace->clear();
+	safe_clear_trace();
+	//ui.treetrace->clear();
 }
 
 void QtWidgetsApplication1::onActionTriggered()
@@ -293,7 +294,8 @@ void QtWidgetsApplication1::clearance()
 	// todo: how to delete the items in the queue safely?
 	// 2024Äê10ÔÂ3ÈÕ 11:23
 	full_queue.clear();
-	ui.treetrace->clear();
+	safe_clear_trace();
+	//ui.treetrace->clear();
 }
 
 bool QtWidgetsApplication1::new_session()
@@ -401,6 +403,7 @@ void QtWidgetsApplication1::pauseTrace()
 			LOGGER_INFO(log_, "==== FROZEN STATUS {} ====", frozen);
 			LOGGER_INFO(log_, "==== BEFORE RESUME TRACE ====");
 			LOGGER_INFO(log_, "==== QUEUE SIZE BEFORE RESUMING {} ====", full_queue.size() - padding);
+			restore_full_queue();
 			resumeTrace();
 			LOGGER_INFO(log_, "==== AFTER RESUME TRACE ====");
 			LOGGER_INFO(log_, "\n");
@@ -591,7 +594,7 @@ void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
 }
 
 
-void QtWidgetsApplication1::on_pop_to_root(QTreeWidgetItem* item)
+void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 {
 	auto log_ = GETLOG("WORKFLOW");
 	//rwLock.lockForWrite();
@@ -599,11 +602,14 @@ void QtWidgetsApplication1::on_pop_to_root(QTreeWidgetItem* item)
 	timer_isRunning = true;
 	if (item != NULL) {
 		full_queue.enqueue(item);
-		construct_page_data(item);
-		QString source = ((TraceTreeWidgetItem*)item)->getSource();
-		QString uuid = ((TraceTreeWidgetItem*)item)->getUUID();
+		TraceTreeWidgetItem* item_backup = (TraceTreeWidgetItem*)item->clone();
+		full_queue_backup.enqueue(item_backup);
+		construct_page_data(item_backup);
+		QString source = ((TraceTreeWidgetItem*)item_backup)->getSource();
+		QString uuid = ((TraceTreeWidgetItem*)item_backup)->getUUID();
 		LOGGER_INFO(log_, "ENQUEUING -> {}, UUID -> {}", item->text(0).toStdString(), uuid.toStdString());
-		//qDebug() << "UUID -> " << uuid;
+		qDebug() << "UUID -> " << uuid << "SOURCE ->" << source;
+		qDebug() << "ORIGINAL DATA ->" << ((TraceTreeWidgetItem*)item_backup)->get_original_data();
 	}
 	timer_isRunning = false;
 	//rwLock.unlock();
@@ -799,7 +805,7 @@ void QtWidgetsApplication1::draw_trace_window(int capacity)
 	if (queue_size <= 0) return;
 
 	QTreeWidget* tree = ui.treetrace;
-	QTreeWidgetItem* it = nullptr;
+	TraceTreeWidgetItem* it = nullptr;
 	int changes = std::min(queue_size, capacity);
 	LOGGER_INFO(log_, "DRAW CHANGES -> {}", changes);
 	if (changes) {
@@ -847,7 +853,7 @@ void QtWidgetsApplication1::fill_up_to_count(int count)
 	if (queue_size <= 0) return;
 
 	QTreeWidget* tree = ui.treetrace;
-	QTreeWidgetItem* it = nullptr;
+	TraceTreeWidgetItem* it = nullptr;
 	int tree_count = tree->topLevelItemCount();
 	int gap = count - tree_count;
 	if (gap <= 0) return;
@@ -892,8 +898,8 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 				{
 					qDebug() << "overflow -> " << queue_original_size;
 				}
-				QTreeWidgetItem* it0 = read_item_from_queue(idx);
-				QTreeWidgetItem* it1 = read_item_from_dumb(idx);
+				TraceTreeWidgetItem* it0 = read_item_from_queue(idx);
+				TraceTreeWidgetItem* it1 = read_item_from_dumb(idx);
 				int it0colcount = it0->columnCount();
 				int it1colcount = it1->columnCount();
 				if (filter_pass_item(it0)) {
@@ -921,7 +927,7 @@ void QtWidgetsApplication1::fill_empty_tree(int capacity)
 		changes = 1;
 		LOGGER_INFO(log_, "EMPTY CHANGES -> {}", changes);
 		for (int i = 0; i < changes; i++) {
-			QTreeWidgetItem* it = nullptr;
+			TraceTreeWidgetItem* it = nullptr;
 			int idx = queue_size - changes + i;
 			it = this->read_item_from_queue(idx);
 			LOGGER_INFO(log_, "READY INDEX -> {}", idx);
@@ -1124,10 +1130,10 @@ bool QtWidgetsApplication1::showNewSession()
 	}
 }
 
-QTreeWidgetItem* QtWidgetsApplication1::read_item_from_queue(int index)
+TraceTreeWidgetItem* QtWidgetsApplication1::read_item_from_queue(int index)
 {
 	auto log_ = GETLOG("WORKFLOW");
-	QTreeWidgetItem* item = nullptr;
+	TraceTreeWidgetItem* item = nullptr;
 	//rwLock.lockForRead();
 	LOGGER_INFO(log_, "==== READ LOCK ====");
 	item = this->full_queue.at(index);
@@ -1137,7 +1143,7 @@ QTreeWidgetItem* QtWidgetsApplication1::read_item_from_queue(int index)
 	return item;
 }
 
-QTreeWidgetItem* QtWidgetsApplication1::read_item_from_dumb(int index)
+TraceTreeWidgetItem* QtWidgetsApplication1::read_item_from_dumb(int index)
 {
 	/* This function is a mock one to generate 10 rows data
 	*  to the tracewidget to show.
@@ -1150,10 +1156,10 @@ QTreeWidgetItem* QtWidgetsApplication1::read_item_from_dumb(int index)
 		str_pdu.append(str);
 	}
 	TraceTreeWidgetItem* item = new TraceTreeWidgetItem(str_pdu);
-	return (QTreeWidgetItem*)item;
+	return item;
 }
 
-void QtWidgetsApplication1::construct_page_data(QTreeWidgetItem* item)
+void QtWidgetsApplication1::construct_page_data(TraceTreeWidgetItem* item)
 {
 	/* This function construct the current page data.
 	*  in order to show the tree in the pause or stopped state.
@@ -1170,6 +1176,37 @@ void QtWidgetsApplication1::construct_page_data(QTreeWidgetItem* item)
 
 void QtWidgetsApplication1::show_fullpage()
 {
-	ui.treetrace->clear();
-	ui.treetrace->addTopLevelItems(this->current_page_queue);
+	safe_clear_trace();
+	//ui.treetrace->clear();
+	QQueue<QTreeWidgetItem*> baseQueue;
+	for (int i = 0; i < current_page_queue.size(); i++)
+	{
+		TraceTreeWidgetItem* traceItem = current_page_queue.at(i);
+		baseQueue.enqueue(static_cast<QTreeWidgetItem*>(traceItem));
+	}
+	ui.treetrace->addTopLevelItems(baseQueue);
 }
+
+void QtWidgetsApplication1::restore_full_queue()
+{
+	for (int i = 0; i < full_queue_backup.size(); i++) {
+		TraceTreeWidgetItem* it = (TraceTreeWidgetItem*)full_queue_backup.at(i);
+		full_queue.append(it->clone());
+	}
+}
+
+void removeAllItems(QTreeWidgetItem* item)
+{
+	while (item->childCount() > 0) {
+		removeAllItems(item->child(0));
+		delete item->takeChild(0);
+	}
+}
+
+void QtWidgetsApplication1::safe_clear_trace()
+{
+	removeAllItems(ui.treetrace->invisibleRootItem());
+	full_queue.clear();
+	ui.treetrace->clear();
+}
+

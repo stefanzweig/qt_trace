@@ -11,6 +11,7 @@
 #include <QtWidgets/QTreeView>
 #include <QTreeWidgetItem>
 #include "uuid_v4.h"
+#include "TraceTreeWidgetItem.h"
 
 class multiThread :
     public QThread, public QObject, public SubListener
@@ -29,7 +30,7 @@ public:
     bool isPAUSED() { return is_paused; }
     bool isRUN() { return (!is_stop && !is_paused); }
     QList<QString> monitor_modules;
-    QQueue<QTreeWidgetItem*> *queue_;
+    QQueue<TraceTreeWidgetItem*> *queue_;
 
 public slots:
     void stopThread();
@@ -72,7 +73,7 @@ private:
     void formatRow_canframe_thread(can_frame frame);
 
 signals:
-    void popToRoot(QTreeWidgetItem* item);
+    void popToRoot(TraceTreeWidgetItem* item);
 };
 
 #endif // MULTITHREAD_H

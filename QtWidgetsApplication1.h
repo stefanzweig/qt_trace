@@ -12,6 +12,7 @@
 #include "columnfilter.h"
 #include "spdlog/spdlog.h"
 #include <QReadWriteLock>
+#include "TraceTreeWidgetItem.h"
 
 #define TIMER_HEARTBEAT 100
 #define MAX_ITEM_COUNT 5000
@@ -37,16 +38,17 @@ private:
 	void get_default_configurations();
 	void compare_item();
 	void init_mylogger();
-	QTreeWidgetItem* read_item_from_queue(int index);
-	QTreeWidgetItem* read_item_from_dumb(int index);
+	TraceTreeWidgetItem* read_item_from_queue(int index);
+	TraceTreeWidgetItem* read_item_from_dumb(int index);
 
 	QTimer* timer = nullptr;
 	QTimer* timer_dustbin = nullptr;
 	ZoneMasterCanMessageDataSubscriber* mysub_can_frames = nullptr;
 	ZoneMasterCanParserSubscriber* mysub_can_parser = nullptr;
 	multiThread* calc_thread = nullptr;
-	QQueue<QTreeWidgetItem*> full_queue;
-	QQueue<QTreeWidgetItem*> current_page_queue;
+	QQueue<TraceTreeWidgetItem*> full_queue;
+	QQueue<TraceTreeWidgetItem*> full_queue_backup;
+	QQueue<TraceTreeWidgetItem*> current_page_queue;
 
 	uint64_t last_timestamp = 0;
 	uint64_t last_timestamp_canparser = 0;
@@ -115,7 +117,7 @@ private slots:
 	void formatRow_canparser(unsigned long long i);
 	void internal_canparser(canframe frame);
 	void applyFilter(QList<QList<QString>> items, int count);
-	void on_pop_to_root(QTreeWidgetItem* item);
+	void on_pop_to_root(TraceTreeWidgetItem* item);
 
 	void headerButtonClicked();
 	void prepareMenu(const QPoint& pos);
@@ -134,7 +136,6 @@ private slots:
 	void on_horizontal_scroll();
 	void about();
 	void reset_all_filters();
-	bool filter_pass_item(QTreeWidgetItem* it);
 	void refresh_full_tree(int capacity);
 	void fill_partial_tree(int capacity);
 	void fill_empty_tree(int capacity);
@@ -144,7 +145,10 @@ private slots:
 	bool showNewSession();
 	void clearance();
 	void updateProgressLeft();
-	void construct_page_data(QTreeWidgetItem* item);
+	void construct_page_data(TraceTreeWidgetItem* item);
+	bool filter_pass_item(QTreeWidgetItem* it);
 	bool filter_run_pass_item(QTreeWidgetItem* it);
 	void show_fullpage();
+	void restore_full_queue();
+	void safe_clear_trace();
 };

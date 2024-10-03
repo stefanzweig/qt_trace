@@ -36,6 +36,18 @@ const QString& typeToString(MyItemType type) {
 	return typeNames[type];
 }
 
+QTreeWidgetItem* deepCopyTreeWidgetItem(QTreeWidgetItem* originalItem) {
+	QTreeWidgetItem* copiedItem = new QTreeWidgetItem(*originalItem);
+
+	for (int i = 0; i < originalItem->childCount(); ++i) {
+		QTreeWidgetItem* childCopy = deepCopyTreeWidgetItem(originalItem->child(i));
+		copiedItem->addChild(childCopy);
+	}
+
+	return copiedItem;
+}
+
+
 class TraceTreeWidgetItem :
 	public QTreeWidgetItem
 {
@@ -52,6 +64,20 @@ public:
 		{
 			original_data.append(s);
 		}
+	}
+
+	TraceTreeWidgetItem* clone() const {
+		TraceTreeWidgetItem* newItem = new TraceTreeWidgetItem(*this);
+		newItem->item_type = item_type;
+		newItem->source_ = source_;
+		newItem->changed = changed;
+		newItem->ref_counter = 0;
+		newItem->uuid_ = uuid_;
+		newItem->original_data.append(original_data);
+		for (int i = 0; i < childCount(); ++i) {
+			newItem->addChild(static_cast<TraceTreeWidgetItem*>(child(i))->clone());
+		}
+		return newItem;
 	}
 
 	QVariant data(int column, int role) const override;
