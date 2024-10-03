@@ -52,9 +52,11 @@ private:
 	uint64_t last_timestamp_canparser = 0;
 	uint64_t full_count_canframes = 0;
 	uint64_t full_count_canparser = 0;
-	uint64_t count_per_page = 500;
-	uint64_t current_page = 0;
+	uint64_t count_per_page = 4000; // the full length of data in the window when it is paused.
+	int page_capacity = 300; // the trace windows maximal rows of data
+	uint64_t current_page_index = 0;
 	bool isHex = true; // repr in hex
+	int page_count = 0; /* (full_count_canframes / count_per_page) */
 
 	QStringList initialHeader = { "Time[ms]", "Chn", "ID", "Name", "Dir", "DLC", "EventType", "DataLength", "BusType", "Data" };
 	QStringList CurrentHeader = initialHeader;
@@ -80,7 +82,6 @@ private:
 	int visible_height = 700;
 	int item_height = 20;  /* default item height in the trace widget. */
 	int item_width = 20;
-	int page_capacity = 4000;
 	int dds_domainid = 90;
 	int last_data_index = -1;
 	int padding = 1;
@@ -96,7 +97,7 @@ private:
 	QString last_status = "READY";
 	bool timer_isRunning = false; // whether it is in a process of timer, a lock.
 	QReadWriteLock rwLock;
-	
+
 private slots:
 	void startTrace();
 	void stopTrace();
@@ -145,4 +146,5 @@ private slots:
 	void updateProgressLeft();
 	void construct_page_data(QTreeWidgetItem* item);
 	bool filter_run_pass_item(QTreeWidgetItem* it);
+	void show_fullpage();
 };

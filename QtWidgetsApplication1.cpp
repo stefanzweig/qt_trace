@@ -136,7 +136,7 @@ void QtWidgetsApplication1::get_default_configurations()
 	kv = settings.value("app/page_capacity", 300).toInt();
 	page_capacity = kv;
 
-	kv = settings.value("app/count_per_page", 300).toInt();
+	kv = settings.value("app/count_per_page", 4000).toInt();
 	count_per_page = kv;
 
 	kv = settings.value("app/padding", 1).toInt();
@@ -291,6 +291,7 @@ void QtWidgetsApplication1::clearance()
 	calc_thread->full_count_canparser = 0;
 
 	// todo: how to delete the items in the queue safely?
+	// 2024年10月3日 11:23
 	full_queue.clear();
 	ui.treetrace->clear();
 }
@@ -602,7 +603,7 @@ void QtWidgetsApplication1::on_pop_to_root(QTreeWidgetItem* item)
 		QString source = ((TraceTreeWidgetItem*)item)->getSource();
 		QString uuid = ((TraceTreeWidgetItem*)item)->getUUID();
 		LOGGER_INFO(log_, "ENQUEUING -> {}, UUID -> {}", item->text(0).toStdString(), uuid.toStdString());
-		qDebug() << "UUID -> " << uuid;
+		//qDebug() << "UUID -> " << uuid;
 	}
 	timer_isRunning = false;
 	//rwLock.unlock();
@@ -984,8 +985,13 @@ void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
 {
 	auto log_ = GETLOG("WORKFLOW");
 
-	LOGGER_INFO(log_, "NOTHING. EXITING...");
-	LOGGER_INFO(log_, "====================");
+	//LOGGER_INFO(log_, "NOTHING. EXITING...");
+	//LOGGER_INFO(log_, "====================");
+	//return;
+
+	qDebug() << "SHOW_FULLPAGE...";
+	show_fullpage();
+	qDebug() << "END OF SHOW_FULLPAGE";
 	return;
 
 	if (frozen) return;
@@ -1152,12 +1158,18 @@ void QtWidgetsApplication1::construct_page_data(QTreeWidgetItem* item)
 	/* This function construct the current page data.
 	*  in order to show the tree in the pause or stopped state.
 	*  in the class there should be a queue of items and limit the size
-	*  to the *page_capacity*.
+	*  to the *count_per_page*.
 	*  because the queue stores the pointers, so this queue do not
 	*  delete the item manually.
 	*  2024年10月2日 22:06
 	*/
 	current_page_queue.enqueue(item);
-	if (current_page_queue.size() > page_capacity)
+	if (current_page_queue.size() > count_per_page)
 		current_page_queue.dequeue();
+}
+
+void QtWidgetsApplication1::show_fullpage()
+{
+	ui.treetrace->clear();
+	ui.treetrace->addTopLevelItems(this->current_page_queue);
 }
