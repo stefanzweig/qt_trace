@@ -289,6 +289,8 @@ void QtWidgetsApplication1::clearance()
 {
 	calc_thread->full_count_canframes = 0;
 	calc_thread->full_count_canparser = 0;
+
+	// todo: how to delete the items in the queue safely?
 	full_queue.clear();
 	ui.treetrace->clear();
 }
@@ -600,6 +602,7 @@ void QtWidgetsApplication1::on_pop_to_root(QTreeWidgetItem* item)
 		QString source = ((TraceTreeWidgetItem*)item)->getSource();
 		QString uuid = ((TraceTreeWidgetItem*)item)->getUUID();
 		LOGGER_INFO(log_, "ENQUEUING -> {}, UUID -> {}", item->text(0).toStdString(), uuid.toStdString());
+		qDebug() << "UUID -> " << uuid;
 	}
 	timer_isRunning = false;
 	//rwLock.unlock();
@@ -869,6 +872,7 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 	QTreeWidget* tree = ui.treetrace;
 	int tree_count = tree->topLevelItemCount();
 	int gap = capacity - tree_count;
+	qDebug() << "FILL PARTIAL UP TO -> " << capacity;
 	LOGGER_INFO(log_, "GAP -> {}", gap);
 	if (gap <= 0) return;
 	int changes = std::min(queue_size, gap);
@@ -1058,21 +1062,18 @@ void QtWidgetsApplication1::reset_all_filters()
 bool QtWidgetsApplication1::filter_pass_item(QTreeWidgetItem* it)
 {
 	if (it == NULL) return false;
-	//if (calc_thread->isRUN() && it) {
-	//	try
-	//	{
-	//		int children_count = it->childCount();
-	//		if (children_count > 0) {
-	//			return false;
-	//		}
-	//	}
-	//	catch (...)
-	//	{
-	//	}
-	//}
+
+	bool matched = true;
+
+	// running, only root items passed. 2024年10月3日 9:39
+	if (calc_thread->isRUN() && it) {
+		matched = filter_run_pass_item(it);
+		if (!matched) return false;
+	}
+
+	// filters. 2024年10月3日 9:39 
 	if (new_filters.isEmpty())
 		return true;
-	bool matched = true;
 	for (const auto& key : new_filters.keys()) {
 		QList<QVariant> vlist = new_filters.value(key);
 		int col_index = vlist[0].toInt();
@@ -1082,6 +1083,24 @@ bool QtWidgetsApplication1::filter_pass_item(QTreeWidgetItem* it)
 			matched = false;
 	}
 	return matched;
+}
+
+bool QtWidgetsApplication1::filter_run_pass_item(QTreeWidgetItem* it)
+{
+	if (calc_thread->isRUN() && it) {
+		try
+		{
+			int children_count = it->childCount();
+			if (children_count > 0) {
+				return false;
+			}
+			else return true;
+		}
+		catch (...)
+		{
+		}
+	}
+	else return true;
 }
 
 bool QtWidgetsApplication1::showNewSession()
@@ -1134,7 +1153,7 @@ void QtWidgetsApplication1::construct_page_data(QTreeWidgetItem* item)
 	*  in order to show the tree in the pause or stopped state.
 	*  in the class there should be a queue of items and limit the size
 	*  to the *page_capacity*.
-	*  because the queue stores the pointers, so this queue do not 
+	*  because the queue stores the pointers, so this queue do not
 	*  delete the item manually.
 	*  2024年10月2日 22:06
 	*/

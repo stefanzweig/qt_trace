@@ -144,4 +144,5 @@ private slots:
 	void clearance();
 	void updateProgressLeft();
 	void construct_page_data(QTreeWidgetItem* item);
+	bool filter_run_pass_item(QTreeWidgetItem* it);
 };
