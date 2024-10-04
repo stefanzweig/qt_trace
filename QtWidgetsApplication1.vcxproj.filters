@@ -418,9 +418,6 @@
     <ClInclude Include="my_spdlog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="uitils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TraceTreeWidgetItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>

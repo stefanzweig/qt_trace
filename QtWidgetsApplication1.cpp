@@ -1203,14 +1203,19 @@ QString QtWidgetsApplication1::previous_state()
 
 void QtWidgetsApplication1::print_item_queue(QQueue<TraceTreeWidgetItem*> queue)
 {
-	while (!queue.empty())
-	{
-		TraceTreeWidgetItem* item = dynamic_cast<TraceTreeWidgetItem*> (queue.dequeue());
+	for (const TraceTreeWidgetItem* item : queue) {
 		QString source = item->getSource();
 		QString uuid = item->getUUID();
 		qDebug() << "PRINT ITEM -> " << "UUID -> " << uuid << "SOURCE -> " << source;
-		delete item;
 	}
+	//while (!queue.empty())
+	//{
+	//	TraceTreeWidgetItem* item = dynamic_cast<TraceTreeWidgetItem*> (queue.dequeue());
+	//	QString source = item->getSource();
+	//	QString uuid = item->getUUID();
+	//	qDebug() << "PRINT ITEM -> " << "UUID -> " << uuid << "SOURCE -> " << source;
+	//	delete item;
+	//}
 	qDebug() << "PRINT ITEM -> " << "SIZE -> " << queue.size();
 }
 
