@@ -321,6 +321,7 @@ void QtWidgetsApplication1::startTrace()
 	start_time = QDateTime::currentDateTime();
 	LOGGER_INFO(log_, "==== BEFORE RESUME TRACE ====");
 	resumeTrace();
+	last_status = "STARTED";
 	LOGGER_INFO(log_, "==== AFTER RESUME TRACE ====");
 	LOGGER_INFO(log_, "\n");
 }
@@ -392,6 +393,7 @@ void QtWidgetsApplication1::pauseTrace()
 {
 	auto log_ = GETLOG("WORKFLOW");
 	LOGGER_INFO(log_, "==== PAUSE BUTTON CLICKED ====");
+	if (last_status == "STOPPED" || last_status == "READY") return;
 	//this->stopTrace();
 
 	if (1) {
@@ -940,23 +942,26 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
 	QScrollBar* scrollBar = ui.treetrace->verticalScrollBar();
 	if (scrollBar->value() == scrollBar->maximum()) { return; }
 
+
 	auto log_ = GETLOG("WORKFLOW");
 	calc_thread->pauseThread();
 	timer->stop();
 	paused_index = full_queue.size() - padding;
-	last_status = "PAUSED";
 	updateToolbar();
 
-	if (frozen)
+	if (frozen) {
+		last_status = "PAUSED";
 		return;
-	else {
+	}
+	else if (last_status == "STARTED") {
 		LOGGER_INFO(log_, "SCROLLED FULL QUEUE -> {}", paused_index);
 		LOGGER_INFO(log_, "SCROLLED BEFORE FREEZING");
 		freeze_treetrace_items(count_per_page);
 		frozen = true;
+		last_status = "PAUSED";
 		LOGGER_INFO(log_, "SCROLLED AFTER FREEZING");
 	}
-
+	
 }
 
 void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
