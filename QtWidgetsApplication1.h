@@ -13,6 +13,7 @@
 #include "spdlog/spdlog.h"
 #include <QReadWriteLock>
 #include "TraceTreeWidgetItem.h"
+#include "StateManager.h"
 
 #define TIMER_HEARTBEAT 100
 #define MAX_ITEM_COUNT 5000
@@ -99,6 +100,7 @@ private:
 	QString last_status = "INITIAL";
 	bool timer_isRunning = false; // whether it is in a process of timer, a lock.
 	QReadWriteLock rwLock;
+	StateManager state_manager;
 
 private slots:
 	void startTrace();
@@ -151,4 +153,6 @@ private slots:
 	void show_fullpage();
 	void restore_full_queue();
 	void safe_clear_trace();
+	QString previous_state();
+	void print_item_queue(QQueue<TraceTreeWidgetItem*> queue);
 };

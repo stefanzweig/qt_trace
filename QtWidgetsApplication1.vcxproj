@@ -133,6 +133,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="endianness.h" />
+    <ClInclude Include="StateManager.h" />
     <ClInclude Include="TraceTreeWidgetItem.h" />
     <ClInclude Include="uitils.h" />
     <ClInclude Include="uuid_v4.h" />

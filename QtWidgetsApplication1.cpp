@@ -1,18 +1,19 @@
 #include "QtWidgetsApplication1.h"
-#include <QTimer>
+#include <QDateTime>
 #include <QDebug>
-#include "multiThread.h"
-#include "columnfilter.h"
-#include <QSettings>
-#include <QScrollBar>
 #include <QLabel>
 #include <QMessageBox>
-#include <QDateTime>
+#include <QScrollBar>
+#include <QSettings>
 #include <QTime>
-#include "newsession_dialog.h"
-#include "spdlog/spdlog.h"
-#include "spdlog/sinks/basic_file_sink.h"
+#include <QTimer>
+
+#include "columnfilter.h"
+#include "multiThread.h"
 #include "my_spdlog.h"
+#include "newsession_dialog.h"
+#include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/spdlog.h"
 #include "TraceTreeWidgetItem.h"
 
 
@@ -69,6 +70,13 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
 
 	delete filter;
 	filter = nullptr;
+
+	state_manager.changeState(State::COMPLETE);
+	state_manager.printHistory();
+
+	print_item_queue(full_queue);
+	print_item_queue(full_queue_backup);
+	print_item_queue(current_page_queue);
 
 	spdlog::drop_all();
 }
@@ -275,9 +283,7 @@ void QtWidgetsApplication1::prepareMenu(const QPoint& pos)
 
 void QtWidgetsApplication1::newDev()
 {
-	qDebug() << tr("Clean All");
-	safe_clear_trace();
-	//ui.treetrace->clear();
+	// no use so far
 }
 
 void QtWidgetsApplication1::onActionTriggered()
@@ -293,9 +299,7 @@ void QtWidgetsApplication1::clearance()
 
 	// todo: how to delete the items in the queue safely?
 	// 2024年10月3日 11:23
-	full_queue.clear();
 	safe_clear_trace();
-	//ui.treetrace->clear();
 }
 
 bool QtWidgetsApplication1::new_session()
@@ -315,6 +319,7 @@ void QtWidgetsApplication1::startTrace()
 {
 	auto log_ = GETLOG("WORKFLOW");
 	LOGGER_INFO(log_, "==== START TRACE CLICKED ====");
+	state_manager.changeState(State::START);
 
 	if (!new_session())
 		return;
@@ -365,6 +370,7 @@ void QtWidgetsApplication1::stopTrace()
 	auto log_ = GETLOG("WORKFLOW");
 	LOGGER_INFO(log_, "==== STOP TRACE CLICKED ====");
 	if (last_status == "STOPPED" || last_status == "READY") return;
+	state_manager.changeState(State::STOPPED);
 
 	calc_thread->stopThread();
 	timer->stop();
@@ -394,7 +400,6 @@ void QtWidgetsApplication1::pauseTrace()
 	auto log_ = GETLOG("WORKFLOW");
 	LOGGER_INFO(log_, "==== PAUSE BUTTON CLICKED ====");
 	if (last_status == "STOPPED" || last_status == "READY") return;
-	//this->stopTrace();
 
 	if (1) {
 		if (calc_thread->isPAUSED()) {
@@ -402,6 +407,7 @@ void QtWidgetsApplication1::pauseTrace()
 			frozen = false;
 			//ui.treetrace->clear();
 			initial_trace = true;
+			state_manager.changeState(State::RESUMED);
 
 			restore_full_queue();
 			LOGGER_INFO(log_, "==== FROZEN STATUS {} ====", frozen);
@@ -425,6 +431,7 @@ void QtWidgetsApplication1::pauseTrace()
 		LOGGER_INFO(log_, "AFTER FREEZING");
 		updateToolbar();
 		updateProgressLeft();
+		state_manager.changeState(State::PAUSE);
 	}
 	LOGGER_INFO(log_, "==== END OF PAUSE BUTTON CLICKED ====");
 	LOGGER_INFO(log_, "\n");
@@ -612,7 +619,7 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 		QString uuid = ((TraceTreeWidgetItem*)item_backup)->getUUID();
 		LOGGER_INFO(log_, "ENQUEUING -> {}, UUID -> {}", item->text(0).toStdString(), uuid.toStdString());
 		qDebug() << "UUID -> " << uuid << "SOURCE ->" << source;
-		qDebug() << "ORIGINAL DATA ->" << ((TraceTreeWidgetItem*)item_backup)->get_original_data();
+		//qDebug() << "ORIGINAL DATA ->" << ((TraceTreeWidgetItem*)item_backup)->get_original_data();
 	}
 	timer_isRunning = false;
 	//rwLock.unlock();
@@ -950,7 +957,6 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
 	updateToolbar();
 
 	if (frozen) {
-		last_status = "PAUSED";
 		return;
 	}
 	else if (last_status == "STARTED") {
@@ -961,7 +967,8 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
 		last_status = "PAUSED";
 		LOGGER_INFO(log_, "SCROLLED AFTER FREEZING");
 	}
-	
+	last_status = "PAUSED";
+
 }
 
 void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
@@ -1146,7 +1153,7 @@ void QtWidgetsApplication1::construct_page_data(TraceTreeWidgetItem* item)
 	*  delete the item manually.
 	*  2024年10月2日 22:06
 	*/
-	current_page_queue.enqueue(item);
+	current_page_queue.enqueue(item->clone());
 	if (current_page_queue.size() > count_per_page)
 		current_page_queue.dequeue();
 }
@@ -1154,7 +1161,9 @@ void QtWidgetsApplication1::construct_page_data(TraceTreeWidgetItem* item)
 void QtWidgetsApplication1::show_fullpage()
 {
 	safe_clear_trace();
-	//ui.treetrace->clear();
+	// for test purpose
+	return;
+
 	QQueue<QTreeWidgetItem*> baseQueue;
 	for (int i = 0; i < current_page_queue.size(); i++)
 	{
@@ -1182,10 +1191,29 @@ void removeAllItems(QTreeWidgetItem* item)
 
 void QtWidgetsApplication1::safe_clear_trace()
 {
-	removeAllItems(ui.treetrace->invisibleRootItem());
-	full_queue.clear();
-	ui.treetrace->clear();
+	//removeAllItems(ui.treetrace->invisibleRootItem());
+	//full_queue.clear();
+	//ui.treetrace->clear();
 }
+
+QString QtWidgetsApplication1::previous_state()
+{
+	return this->state_manager.previous_state();
+}
+
+void QtWidgetsApplication1::print_item_queue(QQueue<TraceTreeWidgetItem*> queue)
+{
+	while (!queue.empty())
+	{
+		TraceTreeWidgetItem* item = dynamic_cast<TraceTreeWidgetItem*> (queue.dequeue());
+		QString source = item->getSource();
+		QString uuid = item->getUUID();
+		qDebug() << "PRINT ITEM -> " << "UUID -> " << uuid << "SOURCE -> " << source;
+		delete item;
+	}
+	qDebug() << "PRINT ITEM -> " << "SIZE -> " << queue.size();
+}
+
 
 void QtWidgetsApplication1::compare_item()
 {
