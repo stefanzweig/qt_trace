@@ -24,6 +24,9 @@ QSize getItemSize(QTreeWidgetItem* item, int column, const QFont& font) {
 	return QSize(textSize.width() + 20, textSize.height());
 }
 
+QMutex mutex;
+
+
 QtWidgetsApplication1::QtWidgetsApplication1(QWidget* parent)
 	: QMainWindow(parent)
 {
@@ -398,7 +401,8 @@ void QtWidgetsApplication1::stopTrace()
 
 	frozen = true;
 	LOGGER_INFO(log_, "==== FROZEN STATUS {} ====", frozen);
-	freeze_treetrace_items(count_per_page);
+	//freeze_treetrace_items(count_per_page);
+	show_fullpage();
 	LOGGER_INFO(log_, "==== END OF STOPPING TRACE ====");
 	LOGGER_INFO(log_, "\n");
 
@@ -410,39 +414,39 @@ void QtWidgetsApplication1::pauseTrace()
 	LOGGER_INFO(log_, "==== PAUSE BUTTON CLICKED ====");
 	if (last_status == "STOPPED" || last_status == "READY") return;
 
-	if (1) {
-		if (calc_thread->isPAUSED()) {
-			LOGGER_INFO(log_, "==== CONTINUE AFTER PAUSE ====");
-			frozen = false;
-			//ui.treetrace->clear();
-			initial_trace = true;
-			state_manager.changeState(State::RESUMED);
+	if (calc_thread->isPAUSED()) {
+		LOGGER_INFO(log_, "==== CONTINUE AFTER PAUSE ====");
+		frozen = false;
+		initial_trace = true;
+		state_manager.changeState(State::RESUMED);
 
-			ui.treetrace->clear();
-			restore_full_queue();
-			LOGGER_INFO(log_, "==== FROZEN STATUS {} ====", frozen);
-			LOGGER_INFO(log_, "==== BEFORE RESUME TRACE ====");
-			LOGGER_INFO(log_, "==== QUEUE SIZE BEFORE RESUMING {} ====", full_queue.size() - padding);
-			resumeTrace();
-			LOGGER_INFO(log_, "==== AFTER RESUME TRACE ====");
-			LOGGER_INFO(log_, "\n");
-			return;
-		}
-		LOGGER_INFO(log_, "==== PAUSE TRACE ====");
-		calc_thread->pauseThread();
-		timer->stop();
-		paused_index = full_queue.size() - padding;
-		LOGGER_INFO(log_, "==== THREAD PAUSE STATUS -> {} ====", calc_thread->isPAUSED());
-		LOGGER_INFO(log_, "PAUSED FULL QUEUE -> {}", paused_index);
-		LOGGER_INFO(log_, "==== QUEUE SIZE WHEN PAUSE {} ====", full_queue.size() - padding);
-		last_status = "PAUSED";
-		LOGGER_INFO(log_, "BEFORE FREEZING");
-		freeze_treetrace_items(count_per_page);
-		LOGGER_INFO(log_, "AFTER FREEZING");
-		updateToolbar();
-		updateProgressLeft();
-		state_manager.changeState(State::PAUSE);
+		//ui.treetrace->clear();
+		//restore_full_queue();
+		LOGGER_INFO(log_, "==== FROZEN STATUS {} ====", frozen);
+		LOGGER_INFO(log_, "==== BEFORE RESUME TRACE ====");
+		LOGGER_INFO(log_, "==== QUEUE SIZE BEFORE RESUMING {} ====", full_queue.size() - padding);
+		resumeTrace();
+		LOGGER_INFO(log_, "==== AFTER RESUME TRACE ====");
+		LOGGER_INFO(log_, "\n");
+		return;
 	}
+	LOGGER_INFO(log_, "==== PAUSE TRACE ====");
+	calc_thread->pauseThread();
+	timer->stop();
+	paused_index = full_queue.size() - padding;
+	LOGGER_INFO(log_, "==== THREAD PAUSE STATUS -> {} ====", calc_thread->isPAUSED());
+	LOGGER_INFO(log_, "PAUSED FULL QUEUE -> {}", paused_index);
+	LOGGER_INFO(log_, "==== QUEUE SIZE WHEN PAUSE {} ====", full_queue.size() - padding);
+	last_status = "PAUSED";
+	LOGGER_INFO(log_, "BEFORE FREEZING");
+	//freeze_treetrace_items(count_per_page);
+	//ui.treetrace->clear();
+	//restore_full_queue();
+	show_fullpage();
+	LOGGER_INFO(log_, "AFTER FREEZING");
+	updateToolbar();
+	updateProgressLeft();
+	state_manager.changeState(State::PAUSE);
 	LOGGER_INFO(log_, "==== END OF PAUSE BUTTON CLICKED ====");
 	LOGGER_INFO(log_, "\n");
 }
@@ -617,7 +621,8 @@ void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
 void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 {
 	auto log_ = GETLOG("WORKFLOW");
-	//rwLock.lockForWrite();
+	rwLock.lockForWrite();
+	mutex.lock();
 	//LOGGER_INFO(log_, "==== WRITE LOCK ====");
 	timer_isRunning = true;
 	if (item != NULL) {
@@ -632,7 +637,8 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 		//qDebug() << "ORIGINAL DATA ->" << ((TraceTreeWidgetItem*)item_backup)->get_original_data();
 	}
 	timer_isRunning = false;
-	//rwLock.unlock();
+	rwLock.unlock();
+	mutex.unlock();
 	//LOGGER_INFO(log_, "==== WRITE UNLOCK ====");
 }
 
@@ -737,15 +743,13 @@ void QtWidgetsApplication1::display_mode_switch()
 	restore_full_queue();
 	print_item_queue(full_queue_backup);
 	print_item_queue(full_queue);
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-	/*
+
 	if (display_mode)
 		display_mode = 0;
 	else
 		display_mode = 1;
 	updateToolbar();
 	update_tracewindow();
-	*/
 }
 
 void QtWidgetsApplication1::get_refreshed_items()
@@ -979,7 +983,8 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
 	else if (last_status == "STARTED") {
 		LOGGER_INFO(log_, "SCROLLED FULL QUEUE -> {}", paused_index);
 		LOGGER_INFO(log_, "SCROLLED BEFORE FREEZING");
-		freeze_treetrace_items(count_per_page);
+		//freeze_treetrace_items(count_per_page);
+		show_fullpage();
 		frozen = true;
 		last_status = "PAUSED";
 		LOGGER_INFO(log_, "SCROLLED AFTER FREEZING");
@@ -1177,10 +1182,16 @@ void QtWidgetsApplication1::construct_page_data(TraceTreeWidgetItem* item)
 
 void QtWidgetsApplication1::show_fullpage()
 {
-	safe_clear_trace();
-	// for test purpose
-	//return;
+	if (timer_isRunning) return;
+	timer_isRunning = true;
 
+	rwLock.lockForWrite();
+	QReadWriteLock rLock;
+	rLock.lockForRead();
+
+	ui.treetrace->clear();
+	safe_clear_trace();
+	
 	QQueue<QTreeWidgetItem*> baseQueue;
 	for (int i = 0; i < current_page_queue.size(); i++)
 	{
@@ -1188,16 +1199,24 @@ void QtWidgetsApplication1::show_fullpage()
 		baseQueue.enqueue(static_cast<QTreeWidgetItem*>(traceItem));
 	}
 	ui.treetrace->addTopLevelItems(baseQueue);
+	restore_full_queue();
+
+	print_item_queue(this->full_queue);
+	print_item_queue(this->full_queue_backup);
+	timer_isRunning = false;
+	rLock.unlock();
+	rwLock.unlock();
 }
 
 void QtWidgetsApplication1::restore_full_queue()
 {
+	mutex.lock();
 	full_queue.clear();
-
 	for (int i = 0; i < full_queue_backup.size(); i++) {
-		TraceTreeWidgetItem* it = (TraceTreeWidgetItem*)full_queue_backup.at(i);
-		full_queue.append(it->clone());
+		TraceTreeWidgetItem* it = full_queue_backup.at(i)->clone();
+		full_queue.append(it);
 	}
+	mutex.unlock();
 }
 
 void removeAllItems(QTreeWidgetItem* item)
@@ -1220,23 +1239,31 @@ QString QtWidgetsApplication1::previous_state()
 
 void QtWidgetsApplication1::print_item_queue(QQueue<TraceTreeWidgetItem*> queue)
 {
-	qDebug() << "PRINT ITEM -> " << "SIZE -> " << queue.size();
-	if (queue.isEmpty()) return;
-
+	if (timer_isRunning) return;
+	timer_isRunning = true;
+	rwLock.lockForRead();
+	qDebug() << "PRINT QUEUE SIZE -> " << queue.size();
+	if (queue.isEmpty()) {
+		rwLock.unlock();
+		timer_isRunning = true;
+		return;
+	}
 	for (const TraceTreeWidgetItem* item : queue) {
 		QString source = item->getSource();
 		QString uuid = item->getUUID();
 		qDebug() << "PRINT ITEM -> " << "UUID -> " << uuid << "SOURCE -> " << source;
 	}
+	timer_isRunning = true;
+	rwLock.unlock();
 }
 
 void QtWidgetsApplication1::clear_queue(QQueue<TraceTreeWidgetItem*>& queue)
 {
-	while (!queue.empty())
-	{
-		TraceTreeWidgetItem* item = dynamic_cast<TraceTreeWidgetItem*> (queue.dequeue());
-		delete item;
-	}
+	//while (!queue.isEmpty())
+	//{
+	//	TraceTreeWidgetItem* item = dynamic_cast<TraceTreeWidgetItem*> (queue.dequeue());
+	//	delete item;
+	//}
 	queue.clear();
 	qDebug() << "PRINT ITEM -> " << "SIZE -> " << queue.size();
 }
