@@ -78,6 +78,14 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
 	print_item_queue(full_queue_backup);
 	print_item_queue(current_page_queue);
 
+	clear_queue(full_queue);
+	clear_queue(full_queue_backup);
+	clear_queue(current_page_queue);
+
+	print_item_queue(full_queue);
+	print_item_queue(full_queue_backup);
+	print_item_queue(current_page_queue);
+
 	spdlog::drop_all();
 }
 
@@ -310,6 +318,7 @@ bool QtWidgetsApplication1::new_session()
 		leftLabel->setText(QString("Previous Count: %1").arg(ncount));
 	}
 	if (showNewSession()) {
+		ui.treetrace->clear();
 		clearance();
 	}
 	return true;
@@ -409,6 +418,7 @@ void QtWidgetsApplication1::pauseTrace()
 			initial_trace = true;
 			state_manager.changeState(State::RESUMED);
 
+			ui.treetrace->clear();
 			restore_full_queue();
 			LOGGER_INFO(log_, "==== FROZEN STATUS {} ====", frozen);
 			LOGGER_INFO(log_, "==== BEFORE RESUME TRACE ====");
@@ -723,12 +733,19 @@ void QtWidgetsApplication1::updateToolbar()
 
 void QtWidgetsApplication1::display_mode_switch()
 {
+	ui.treetrace->clear();
+	restore_full_queue();
+	print_item_queue(full_queue_backup);
+	print_item_queue(full_queue);
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+	/*
 	if (display_mode)
 		display_mode = 0;
 	else
 		display_mode = 1;
 	updateToolbar();
 	update_tracewindow();
+	*/
 }
 
 void QtWidgetsApplication1::get_refreshed_items()
@@ -1162,7 +1179,7 @@ void QtWidgetsApplication1::show_fullpage()
 {
 	safe_clear_trace();
 	// for test purpose
-	return;
+	//return;
 
 	QQueue<QTreeWidgetItem*> baseQueue;
 	for (int i = 0; i < current_page_queue.size(); i++)
@@ -1175,6 +1192,8 @@ void QtWidgetsApplication1::show_fullpage()
 
 void QtWidgetsApplication1::restore_full_queue()
 {
+	full_queue.clear();
+
 	for (int i = 0; i < full_queue_backup.size(); i++) {
 		TraceTreeWidgetItem* it = (TraceTreeWidgetItem*)full_queue_backup.at(i);
 		full_queue.append(it->clone());
@@ -1191,9 +1210,7 @@ void removeAllItems(QTreeWidgetItem* item)
 
 void QtWidgetsApplication1::safe_clear_trace()
 {
-	//removeAllItems(ui.treetrace->invisibleRootItem());
-	//full_queue.clear();
-	//ui.treetrace->clear();
+	clear_queue(full_queue);
 }
 
 QString QtWidgetsApplication1::previous_state()
@@ -1203,22 +1220,26 @@ QString QtWidgetsApplication1::previous_state()
 
 void QtWidgetsApplication1::print_item_queue(QQueue<TraceTreeWidgetItem*> queue)
 {
+	qDebug() << "PRINT ITEM -> " << "SIZE -> " << queue.size();
+	if (queue.isEmpty()) return;
+
 	for (const TraceTreeWidgetItem* item : queue) {
 		QString source = item->getSource();
 		QString uuid = item->getUUID();
 		qDebug() << "PRINT ITEM -> " << "UUID -> " << uuid << "SOURCE -> " << source;
 	}
-	//while (!queue.empty())
-	//{
-	//	TraceTreeWidgetItem* item = dynamic_cast<TraceTreeWidgetItem*> (queue.dequeue());
-	//	QString source = item->getSource();
-	//	QString uuid = item->getUUID();
-	//	qDebug() << "PRINT ITEM -> " << "UUID -> " << uuid << "SOURCE -> " << source;
-	//	delete item;
-	//}
-	qDebug() << "PRINT ITEM -> " << "SIZE -> " << queue.size();
 }
 
+void QtWidgetsApplication1::clear_queue(QQueue<TraceTreeWidgetItem*>& queue)
+{
+	while (!queue.empty())
+	{
+		TraceTreeWidgetItem* item = dynamic_cast<TraceTreeWidgetItem*> (queue.dequeue());
+		delete item;
+	}
+	queue.clear();
+	qDebug() << "PRINT ITEM -> " << "SIZE -> " << queue.size();
+}
 
 void QtWidgetsApplication1::compare_item()
 {
