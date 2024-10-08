@@ -101,6 +101,7 @@ private:
 	bool timer_isRunning = false; // whether it is in a process of timer, a lock.
 	QReadWriteLock rwLock;
 	StateManager state_manager;
+	QMutex m_mutex;
 
 private slots:
 	void startTrace();

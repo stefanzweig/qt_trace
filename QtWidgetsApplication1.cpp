@@ -24,9 +24,6 @@ QSize getItemSize(QTreeWidgetItem* item, int column, const QFont& font) {
 	return QSize(textSize.width() + 20, textSize.height());
 }
 
-QMutex mutex;
-
-
 QtWidgetsApplication1::QtWidgetsApplication1(QWidget* parent)
 	: QMainWindow(parent)
 {
@@ -621,10 +618,8 @@ void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
 void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 {
 	auto log_ = GETLOG("WORKFLOW");
-	rwLock.lockForWrite();
-	mutex.lock();
-	//LOGGER_INFO(log_, "==== WRITE LOCK ====");
 	timer_isRunning = true;
+	QMutexLocker locker(&m_mutex);
 	if (item != NULL) {
 		full_queue.enqueue(item);
 		TraceTreeWidgetItem* item_backup = (TraceTreeWidgetItem*)item->clone();
@@ -634,12 +629,8 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 		QString uuid = ((TraceTreeWidgetItem*)item_backup)->getUUID();
 		LOGGER_INFO(log_, "ENQUEUING -> {}, UUID -> {}", item->text(0).toStdString(), uuid.toStdString());
 		qDebug() << "UUID -> " << uuid << "SOURCE ->" << source;
-		//qDebug() << "ORIGINAL DATA ->" << ((TraceTreeWidgetItem*)item_backup)->get_original_data();
 	}
 	timer_isRunning = false;
-	rwLock.unlock();
-	mutex.unlock();
-	//LOGGER_INFO(log_, "==== WRITE UNLOCK ====");
 }
 
 void QtWidgetsApplication1::ChangeHeader(const QString& text)
@@ -1140,12 +1131,8 @@ TraceTreeWidgetItem* QtWidgetsApplication1::read_item_from_queue(int index)
 {
 	auto log_ = GETLOG("WORKFLOW");
 	TraceTreeWidgetItem* item = nullptr;
-	//rwLock.lockForRead();
-	//LOGGER_INFO(log_, "==== READ LOCK ====");
 	item = this->full_queue.at(index);
 	LOGGER_INFO(log_, "ITEM CONTENT -> {}", item->text(0).toStdString());
-	//rwLock.unlock();
-	//LOGGER_INFO(log_, "==== READ UNLOCK ====");
 	return item;
 }
 
@@ -1185,45 +1172,28 @@ void QtWidgetsApplication1::show_fullpage()
 	if (timer_isRunning) return;
 	timer_isRunning = true;
 
-	rwLock.lockForWrite();
-	QReadWriteLock rLock;
-	rLock.lockForRead();
-
 	ui.treetrace->clear();
 	safe_clear_trace();
-	
+
 	QQueue<QTreeWidgetItem*> baseQueue;
-	for (int i = 0; i < current_page_queue.size(); i++)
+	int current_page_size = current_page_queue.size();
+	for (int i = 0; i < current_page_size; i++)
 	{
 		TraceTreeWidgetItem* traceItem = current_page_queue.at(i);
 		baseQueue.enqueue(static_cast<QTreeWidgetItem*>(traceItem));
 	}
 	ui.treetrace->addTopLevelItems(baseQueue);
-	restore_full_queue();
-
-	print_item_queue(this->full_queue);
-	print_item_queue(this->full_queue_backup);
 	timer_isRunning = false;
-	rLock.unlock();
-	rwLock.unlock();
 }
 
 void QtWidgetsApplication1::restore_full_queue()
 {
-	mutex.lock();
+	QMutexLocker locker(&m_mutex);
 	full_queue.clear();
-	for (int i = 0; i < full_queue_backup.size(); i++) {
+	int size = full_queue_backup.size();
+	for (int i = 0; i < size; i++) {
 		TraceTreeWidgetItem* it = full_queue_backup.at(i)->clone();
 		full_queue.append(it);
-	}
-	mutex.unlock();
-}
-
-void removeAllItems(QTreeWidgetItem* item)
-{
-	while (item->childCount() > 0) {
-		removeAllItems(item->child(0));
-		delete item->takeChild(0);
 	}
 }
 
@@ -1241,10 +1211,8 @@ void QtWidgetsApplication1::print_item_queue(QQueue<TraceTreeWidgetItem*> queue)
 {
 	if (timer_isRunning) return;
 	timer_isRunning = true;
-	rwLock.lockForRead();
 	qDebug() << "PRINT QUEUE SIZE -> " << queue.size();
 	if (queue.isEmpty()) {
-		rwLock.unlock();
 		timer_isRunning = true;
 		return;
 	}

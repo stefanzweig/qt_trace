@@ -47,6 +47,14 @@ void clearQueue(QQueue<QTreeWidgetItem*>& queue) {
     }
 }
 
+void removeAllItems(QTreeWidgetItem* item)
+{
+    while (item->childCount() > 0) {
+        removeAllItems(item->child(0));
+        delete item->takeChild(0);
+    }
+}
+
 /*
 int main() {
     QQueue<QTreeWidgetItem*> queue2;
