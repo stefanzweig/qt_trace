@@ -619,7 +619,7 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 {
 	auto log_ = GETLOG("WORKFLOW");
 	timer_isRunning = true;
-	QMutexLocker locker(&m_mutex);
+	m_mutex.lock();
 	if (item != NULL) {
 		full_queue.enqueue(item);
 		TraceTreeWidgetItem* item_backup = (TraceTreeWidgetItem*)item->clone();
@@ -631,6 +631,7 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 		qDebug() << "UUID -> " << uuid << "SOURCE ->" << source;
 	}
 	timer_isRunning = false;
+	m_mutex.unlock();
 }
 
 void QtWidgetsApplication1::ChangeHeader(const QString& text)
@@ -756,6 +757,7 @@ void QtWidgetsApplication1::update_tracewindow()
 	auto log_ = GETLOG("WORKFLOW");
 	LOGGER_INFO(log_, "======= UPDATE_TRACEWINDOW =======");
 	LOGGER_INFO(log_, "LAST STATUS -> {}", last_status.toStdString());
+	m_mutex.lock();
 	int queue_size = full_queue.size() - padding;
 	QTreeWidget* tree = ui.treetrace;
 	QTreeWidgetItem* invisible_root_item = tree->invisibleRootItem();
@@ -793,6 +795,7 @@ void QtWidgetsApplication1::update_tracewindow()
 		LOGGER_INFO(log_, "==== REDRAW TREE ====");
 		refresh_full_tree(window_capacity);
 	}
+	m_mutex.unlock();
 	ui.treetrace->scrollToBottom();
 	LOGGER_INFO(log_, "======= END of update_tracewindow =======");
 	LOGGER_INFO(log_, "\n");
@@ -1227,31 +1230,10 @@ void QtWidgetsApplication1::print_item_queue(QQueue<TraceTreeWidgetItem*> queue)
 
 void QtWidgetsApplication1::clear_queue(QQueue<TraceTreeWidgetItem*>& queue)
 {
-	//while (!queue.isEmpty())
-	//{
-	//	TraceTreeWidgetItem* item = dynamic_cast<TraceTreeWidgetItem*> (queue.dequeue());
-	//	delete item;
-	//}
 	queue.clear();
 	qDebug() << "PRINT ITEM -> " << "SIZE -> " << queue.size();
 }
 
 void QtWidgetsApplication1::compare_item()
 {
-	//qDebug() << "the full data count ->" << last_data_index;
-	//QTreeWidgetItem* last = full_queue.at(last_data_index - 1);
-	//qDebug() << "item data ->";
-	//for (int i = 0; i < last->columnCount(); i++) {
-	//	qDebug() << "item col ->" << i << last->text(i);
-	//}
-	//qDebug() << "item data DONE";
-
-	//QTreeWidgetItem* invisible_root_item = ui.treetrace->invisibleRootItem();
-	//int child_count = invisible_root_item->childCount();
-	//QTreeWidgetItem* lastchild = invisible_root_item->child(child_count - 1);
-	//qDebug() << "item data ->";
-	//for (int i = 0; i < lastchild->columnCount(); i++) {
-	//	qDebug() << "item col ->" << i << lastchild->text(i);
-	//}
-	//qDebug() << "item data DONE";
 }
