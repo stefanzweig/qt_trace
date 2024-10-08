@@ -619,19 +619,19 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 {
 	auto log_ = GETLOG("WORKFLOW");
 	timer_isRunning = true;
-	m_mutex.lock();
 	if (item != NULL) {
+		m_mutex.lock();
 		full_queue.enqueue(item);
 		TraceTreeWidgetItem* item_backup = (TraceTreeWidgetItem*)item->clone();
 		full_queue_backup.enqueue(item_backup);
 		construct_page_data(item_backup);
+		m_mutex.unlock();
 		QString source = ((TraceTreeWidgetItem*)item_backup)->getSource();
 		QString uuid = ((TraceTreeWidgetItem*)item_backup)->getUUID();
 		LOGGER_INFO(log_, "ENQUEUING -> {}, UUID -> {}", item->text(0).toStdString(), uuid.toStdString());
 		qDebug() << "UUID -> " << uuid << "SOURCE ->" << source;
 	}
 	timer_isRunning = false;
-	m_mutex.unlock();
 }
 
 void QtWidgetsApplication1::ChangeHeader(const QString& text)
@@ -889,15 +889,22 @@ void QtWidgetsApplication1::fill_up_to_count(int count)
 void QtWidgetsApplication1::fill_partial_tree(int capacity)
 {
 	auto log_ = GETLOG("WORKFLOW");
+	//m_mutex.lock();
 	int queue_size = full_queue.size() - padding;
-	if (queue_size <= 0) return;
+	if (queue_size <= 0) {
+		m_mutex.unlock();
+		return;
+	}
 
 	QTreeWidget* tree = ui.treetrace;
 	int tree_count = tree->topLevelItemCount();
 	int gap = capacity - tree_count;
 	qDebug() << "FILL PARTIAL UP TO -> " << capacity;
 	LOGGER_INFO(log_, "GAP -> {}", gap);
-	if (gap <= 0) return;
+	if (gap <= 0) {
+		m_mutex.unlock();
+		return;
+	}
 	int changes = std::min(queue_size, gap);
 	LOGGER_INFO(log_, "PARTIAL CHANGES -> {}", changes);
 
@@ -926,6 +933,7 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 	}
 
 	// end of mark
+	//m_mutex.unlock(); 
 	LOGGER_INFO(log_, "END OF PARTIAL FILLING");
 	LOGGER_INFO(log_, "====================");
 }
@@ -1191,7 +1199,6 @@ void QtWidgetsApplication1::show_fullpage()
 
 void QtWidgetsApplication1::restore_full_queue()
 {
-	QMutexLocker locker(&m_mutex);
 	full_queue.clear();
 	int size = full_queue_backup.size();
 	for (int i = 0; i < size; i++) {

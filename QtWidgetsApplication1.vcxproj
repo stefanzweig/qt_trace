@@ -120,6 +120,7 @@
     <ClCompile Include="topicData\ZoneMasterCanParserSubscriber.cpp" />
     <ClCompile Include="topicData\ZoneMasterData.cxx" />
     <ClCompile Include="topicData\ZoneMasterDataPubSubTypes.cxx" />
+    <ClCompile Include="topicData\ZoneMasterLinMessageDataSubscriber.cpp" />
     <ClCompile Include="TraceTreeWidgetItem.cpp" />
     <ClCompile Include="treeitem.cpp" />
     <ClCompile Include="treemodel.cpp" />
@@ -134,6 +135,8 @@
   <ItemGroup>
     <ClInclude Include="endianness.h" />
     <ClInclude Include="StateManager.h" />
+    <ClInclude Include="topicData\ZoneMasterLinMessageDataListener.h" />
+    <ClInclude Include="topicData\ZoneMasterLinMessageDataSubscriber.h" />
     <ClInclude Include="TraceTreeWidgetItem.h" />
     <ClInclude Include="uuid_v4.h" />
     <QtMoc Include="columnfilter.h" />
