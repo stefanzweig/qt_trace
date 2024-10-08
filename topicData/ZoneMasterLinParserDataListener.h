@@ -1,6 +1,7 @@
 #pragma once
 
 #include "topicData/ZoneMasterDataPubSubTypes.h"
+#include "topicData/ZoneMasterLinMessageDataListener.h"
 
 #include <chrono>
 #include <thread>
@@ -20,7 +21,6 @@
 #include <QDateTime>
 #include <QVector>
 #include <QByteArray>
-#include "..\zm_struct.h"
 
 using namespace eprosima::fastdds::dds;
 

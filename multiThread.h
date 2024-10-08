@@ -1,12 +1,19 @@
 #pragma once
 #ifndef MULTITHREAD_H
 #define MULTITHREAD_H
+
 #include <QThread>
 #include <QMutex>
-#include "topicData/ZoneMasterCanMessageDataSubscriber.h"
 #include "topicData/ZoneMasterCanMessageDataListener.h"
-#include "topicData/ZoneMasterCanParserSubscriber.h"
+#include "topicData/ZoneMasterCanMessageDataSubscriber.h"
 #include "topicData/ZoneMasterCanParserListener.h"
+#include "topicData/ZoneMasterCanParserSubscriber.h"
+
+#include "topicData/ZoneMasterLinMessageDataSubscriber.h"
+#include "topicData/ZoneMasterLinParserDataSubscriber.h"
+#include "topicData/ZoneMasterLinMessageDataListener.h"
+#include "topicData/ZoneMasterLinParserDataListener.h"
+
 
 #include <QtWidgets/QTreeView>
 #include <QTreeWidgetItem>
@@ -21,8 +28,11 @@ class multiThread :
 public:
     multiThread();
     ~multiThread();
-    void setSubscriber(ZoneMasterCanMessageDataSubscriber* subscriber, int samples, QTreeView* treeview);
+    void setCanSubscriber(ZoneMasterCanMessageDataSubscriber* subscriber, int samples, QTreeView* treeview);
     void setCanParserSubscriber(ZoneMasterCanParserSubscriber* subscriber, int samples, QTreeView* treeview);
+    void setLinSubscriber(ZoneMasterLinMessageDataSubscriber* subscriber, int samples, QTreeView* treeview);
+    void setLinParserSubscriber(ZoneMasterLinParserSubscriber* subscriber, int samples, QTreeView* treeview);
+
     void setFilterOption(QString colName, QList<QList<QString>> items);
     uint64_t full_count_canparser = 0;
     uint64_t full_count_canframes = 0;
@@ -56,6 +66,9 @@ private:
     int samples_ = 100;
     ZoneMasterCanMessageDataSubscriber* mysub_can_frames = nullptr;
     ZoneMasterCanParserSubscriber* mysub_can_parser = nullptr;
+    ZoneMasterLinMessageDataSubscriber* mysub_lin_frames = nullptr;
+    ZoneMasterLinParserSubscriber* mysub_lin_parser = nullptr;
+
     QTreeView* tree_;
     QVector<canframe> full_canparserdata;
     QVector<can_frame> full_canframes;
@@ -66,11 +79,15 @@ private:
 
     bool bconnected_cf = false;
     bool bconnected_cp = false;
+    bool bconnected_lf = false;
+    bool bconnected_lp = false;
     UUIDv4::UUIDGenerator<std::mt19937_64> uuidGenerator;
 
     void bindDataToTraceTree();
     void formatRow_canparser_thread(canframe frame);
     void formatRow_canframe_thread(can_frame frame);
+    void formatRow_linparser_thread(linFrame frame);
+    void formatRow_linframe_thread(linFrame frame);
 
 signals:
     void popToRoot(TraceTreeWidgetItem* item);

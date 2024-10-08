@@ -20,7 +20,6 @@
 #include <QDateTime>
 #include <QVector>
 #include <QByteArray>
-#include "..\zm_struct.h"
 
 using namespace eprosima::fastdds::dds;
 
@@ -67,26 +66,14 @@ public:
             if (info.valid_data)
             {
                 samples_++;
-                for (int i = 0; i < lin_messages_.len(); i++) {
-                    linMessage msg = lin_messages_.linMsgs()[i];
-                    QString repr = QString::number(msg.id());
-                    QDateTime timestamp = QDateTime::fromSecsSinceEpoch(msg.timeStamp() / 1000000000);
-                    repr += "-" + timestamp.toString("yyyy-MM-dd hh:mm:ss");
-                    can_frame cf;
-                    cf.Timestamp = msg.timeStamp();
-                    cf.Chn = msg.channel();
-                    cf.ID = msg.id();
-                    cf.Name = "";
-                    cf.Dir = QString::number(msg.rxtx());
-                    cf.DLC = msg.dlc();
-                    QByteArray output;
-                    std::copy(msg.data().begin(), msg.data().end(), std::back_inserter(output));
-                    cf.Data_Str = output.toHex(' ');
-                    //cf.EventType = QString::number(msg.isFd());
-                    //cf.DataLength = msg.dataLen();
-                    cf.BusType = "0";
-                    emit traceItemUpdate_internal_lin_frame(cf);
-                }
+                //for (int i = 0; i < lin_messages_.len(); i++) {
+                //    linMessage msg = lin_messages_.linMsgs()[i];
+                //    QString repr = QString::number(msg.id());
+                //    QDateTime timestamp = QDateTime::fromSecsSinceEpoch(msg.timeStamp() / 1000000000);
+                //    repr += "-" + timestamp.toString("yyyy-MM-dd hh:mm:ss");
+                //    linFrame cf;
+                //    emit traceItemUpdate_internal_lin_frame(cf);
+                //}
             }
         }
     }
@@ -108,5 +95,5 @@ public:
     QTreeView* tree_ = nullptr;
 
 signals:
-    void traceItemUpdate_internal_lin_frame(can_frame cf);
+    void traceItemUpdate_internal_lin_frame(linFrame lf);
 };

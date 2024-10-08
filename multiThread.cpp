@@ -24,6 +24,16 @@ void multiThread::stopThread() {
         mysub_can_parser = nullptr;
         bconnected_cp = false;
     }
+    if (mysub_lin_frames != nullptr) {
+        delete mysub_lin_frames;
+        mysub_lin_frames = nullptr;
+        bconnected_lf = false;
+    }
+    if (mysub_lin_parser != nullptr) {
+        delete mysub_lin_parser;
+        mysub_lin_parser = nullptr;
+        bconnected_lp = false;
+    }
 }
 
 void multiThread::stopFlag()
@@ -58,9 +68,20 @@ void multiThread::run() {
             }
         }
     }
+    if (monitor_modules.contains("lin")) {
+        if (mysub_lin_frames != nullptr) {
+            if (mysub_lin_frames->init()) {
+            }
+        }
+    }
+    if (monitor_modules.contains("linpdu")) {
+        if (mysub_lin_parser != nullptr) {
+            if (mysub_lin_parser->init()) {
+            }
+        }
+    }
     while (true) {
         if (!is_stop) {
-            //qDebug() << "running...";
             msleep(100); // every 1 second
         }
         else {
@@ -103,7 +124,7 @@ void multiThread::setQueryString(QString str)
     this->query_string = str;
 }
 
-void multiThread::setSubscriber(ZoneMasterCanMessageDataSubscriber* subscriber, int samples, QTreeView* treeview)
+void multiThread::setCanSubscriber(ZoneMasterCanMessageDataSubscriber* subscriber, int samples, QTreeView* treeview)
 {
     if (!bconnected_cf) {
         mysub_can_frames = subscriber;
@@ -125,6 +146,29 @@ void multiThread::setCanParserSubscriber(ZoneMasterCanParserSubscriber* subscrib
         bconnected_cp = true;
     }
 }
+
+void multiThread::setLinSubscriber(ZoneMasterLinMessageDataSubscriber* subscriber, int samples, QTreeView* treeview)
+{
+    if (!bconnected_lf) {
+        mysub_lin_frames = subscriber;
+        samples_ = samples;
+        subscriber->setOuterThread(this, treeview);
+        //QObject::connect(&mysub_lin_frames->listener_, &LinSubListener::traceItemUpdate_internal_lin_frame, this, &multiThread::formatRow_linframe_thread);
+        bconnected_lf = true;
+    }
+}
+
+void multiThread::setLinParserSubscriber(ZoneMasterLinParserSubscriber* subscriber, int samples, QTreeView* treeview)
+{
+    if (!bconnected_lp) {
+        mysub_lin_parser = subscriber;
+        samples_ = samples;
+        subscriber->setOuterThread(this, treeview);
+        //QObject::connect(&mysub_lin_parser->listener_, &LinParserListener::traceItemUpdate_internal_linparser, this, &multiThread::formatRow_linparser_thread);
+        bconnected_lp = true;
+    }
+}
+
 
 void multiThread::formatRow_canparser_thread(canframe frame)
 {
@@ -245,6 +289,14 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
         emit(popToRoot(Item));
     }
         
+}
+
+void multiThread::formatRow_linframe_thread(linFrame frame)
+{
+}
+
+void multiThread::formatRow_linparser_thread(linFrame frame)
+{
 }
 
 void multiThread::setFilterOption(QString colName, QList<QList<QString>> items)

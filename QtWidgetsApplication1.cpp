@@ -52,6 +52,16 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
 		delete mysub_can_parser;
 		mysub_can_parser = nullptr;
 	}
+
+	if (mysub_lin_frames != nullptr) {
+		delete mysub_lin_frames;
+		mysub_lin_frames = nullptr;
+	}
+	if (mysub_lin_parser != nullptr) {
+		delete mysub_lin_parser;
+		mysub_lin_parser = nullptr;
+	}
+
 	if (calc_thread != nullptr) {
 		calc_thread->stopFlag();
 
@@ -339,6 +349,7 @@ void QtWidgetsApplication1::startTrace()
 	LOGGER_INFO(log_, "==== AFTER RESUME TRACE ====");
 	LOGGER_INFO(log_, "\n");
 }
+
 void QtWidgetsApplication1::resumeTrace()
 {
 	auto log_ = GETLOG("WORKFLOW");
@@ -357,9 +368,19 @@ void QtWidgetsApplication1::resumeTrace()
 		mysub_can_parser = new ZoneMasterCanParserSubscriber(dds_domainid);
 		qRegisterMetaType <canframe>("canframe");
 	}
+
+	if (mysub_lin_frames == nullptr) {
+		mysub_lin_frames = new ZoneMasterLinMessageDataSubscriber(dds_domainid);
+		//qRegisterMetaType <linFrame>("linFrame");
+	}
+
+	//if (mysub_lin_parser == nullptr) {
+	//	mysub_lin_parser = new ZoneMasterLinParserSubscriber(dds_domainid);
+	//}
+
 	calc_thread->restartThread();
 	LOGGER_INFO(log_, "==== THREAD RESTARTED ====");
-	calc_thread->setSubscriber(mysub_can_frames, samples, ui.treetrace);
+	calc_thread->setCanSubscriber(mysub_can_frames, samples, ui.treetrace);
 	LOGGER_INFO(log_, "==== CAN SUB SET ====");
 	calc_thread->setCanParserSubscriber(mysub_can_parser, samples, ui.treetrace);
 	LOGGER_INFO(log_, "==== PDU SUB SET ====");
@@ -387,6 +408,8 @@ void QtWidgetsApplication1::stopTrace()
 
 	mysub_can_frames = nullptr;
 	mysub_can_parser = nullptr;
+	mysub_lin_frames = nullptr;
+	mysub_lin_parser = nullptr;
 
 	initial_trace = true;
 	updateToolbar();

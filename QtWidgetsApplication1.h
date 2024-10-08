@@ -5,8 +5,12 @@
 #include <QTimer>
 #include <QQueue>
 #include <QLabel>
+
 #include "topicData/ZoneMasterCanMessageDataSubscriber.h"
 #include "topicData/ZoneMasterCanParserSubscriber.h"
+#include "topicData/ZoneMasterLinMessageDataSubscriber.h"
+#include "topicData/ZoneMasterLinParserDataSubscriber.h"
+
 #include "multiThread.h"
 #include "zm_struct.h"
 #include "columnfilter.h"
@@ -46,6 +50,10 @@ private:
 	QTimer* timer_dustbin = nullptr;
 	ZoneMasterCanMessageDataSubscriber* mysub_can_frames = nullptr;
 	ZoneMasterCanParserSubscriber* mysub_can_parser = nullptr;
+
+	ZoneMasterLinMessageDataSubscriber* mysub_lin_frames = nullptr;
+	ZoneMasterLinParserSubscriber* mysub_lin_parser = nullptr;
+
 	multiThread* calc_thread = nullptr;
 	QQueue<TraceTreeWidgetItem*> full_queue;
 	QQueue<TraceTreeWidgetItem*> full_queue_backup;

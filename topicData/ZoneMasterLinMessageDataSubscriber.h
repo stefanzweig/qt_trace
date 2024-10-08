@@ -2,6 +2,7 @@
 
 #include "topicData/ZoneMasterDataPubSubTypes.h"
 #include "topicData/ZoneMasterLinMessageDataListener.h"
+#include "topicData/ZoneMasterCanMessageDataListener.h"
 
 #include <chrono>
 #include <thread>
@@ -38,12 +39,12 @@ public:
         , subscriber_(nullptr)
         , topic_(nullptr)
         , reader_(nullptr)
-        , type_(nullptr) // this should be matched.
+        , type_(nullptr)
     {
         linMessagesPubSubType* lin_messages_pubsubtype = new linMessagesPubSubType();
         lin_messages_pubsubtype->setName("linMessageData");
         type_ = TypeSupport(lin_messages_pubsubtype);
-        this->domainid = domainid;
+        domainid = domainid;
     }
 
     virtual ~ZoneMasterLinMessageDataSubscriber()
@@ -70,6 +71,7 @@ public:
 
     void run(uint32_t samples);
     void setOuterThread(QThread* thread, QTreeView* treeview);
-    LinSubListener listener_;
+    //LinSubListener listener_;
+    SubListener listener_;
 };
 
