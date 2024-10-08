@@ -70,6 +70,9 @@
     <ClCompile Include="topicData\ZoneMasterLinMessageDataSubscriber.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="topicData\ZoneMasterLinParserDataSubscriber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gui_global.h">
@@ -437,6 +440,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="topicData\ZoneMasterLinMessageDataSubscriber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="topicData\ZoneMasterLinParserDataListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="topicData\ZoneMasterLinParserDataSubscriber.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

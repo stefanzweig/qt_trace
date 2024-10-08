@@ -121,6 +121,7 @@
     <ClCompile Include="topicData\ZoneMasterData.cxx" />
     <ClCompile Include="topicData\ZoneMasterDataPubSubTypes.cxx" />
     <ClCompile Include="topicData\ZoneMasterLinMessageDataSubscriber.cpp" />
+    <ClCompile Include="topicData\ZoneMasterLinParserDataSubscriber.cpp" />
     <ClCompile Include="TraceTreeWidgetItem.cpp" />
     <ClCompile Include="treeitem.cpp" />
     <ClCompile Include="treemodel.cpp" />
@@ -137,6 +138,8 @@
     <ClInclude Include="StateManager.h" />
     <ClInclude Include="topicData\ZoneMasterLinMessageDataListener.h" />
     <ClInclude Include="topicData\ZoneMasterLinMessageDataSubscriber.h" />
+    <ClInclude Include="topicData\ZoneMasterLinParserDataListener.h" />
+    <ClInclude Include="topicData\ZoneMasterLinParserDataSubscriber.h" />
     <ClInclude Include="TraceTreeWidgetItem.h" />
     <ClInclude Include="uuid_v4.h" />
     <QtMoc Include="columnfilter.h" />
