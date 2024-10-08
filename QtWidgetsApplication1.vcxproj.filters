@@ -436,9 +436,6 @@
     <ClInclude Include="StateManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="topicData\ZoneMasterLinMessageDataListener.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="topicData\ZoneMasterLinMessageDataSubscriber.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -446,6 +443,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="topicData\ZoneMasterLinParserDataSubscriber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="topicData\ZoneMasterLinMessageDataListener.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

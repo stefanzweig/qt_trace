@@ -3,6 +3,7 @@
 #include "topicData/ZoneMasterDataPubSubTypes.h"
 #include "topicData/ZoneMasterLinMessageDataListener.h"
 #include "topicData/ZoneMasterCanMessageDataListener.h"
+//#include "topicData/ZoneMasterCanMessageDataListener.h"
 
 #include <chrono>
 #include <thread>
@@ -33,6 +34,7 @@ private:
     int domainid = 90;
 
     TypeSupport type_;
+
 public:
     ZoneMasterLinMessageDataSubscriber(int domainid = 90)
         : participant_(nullptr)
@@ -68,10 +70,9 @@ public:
     }
 
     bool init();
-
     void run(uint32_t samples);
     void setOuterThread(QThread* thread, QTreeView* treeview);
-    //LinSubListener listener_;
-    SubListener listener_;
+    SubListenerL listener_;
+    //SubListener listener_;
 };
 

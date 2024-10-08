@@ -20,22 +20,20 @@
 #include <QDateTime>
 #include <QVector>
 #include <QByteArray>
+#include "..\zm_struct.h"
 
 using namespace eprosima::fastdds::dds;
 
-
-class LinSubListener : public QObject, public DataReaderListener
+class SubListenerL : public QObject, public DataReaderListener
 {
     Q_OBJECT
-
 public:
 
-    LinSubListener()
-        : samples_(0)
+    SubListenerL()
     {
     }
 
-    ~LinSubListener() override
+    ~SubListenerL()
     {
     }
 
@@ -60,40 +58,12 @@ public:
     void on_data_available(
         DataReader* reader) override
     {
-        SampleInfo info;
-        if (reader->take_next_sample(&lin_messages_, &info) == ReturnCode_t::RETCODE_OK)
-        {
-            if (info.valid_data)
-            {
-                samples_++;
-                //for (int i = 0; i < lin_messages_.len(); i++) {
-                //    linMessage msg = lin_messages_.linMsgs()[i];
-                //    QString repr = QString::number(msg.id());
-                //    QDateTime timestamp = QDateTime::fromSecsSinceEpoch(msg.timeStamp() / 1000000000);
-                //    repr += "-" + timestamp.toString("yyyy-MM-dd hh:mm:ss");
-                //    linFrame cf;
-                //    emit traceItemUpdate_internal_lin_frame(cf);
-                //}
-            }
-        }
     }
 
-    void on_requested_incompatible_qos(
-        DataReader* reader,
-        const RequestedIncompatibleQosStatus& status)
-    {
-        (void)reader;
-        (void)status;
-    }
-
-    linMessages lin_messages_;
-
-
-    std::atomic_int samples_;
-
+    //canMessages can_messages_;
     QThread* outerThread = nullptr;
     QTreeView* tree_ = nullptr;
 
-signals:
-    void traceItemUpdate_internal_lin_frame(linFrame lf);
+//signals:
+//    void traceItemUpdate_internal_lin_frame(linFrame lf);
 };

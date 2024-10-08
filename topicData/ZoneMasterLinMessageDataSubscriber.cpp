@@ -1,6 +1,7 @@
 #include "topicData/ZoneMasterLinMessageDataSubscriber.h"
 #include "topicData/ZoneMasterLinMessageDataListener.h"
 #include "topicData/BaseNodeData.h"
+#include "topicData/ZoneMasterLinMessageDataSubscriber.h"
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -15,9 +16,7 @@
 bool ZoneMasterLinMessageDataSubscriber::init()
 {
     DomainParticipantQos participantQos;
-    participantQos.name("Participant_ZWEIG");
-    //std::shared_ptr<eprosima::fastdds::rtps::SharedMemTransportDescriptor> shm_transport = std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
-    //participantQos.transport().user_transports.push_back(shm_transport);
+    participantQos.name("Participant_Lin_ZWEIG");
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
     if (factory)
         participant_ = factory->create_participant(domainid, participantQos);
@@ -68,10 +67,6 @@ bool ZoneMasterLinMessageDataSubscriber::init()
 
 void ZoneMasterLinMessageDataSubscriber::run(uint32_t samples)
 {
-    while (listener_.samples_ < samples)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
 }
 
 void ZoneMasterLinMessageDataSubscriber::setOuterThread(QThread* thread, QTreeView* treeview)
