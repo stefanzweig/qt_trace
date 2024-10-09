@@ -138,7 +138,7 @@
     <ClInclude Include="StateManager.h" />
     <QtMoc Include="topicData\ZoneMasterLinMessageDataListener.h" />
     <ClInclude Include="topicData\ZoneMasterLinMessageDataSubscriber.h" />
-    <ClInclude Include="topicData\ZoneMasterLinParserDataListener.h" />
+    <QtMoc Include="topicData\ZoneMasterLinParserDataListener.h" />
     <ClInclude Include="topicData\ZoneMasterLinParserDataSubscriber.h" />
     <ClInclude Include="TraceTreeWidgetItem.h" />
     <ClInclude Include="uuid_v4.h" />

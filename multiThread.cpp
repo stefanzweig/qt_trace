@@ -164,7 +164,7 @@ void multiThread::setLinParserSubscriber(ZoneMasterLinParserSubscriber* subscrib
         mysub_lin_parser = subscriber;
         samples_ = samples;
         subscriber->setOuterThread(this, treeview);
-        //QObject::connect(&mysub_lin_parser->listener_, &LinParserListener::traceItemUpdate_internal_linparser, this, &multiThread::formatRow_linparser_thread);
+        QObject::connect(&mysub_lin_parser->listener_, &LinParserListener::traceItemUpdate_internal_linparser, this, &multiThread::formatRow_linparser_thread);
         bconnected_lp = true;
     }
 }

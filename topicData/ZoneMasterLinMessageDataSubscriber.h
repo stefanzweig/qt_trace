@@ -1,9 +1,7 @@
 #pragma once
-
 #include "topicData/ZoneMasterDataPubSubTypes.h"
 #include "topicData/ZoneMasterLinMessageDataListener.h"
 #include "topicData/ZoneMasterCanMessageDataListener.h"
-//#include "topicData/ZoneMasterCanMessageDataListener.h"
 
 #include <chrono>
 #include <thread>
@@ -73,6 +71,5 @@ public:
     void run(uint32_t samples);
     void setOuterThread(QThread* thread, QTreeView* treeview);
     LinSubListener listener_;
-    //SubListener listener_;
 };
 

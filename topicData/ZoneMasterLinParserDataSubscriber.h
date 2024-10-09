@@ -1,12 +1,8 @@
 #pragma once
-
 #include "topicData/ZoneMasterDataPubSubTypes.h"
 #include "topicData/ZoneMasterLinParserDataListener.h"
-
-
 #include <chrono>
 #include <thread>
-
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
@@ -17,7 +13,6 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 using namespace eprosima::fastdds::dds;
-
 class ZoneMasterLinParserSubscriber
 {
 private:
