@@ -454,6 +454,10 @@ void QtWidgetsApplication1::pauseTrace()
 	auto log_ = GETLOG("WORKFLOW");
 	LOGGER_INFO(log_, "==== PAUSE BUTTON CLICKED ====");
 	if (last_status == "STOPPED" || last_status == "READY") return;
+
+	int backup_count = full_queue_backup.size();
+
+	qDebug() << "FULL_QUEUE_BACKUP SIZE ->" << backup_count;
 	
 	if (calc_thread->isPAUSED()) {
 		resume_from_pause_trace();
@@ -463,7 +467,8 @@ void QtWidgetsApplication1::pauseTrace()
 	LOGGER_INFO(log_, "==== PAUSE TRACE ====");
 	calc_thread->pauseThread();
 	timer->stop();
-	paused_instant_index = full_queue.size() - padding;
+	paused_instant_index = full_queue_backup.size() - padding;
+	qDebug() << "INSTANT INDEX ->" << paused_instant_index;
 	LOGGER_INFO(log_, "==== THREAD PAUSE STATUS -> {} ====", calc_thread->isPAUSED());
 	LOGGER_INFO(log_, "PAUSED FULL QUEUE -> {}", paused_instant_index);
 	LOGGER_INFO(log_, "==== QUEUE SIZE WHEN PAUSE {} ====", full_queue.size() - padding);
@@ -772,11 +777,10 @@ void QtWidgetsApplication1::updateToolbar()
 
 void QtWidgetsApplication1::display_mode_switch()
 {
-	ui.treetrace->clear();
-	restore_full_queue();
-	print_item_queue(full_queue_backup);
-	print_item_queue(full_queue);
-
+	//ui.treetrace->clear();
+	//restore_full_queue();
+	//print_item_queue(full_queue_backup);
+	//print_item_queue(full_queue);
 	if (display_mode)
 		display_mode = 0;
 	else
@@ -800,6 +804,10 @@ void QtWidgetsApplication1::update_tracewindow()
 	LOGGER_INFO(log_, "LAST STATUS -> {}", last_status.toStdString());
 	//m_mutex.lock();
 	int queue_size = full_queue.size() - padding;
+	int queue_backup_size = full_queue_backup.size() - padding;
+	qDebug() << "FULL -> " << queue_size << "BACKUP -> " << queue_backup_size;
+	LOGGER_INFO(log_, "FULLSIZE -> {}, BACKUP_SIZE -> {}", queue_size, queue_backup_size);
+
 	QTreeWidget* tree = ui.treetrace;
 	QTreeWidgetItem* invisible_root_item = tree->invisibleRootItem();
 
@@ -1017,7 +1025,7 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
 	auto log_ = GETLOG("WORKFLOW");
 	calc_thread->pauseThread();
 	timer->stop();
-	paused_instant_index = full_queue.size() - padding;
+	paused_instant_index = full_queue_backup.size() - padding;
 	updateToolbar();
 
 	if (frozen) {
@@ -1235,17 +1243,16 @@ void QtWidgetsApplication1::show_fullpage()
 	int i = (paused_instant_index > 4000) ? paused_instant_index-4000 : 0;
 	qDebug() << "PAUSED_INSTANT_INDEX ->" << paused_instant_index;
 
+	for (; i < paused_instant_index; i++)
+	{
+		TraceTreeWidgetItem* traceItem = full_queue_backup.at(i);
+		full_queue.enqueue(traceItem);
+	}
 	//for (int i = 0; i < current_page_size; i++)
 	//{
 	//	TraceTreeWidgetItem* traceItem = current_page_queue.at(i);
 	//	baseQueue.enqueue(static_cast<QTreeWidgetItem*>(traceItem));
 	//}
-
-	for (; i < paused_instant_index; i++)
-	{
-		TraceTreeWidgetItem* traceItem = full_queue_backup.at(i);
-		baseQueue.enqueue(static_cast<QTreeWidgetItem*>(traceItem));
-	}
 	qDebug() << "BASEQUEUE SIZE ->" << baseQueue.size();
 	ui.treetrace->addTopLevelItems(baseQueue);
 	timer_isRunning = false;
