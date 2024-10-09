@@ -104,7 +104,7 @@ private:
 	QDateTime start_time;
 	QDateTime end_time;
 	qint64 progress_secs;
-	int paused_index = 0;
+	int paused_instant_index = -1;
 	QString last_status = "INITIAL";
 	bool timer_isRunning = false; // whether it is in a process of timer, a lock.
 	QReadWriteLock rwLock;
@@ -165,4 +165,5 @@ private slots:
 	QString previous_state();
 	void print_item_queue(QQueue<TraceTreeWidgetItem*> queue);
 	void clear_queue(QQueue<TraceTreeWidgetItem*>& queue);
+	void resume_from_pause_trace();
 };
