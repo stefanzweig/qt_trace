@@ -153,7 +153,7 @@ void multiThread::setLinSubscriber(ZoneMasterLinMessageDataSubscriber* subscribe
         mysub_lin_frames = subscriber;
         samples_ = samples;
         subscriber->setOuterThread(this, treeview);
-        //QObject::connect(&mysub_lin_frames->listener_, &LinSubListener::traceItemUpdate_internal_lin_frame, this, &multiThread::formatRow_linframe_thread);
+        QObject::connect(&mysub_lin_frames->listener_, &LinSubListener::traceItemUpdate_internal_lin_frame, this, &multiThread::formatRow_linframe_thread);
         bconnected_lf = true;
     }
 }

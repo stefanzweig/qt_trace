@@ -24,16 +24,16 @@
 
 using namespace eprosima::fastdds::dds;
 
-class SubListenerL : public QObject, public DataReaderListener
+class LinSubListener : public QObject, public DataReaderListener
 {
     Q_OBJECT
 public:
 
-    SubListenerL()
+    LinSubListener()
     {
     }
 
-    ~SubListenerL()
+    ~LinSubListener()
     {
     }
 
@@ -64,6 +64,6 @@ public:
     QThread* outerThread = nullptr;
     QTreeView* tree_ = nullptr;
 
-//signals:
-//    void traceItemUpdate_internal_lin_frame(linFrame lf);
+signals:
+    void traceItemUpdate_internal_lin_frame(linFrame lf);
 };

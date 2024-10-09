@@ -445,9 +445,6 @@
     <ClInclude Include="topicData\ZoneMasterLinParserDataSubscriber.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="topicData\ZoneMasterLinMessageDataListener.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="treemodel.h">
@@ -463,6 +460,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="multiThread.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="topicData\ZoneMasterLinMessageDataListener.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

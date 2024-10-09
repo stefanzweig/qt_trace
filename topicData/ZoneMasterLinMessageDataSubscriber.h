@@ -72,7 +72,7 @@ public:
     bool init();
     void run(uint32_t samples);
     void setOuterThread(QThread* thread, QTreeView* treeview);
-    SubListenerL listener_;
+    LinSubListener listener_;
     //SubListener listener_;
 };
 
