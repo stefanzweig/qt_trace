@@ -110,6 +110,7 @@ private:
 	QReadWriteLock rwLock;
 	StateManager state_manager;
 	QMutex m_mutex;
+	int debuglog = 1;
 
 private slots:
 	void startTrace();
@@ -167,4 +168,8 @@ private slots:
 	void clear_queue(QQueue<TraceTreeWidgetItem*>& queue);
 	void resume_from_pause_trace();
 	void initial_new_session();
+	void update_latest_index(uint64_t index);
+
+signals:
+	void record_latest_index(uint64_t index);
 };

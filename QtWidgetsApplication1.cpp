@@ -18,7 +18,6 @@
 #include "spdlog/spdlog.h"
 #include "TraceTreeWidgetItem.h"
 
-
 QSize getItemSize(QTreeWidgetItem* item, int column, const QFont& font) {
 	QFontMetrics fontMetrics(font);
 	QString text = item->text(column);
@@ -125,6 +124,7 @@ void QtWidgetsApplication1::init()
 	calc_thread->queue_ = &full_queue;
 
 	connect(calc_thread, &multiThread::popToRoot, this, &QtWidgetsApplication1::on_pop_to_root);
+	connect(this, &QtWidgetsApplication1::record_latest_index, this, &QtWidgetsApplication1::update_latest_index);
 
 	resetLayout();
 	resetStatusBar();
@@ -137,6 +137,7 @@ void QtWidgetsApplication1::init()
 	filter = new columnFilterDialog(this);
 	ui.treetrace->setAttribute(Qt::WA_OpaquePaintEvent);
 	ui.treetrace->setAttribute(Qt::WA_NoSystemBackground);
+
 	showMaximized();
 }
 
@@ -169,6 +170,9 @@ void QtWidgetsApplication1::get_default_configurations()
 
 	kv = settings.value("app/padding", 1).toInt();
 	padding = kv;
+
+	kv = settings.value("app/debuglog", 1).toInt();
+	debuglog = kv;
 
 	QList<QVariant> modules = settings.value("app/modules").toList();
 	qDebug() << "Modules -> " << modules;
@@ -673,6 +677,7 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 		if (calc_thread->isPAUSED()) {
 			TraceTreeWidgetItem* item_backup = (TraceTreeWidgetItem*)item->clone();
 			full_queue_backup.enqueue(item_backup);
+			emit record_latest_index(full_queue_backup.size());
 			//m_mutex.unlock();
 			QString source = ((TraceTreeWidgetItem*)item_backup)->getSource();
 			QString uuid = ((TraceTreeWidgetItem*)item_backup)->getUUID();
@@ -683,6 +688,7 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 			full_queue.enqueue(item);
 			TraceTreeWidgetItem* item_backup = (TraceTreeWidgetItem*)item->clone();
 			full_queue_backup.enqueue(item_backup);
+			emit record_latest_index(full_queue_backup.size());
 			construct_page_data(item_backup);
 			//m_mutex.unlock();
 			QString source = ((TraceTreeWidgetItem*)item_backup)->getSource();
@@ -1326,4 +1332,10 @@ void QtWidgetsApplication1::clear_queue(QQueue<TraceTreeWidgetItem*>& queue)
 
 void QtWidgetsApplication1::compare_item()
 {
+}
+
+void QtWidgetsApplication1::update_latest_index(uint64_t index)
+{
+	paused_instant_index = index;
+	qDebug() << "Received LATEST INDEX:" << index;
 }
