@@ -166,4 +166,5 @@ private slots:
 	void print_item_queue(QQueue<TraceTreeWidgetItem*> queue);
 	void clear_queue(QQueue<TraceTreeWidgetItem*>& queue);
 	void resume_from_pause_trace();
+	void initial_new_session();
 };

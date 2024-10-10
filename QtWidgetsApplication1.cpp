@@ -7,6 +7,8 @@
 #include <QSettings>
 #include <QTime>
 #include <QTimer>
+#include <QSplashScreen>
+#include <QPixmap>
 
 #include "columnfilter.h"
 #include "multiThread.h"
@@ -320,6 +322,16 @@ void QtWidgetsApplication1::clearance()
 	safe_clear_trace();
 }
 
+void QtWidgetsApplication1::initial_new_session()
+{
+	calc_thread->full_count_canframes = 0;
+	calc_thread->full_count_canparser = 0;
+	this->paused_instant_index = -1;
+	clear_queue(full_queue);
+	clear_queue(full_queue_backup);
+	clear_queue(current_page_queue);
+}
+
 bool QtWidgetsApplication1::new_session()
 {
 	int ncount = ui.treetrace->topLevelItemCount();
@@ -329,7 +341,7 @@ bool QtWidgetsApplication1::new_session()
 	}
 	if (showNewSession()) {
 		ui.treetrace->clear();
-		clearance();
+		initial_new_session();
 	}
 	return true;
 }
@@ -371,12 +383,13 @@ void QtWidgetsApplication1::resumeTrace()
 
 	if (mysub_lin_frames == nullptr) {
 		mysub_lin_frames = new ZoneMasterLinMessageDataSubscriber(dds_domainid);
-		//qRegisterMetaType <linFrame>("linFrame");
+		qRegisterMetaType <linFrame>("linFrame");
 	}
 
-	//if (mysub_lin_parser == nullptr) {
-	//	mysub_lin_parser = new ZoneMasterLinParserSubscriber(dds_domainid);
-	//}
+	if (mysub_lin_parser == nullptr) {
+		mysub_lin_parser = new ZoneMasterLinParserSubscriber(dds_domainid);
+		qRegisterMetaType <linFrame>("linFrame");
+	}
 
 	calc_thread->restartThread();
 	LOGGER_INFO(log_, "==== THREAD RESTARTED ====");
@@ -460,6 +473,7 @@ void QtWidgetsApplication1::pauseTrace()
 	qDebug() << "FULL_QUEUE_BACKUP SIZE ->" << backup_count;
 	
 	if (calc_thread->isPAUSED()) {
+		restore_full_queue();
 		resume_from_pause_trace();
 		return;
 	}
@@ -1245,14 +1259,21 @@ void QtWidgetsApplication1::show_fullpage()
 
 	for (; i < paused_instant_index; i++)
 	{
-		TraceTreeWidgetItem* traceItem = full_queue_backup.at(i);
-		full_queue.enqueue(traceItem);
+		TraceTreeWidgetItem* traceItem = full_queue_backup.at(i)->clone();
+		baseQueue.enqueue(traceItem);
 	}
+
 	//for (int i = 0; i < current_page_size; i++)
 	//{
 	//	TraceTreeWidgetItem* traceItem = current_page_queue.at(i);
 	//	baseQueue.enqueue(static_cast<QTreeWidgetItem*>(traceItem));
 	//}
+
+	//for (int k = 0; k < 10; k++) {
+	//	TraceTreeWidgetItem* it = read_item_from_dumb(k);
+	//	baseQueue.enqueue(it);
+	//}
+	
 	qDebug() << "BASEQUEUE SIZE ->" << baseQueue.size();
 	ui.treetrace->addTopLevelItems(baseQueue);
 	timer_isRunning = false;
@@ -1260,9 +1281,10 @@ void QtWidgetsApplication1::show_fullpage()
 
 void QtWidgetsApplication1::restore_full_queue()
 {
-	full_queue.clear();
-	int size = full_queue_backup.size();
-	for (int i = 0; i < size; i++) {
+	if (!full_queue.isEmpty())
+		full_queue.clear();
+	//int size = full_queue_backup.size();
+	for (int i = 0; i < this->paused_instant_index; i++) {
 		TraceTreeWidgetItem* it = full_queue_backup.at(i)->clone();
 		full_queue.append(it);
 	}
