@@ -330,7 +330,7 @@ void QtWidgetsApplication1::initial_new_session()
 {
 	calc_thread->full_count_canframes = 0;
 	calc_thread->full_count_canparser = 0;
-	this->paused_instant_index = -1;
+	paused_instant_index = -1;
 	clear_queue(full_queue);
 	clear_queue(full_queue_backup);
 	clear_queue(current_page_queue);
@@ -475,7 +475,7 @@ void QtWidgetsApplication1::pauseTrace()
 	int backup_count = full_queue_backup.size();
 
 	qDebug() << "FULL_QUEUE_BACKUP SIZE ->" << backup_count;
-	
+
 	if (calc_thread->isPAUSED()) {
 		restore_full_queue();
 		resume_from_pause_trace();
@@ -485,7 +485,6 @@ void QtWidgetsApplication1::pauseTrace()
 	LOGGER_INFO(log_, "==== PAUSE TRACE ====");
 	calc_thread->pauseThread();
 	timer->stop();
-	paused_instant_index = full_queue_backup.size() - padding;
 	qDebug() << "INSTANT INDEX ->" << paused_instant_index;
 	LOGGER_INFO(log_, "==== THREAD PAUSE STATUS -> {} ====", calc_thread->isPAUSED());
 	LOGGER_INFO(log_, "PAUSED FULL QUEUE -> {}", paused_instant_index);
@@ -504,12 +503,10 @@ void QtWidgetsApplication1::pauseTrace()
 
 void QtWidgetsApplication1::formatRow(int x)
 {
-	qDebug() << "formatRow..." << x;
 }
 
 void QtWidgetsApplication1::formatRow_str(QString s)
 {
-	qDebug() << "formatRow..." << s;
 }
 
 
@@ -682,7 +679,6 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 			QString source = ((TraceTreeWidgetItem*)item_backup)->getSource();
 			QString uuid = ((TraceTreeWidgetItem*)item_backup)->getUUID();
 			LOGGER_INFO(log_, "ENQUEUING -> {}, UUID -> {}", item->text(0).toStdString(), uuid.toStdString());
-			qDebug() << "UUID -> " << uuid << "SOURCE ->" << source;
 		}
 		else {
 			full_queue.enqueue(item);
@@ -694,7 +690,6 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 			QString source = ((TraceTreeWidgetItem*)item_backup)->getSource();
 			QString uuid = ((TraceTreeWidgetItem*)item_backup)->getUUID();
 			LOGGER_INFO(log_, "ENQUEUING -> {}, UUID -> {}", item->text(0).toStdString(), uuid.toStdString());
-			qDebug() << "UUID -> " << uuid << "SOURCE ->" << source;
 		}
 	}
 	timer_isRunning = false;
@@ -988,7 +983,7 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 			if (idx >= 0) {
 				if (idx >= queue_original_size)
 				{
-					qDebug() << "overflow -> " << queue_original_size;
+					//qDebug() << "overflow -> " << queue_original_size;
 				}
 				TraceTreeWidgetItem* it0 = read_item_from_queue(idx);
 				//TraceTreeWidgetItem* it1 = read_item_from_dumb(idx);
@@ -1041,11 +1036,9 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
 	QScrollBar* scrollBar = ui.treetrace->verticalScrollBar();
 	if (scrollBar->value() == scrollBar->maximum()) { return; }
 
-
 	auto log_ = GETLOG("WORKFLOW");
 	calc_thread->pauseThread();
 	timer->stop();
-	paused_instant_index = full_queue_backup.size() - padding;
 	updateToolbar();
 
 	if (frozen) {
@@ -1137,7 +1130,7 @@ void QtWidgetsApplication1::about()
 
 void QtWidgetsApplication1::reset_all_filters()
 {
-	qDebug() << "reset_all_filters";
+	//qDebug() << "reset_all_filters";
 	if (!new_filters.isEmpty()) {
 		for (auto it = new_filters.begin(); it != new_filters.end(); ++it) {
 			int col_index = it.value()[0].toInt();
@@ -1258,28 +1251,13 @@ void QtWidgetsApplication1::show_fullpage()
 	safe_clear_trace();
 
 	QQueue<QTreeWidgetItem*> baseQueue;
-	int current_page_size = current_page_queue.size();
-	qDebug() << "CURRENT PAGE SIZE ->" << current_page_size;
-	int i = (paused_instant_index > 4000) ? paused_instant_index-4000 : 0;
+	int i = (paused_instant_index > 4000) ? paused_instant_index - 4000 : 0;
 	qDebug() << "PAUSED_INSTANT_INDEX ->" << paused_instant_index;
-
 	for (; i < paused_instant_index; i++)
 	{
 		TraceTreeWidgetItem* traceItem = full_queue_backup.at(i)->clone();
 		baseQueue.enqueue(traceItem);
 	}
-
-	//for (int i = 0; i < current_page_size; i++)
-	//{
-	//	TraceTreeWidgetItem* traceItem = current_page_queue.at(i);
-	//	baseQueue.enqueue(static_cast<QTreeWidgetItem*>(traceItem));
-	//}
-
-	//for (int k = 0; k < 10; k++) {
-	//	TraceTreeWidgetItem* it = read_item_from_dumb(k);
-	//	baseQueue.enqueue(it);
-	//}
-	
 	qDebug() << "BASEQUEUE SIZE ->" << baseQueue.size();
 	ui.treetrace->addTopLevelItems(baseQueue);
 	timer_isRunning = false;
@@ -1306,22 +1284,21 @@ QString QtWidgetsApplication1::previous_state()
 	return this->state_manager.previous_state();
 }
 
-void QtWidgetsApplication1::print_item_queue(QQueue<TraceTreeWidgetItem*> queue)
+void QtWidgetsApplication1::print_item_queue(QQueue<TraceTreeWidgetItem*> q)
 {
 	if (timer_isRunning) return;
 	timer_isRunning = true;
-	qDebug() << "PRINT QUEUE SIZE -> " << queue.size();
-	if (queue.isEmpty()) {
+	qDebug() << "PRINT QUEUE SIZE -> " << q.size();
+	if (q.isEmpty()) {
 		timer_isRunning = true;
 		return;
 	}
-	for (const TraceTreeWidgetItem* item : queue) {
+	for (const TraceTreeWidgetItem* item : q) {
 		QString source = item->getSource();
 		QString uuid = item->getUUID();
 		qDebug() << "PRINT ITEM -> " << "UUID -> " << uuid << "SOURCE -> " << source;
 	}
 	timer_isRunning = true;
-	rwLock.unlock();
 }
 
 void QtWidgetsApplication1::clear_queue(QQueue<TraceTreeWidgetItem*>& queue)
