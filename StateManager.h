@@ -55,7 +55,6 @@ public:
 			return QString::fromStdString(secondToLast);
 		}
 		else {
-			qDebug() << "vector 中没有足够的元素。";
 			return "";
 		}
 	}

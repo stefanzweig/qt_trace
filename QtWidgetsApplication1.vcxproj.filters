@@ -37,9 +37,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="multiThread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -71,6 +68,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="topicData\ZoneMasterLinParserDataSubscriber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

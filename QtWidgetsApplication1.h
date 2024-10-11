@@ -65,9 +65,10 @@ private:
 	uint64_t full_count_canparser = 0;
 	uint64_t count_per_page = 4000; // the full length of data in the window when it is paused.
 	int page_capacity = 300; // the trace windows maximal rows of data
-	uint64_t current_page_index = 0;
 	bool isHex = true; // repr in hex
-	int page_count = 0; /* (full_count_canframes / count_per_page) */
+	int page_count = 0; // (full_count_canframes / count_per_page) 
+	int current_page_index = 0; // the current page index of all items
+	int current_item_index = 0; // the index of the item inside a page
 
 	QStringList initialHeader = { "Time[ms]", "Chn", "ID", "Name", "Dir", "DLC", "EventType", "DataLength", "BusType", "Data" };
 	QStringList CurrentHeader = initialHeader;
@@ -104,13 +105,14 @@ private:
 	QDateTime start_time;
 	QDateTime end_time;
 	qint64 progress_secs;
-	int paused_instant_index = -1;
+	int paused_instant_index = 0;
 	QString last_status = "INITIAL";
 	bool timer_isRunning = false; // whether it is in a process of timer, a lock.
 	QReadWriteLock rwLock;
 	StateManager state_manager;
 	QMutex m_mutex;
-	int debuglog = 1;
+	int debuglog = 1; // not in use so far
+
 
 private slots:
 	void startTrace();
@@ -120,7 +122,6 @@ private slots:
 	void display_mode_switch();
 	void resetStatusBar();
 	void resumeTrace();
-
 	void updateState();
 	void onActionTriggered();
 	void formatRow(int x);
@@ -130,7 +131,6 @@ private slots:
 	void internal_canparser(canframe frame);
 	void applyFilter(QList<QList<QString>> items, int count);
 	void on_pop_to_root(TraceTreeWidgetItem* item);
-
 	void headerButtonClicked();
 	void prepareMenu(const QPoint& pos);
 	void newDev();
@@ -167,8 +167,9 @@ private slots:
 	void print_item_queue(QQueue<TraceTreeWidgetItem*> queue);
 	void clear_queue(QQueue<TraceTreeWidgetItem*>& queue);
 	void resume_from_pause_trace();
-	void initial_new_session();
+	void initialize_new_session();
 	void update_latest_index(uint64_t index);
+	void updateProgressRunStatus();
 
 signals:
 	void record_latest_index(uint64_t index);

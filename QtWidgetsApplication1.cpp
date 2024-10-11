@@ -185,7 +185,7 @@ void QtWidgetsApplication1::_updateCurrentState()
 {
 }
 
-void QtWidgetsApplication1::updateProgressLeft()
+void QtWidgetsApplication1::updateProgressRunStatus()
 {
 	QString runStatus = "";
 	if (calc_thread->isSTOPPED())
@@ -203,10 +203,30 @@ void QtWidgetsApplication1::updateProgressLeft()
 	QString status_string = runStatus + "CAN Frames: " + QString::number(canframe_count)
 		+ ". PDUs: " + QString::number(canparser_count);
 	ui.statusBar->showMessage(status_string);
+}
 
-	int ncount = ui.treetrace->topLevelItemCount();
-	QString strLeft = QString("Current: %1").arg(ncount);
-	leftLabel->setText(strLeft);
+void QtWidgetsApplication1::updateProgressLeft()
+{
+	updateProgressRunStatus();
+	if (calc_thread->isRUN()) {
+		int ncount = ui.treetrace->topLevelItemCount();
+		//ncount = (ncount > page_capacity) ? page_capacity : ncount;
+		int page_index = paused_instant_index/page_capacity+1;
+		QString strLeft_run = QString("Count: %1/%3, Page: %2")
+			.arg(ncount)
+			.arg(page_index)
+			.arg(page_capacity);
+		leftLabel->setText(strLeft_run);
+	}
+	else {
+		int ncount = ui.treetrace->topLevelItemCount();
+		int page_index = paused_instant_index/count_per_page+1;
+		QString strLeft_idle = QString("Count: %1/%3, Page: %2")
+			.arg(ncount)
+			.arg(page_index)
+			.arg(count_per_page);
+		leftLabel->setText(strLeft_idle);
+	}
 }
 
 void QtWidgetsApplication1::updateProgressTimer()
@@ -276,13 +296,15 @@ void QtWidgetsApplication1::resetLayout()
 
 void QtWidgetsApplication1::resetStatusBar()
 {
-	leftLabel = new QLabel("Left Information", this);
+	QString strLeftTemplate = "Count: 0, Page: 0";
+	QString strRightTemplate = "00:00:00";
+	leftLabel = new QLabel(strLeftTemplate, this);
 	leftWidget = new QWidget(this);
 	leftLayout = new QHBoxLayout(leftWidget);
 	leftLayout->addWidget(leftLabel);
 	leftLayout->addStretch();
 
-	rightLabel = new QLabel("Right Information", this);
+	rightLabel = new QLabel(strRightTemplate, this);
 	rightWidget = new QWidget(this);
 	rightLayout = new QHBoxLayout(rightWidget);
 	rightLayout->addStretch();
@@ -290,6 +312,7 @@ void QtWidgetsApplication1::resetStatusBar()
 
 	ui.statusBar->addPermanentWidget(leftWidget);
 	ui.statusBar->addPermanentWidget(rightWidget);
+	updateProgressRunStatus();
 }
 
 void QtWidgetsApplication1::prepareMenu(const QPoint& pos)
@@ -326,7 +349,7 @@ void QtWidgetsApplication1::clearance()
 	safe_clear_trace();
 }
 
-void QtWidgetsApplication1::initial_new_session()
+void QtWidgetsApplication1::initialize_new_session()
 {
 	calc_thread->full_count_canframes = 0;
 	calc_thread->full_count_canparser = 0;
@@ -340,12 +363,14 @@ bool QtWidgetsApplication1::new_session()
 {
 	int ncount = ui.treetrace->topLevelItemCount();
 	if (!ncount) return true;
-	if (ncount) {
-		leftLabel->setText(QString("Previous Count: %1").arg(ncount));
-	}
+	
+	//if (ncount) {
+	//	leftLabel->setText(QString("Previous Count: %1").arg(ncount));
+	//}
+	
 	if (showNewSession()) {
 		ui.treetrace->clear();
-		initial_new_session();
+		initialize_new_session();
 	}
 	return true;
 }
@@ -674,7 +699,6 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 		if (calc_thread->isPAUSED()) {
 			TraceTreeWidgetItem* item_backup = (TraceTreeWidgetItem*)item->clone();
 			full_queue_backup.enqueue(item_backup);
-			emit record_latest_index(full_queue_backup.size());
 			//m_mutex.unlock();
 			QString source = ((TraceTreeWidgetItem*)item_backup)->getSource();
 			QString uuid = ((TraceTreeWidgetItem*)item_backup)->getUUID();
@@ -684,13 +708,13 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 			full_queue.enqueue(item);
 			TraceTreeWidgetItem* item_backup = (TraceTreeWidgetItem*)item->clone();
 			full_queue_backup.enqueue(item_backup);
-			emit record_latest_index(full_queue_backup.size());
 			construct_page_data(item_backup);
 			//m_mutex.unlock();
 			QString source = ((TraceTreeWidgetItem*)item_backup)->getSource();
 			QString uuid = ((TraceTreeWidgetItem*)item_backup)->getUUID();
 			LOGGER_INFO(log_, "ENQUEUING -> {}, UUID -> {}", item->text(0).toStdString(), uuid.toStdString());
 		}
+		emit record_latest_index(full_queue_backup.size());
 	}
 	timer_isRunning = false;
 }
@@ -1315,4 +1339,6 @@ void QtWidgetsApplication1::update_latest_index(uint64_t index)
 {
 	paused_instant_index = index;
 	qDebug() << "Received LATEST INDEX:" << index;
+	current_page_index = paused_instant_index / count_per_page;
+	current_item_index = paused_instant_index % count_per_page;
 }

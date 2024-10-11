@@ -116,6 +116,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="columnfilter.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="multiThread.cpp" />
     <ClCompile Include="topicData\ZoneMasterCanParserSubscriber.cpp" />
     <ClCompile Include="topicData\ZoneMasterData.cxx" />
@@ -131,7 +132,6 @@
     <QtUic Include="QtWidgetsApplication1.ui" />
     <QtMoc Include="QtWidgetsApplication1.h" />
     <ClCompile Include="QtWidgetsApplication1.cpp" />
-    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="endianness.h" />
