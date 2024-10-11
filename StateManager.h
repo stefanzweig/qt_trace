@@ -58,6 +58,11 @@ public:
 			return "";
 		}
 	}
+	State current_state()
+	{
+		return currentState;
+	}
+	
 
 private:
 	State currentState;

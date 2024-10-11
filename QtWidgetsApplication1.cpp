@@ -498,10 +498,10 @@ void QtWidgetsApplication1::pauseTrace()
 	if (last_status == "STOPPED" || last_status == "READY") return;
 
 	int backup_count = full_queue_backup.size();
-
 	qDebug() << "FULL_QUEUE_BACKUP SIZE ->" << backup_count;
 
 	if (calc_thread->isPAUSED()) {
+		ui.treetrace->clear();
 		restore_full_queue();
 		resume_from_pause_trace();
 		return;
@@ -1059,26 +1059,16 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
 	//qDebug() << "QScrollBar Changed -> " << value;
 	QScrollBar* scrollBar = ui.treetrace->verticalScrollBar();
 	if (scrollBar->value() == scrollBar->maximum()) { return; }
-
-	auto log_ = GETLOG("WORKFLOW");
-	calc_thread->pauseThread();
-	timer->stop();
-	updateToolbar();
-
-	if (frozen) {
-		return;
-	}
-	else if (last_status == "STARTED") {
-		LOGGER_INFO(log_, "SCROLLED FULL QUEUE -> {}", paused_instant_index);
-		LOGGER_INFO(log_, "SCROLLED BEFORE FREEZING");
-		//freeze_treetrace_items(count_per_page);
+	State current_state = this->state_manager.current_state();
+	if (current_state == State::START || current_state == State::RESUMED) {
+		auto log_ = GETLOG("WORKFLOW");
+		calc_thread->pauseThread();
+		timer->stop();
 		show_fullpage();
-		frozen = true;
 		last_status = "PAUSED";
-		LOGGER_INFO(log_, "SCROLLED AFTER FREEZING");
 	}
-	last_status = "PAUSED";
-
+	updateToolbar();
+	updateProgressLeft();
 }
 
 void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
@@ -1275,7 +1265,7 @@ void QtWidgetsApplication1::show_fullpage()
 	safe_clear_trace();
 
 	QQueue<QTreeWidgetItem*> baseQueue;
-	int i = (paused_instant_index > 4000) ? paused_instant_index - 4000 : 0;
+	int i = (paused_instant_index > count_per_page) ? paused_instant_index - count_per_page : 0;
 	qDebug() << "PAUSED_INSTANT_INDEX ->" << paused_instant_index;
 	for (; i < paused_instant_index; i++)
 	{
@@ -1291,7 +1281,6 @@ void QtWidgetsApplication1::restore_full_queue()
 {
 	if (!full_queue.isEmpty())
 		full_queue.clear();
-	//int size = full_queue_backup.size();
 	for (int i = 0; i < this->paused_instant_index; i++) {
 		TraceTreeWidgetItem* it = full_queue_backup.at(i)->clone();
 		full_queue.append(it);
