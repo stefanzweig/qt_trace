@@ -469,6 +469,12 @@ void QtWidgetsApplication1::stopTrace()
 	LOGGER_INFO(log_, "\n");
 
 }
+
+void QtWidgetsApplication1::replayTrace()
+{
+	// 2024年10月11日 17:46 回放功能
+}
+
 void QtWidgetsApplication1::resume_from_pause_trace()
 {
 	auto log_ = GETLOG("WORKFLOW");

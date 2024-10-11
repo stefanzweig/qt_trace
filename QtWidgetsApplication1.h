@@ -118,6 +118,7 @@ private slots:
 	void startTrace();
 	void stopTrace();
 	void pauseTrace();
+	void replayTrace();
 	void resetLayout();
 	void display_mode_switch();
 	void resetStatusBar();
