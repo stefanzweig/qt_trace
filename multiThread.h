@@ -40,7 +40,7 @@ public:
     bool isPAUSED() { return is_paused; }
     bool isRUN() { return (!is_stop && !is_paused); }
     QList<QString> monitor_modules;
-    QQueue<TraceTreeWidgetItem*> *queue_;
+    QQueue<TraceTreeWidgetItem*> *queue_ = nullptr;
 
 public slots:
     void stopThread();
@@ -69,7 +69,7 @@ private:
     ZoneMasterLinMessageDataSubscriber* mysub_lin_frames = nullptr;
     ZoneMasterLinParserSubscriber* mysub_lin_parser = nullptr;
 
-    QTreeView* tree_;
+    QTreeView* tree_ = nullptr;
     QVector<canframe> full_canparserdata;
     QVector<can_frame> full_canframes;
     uint64_t last_timestamp_canparser = 0;

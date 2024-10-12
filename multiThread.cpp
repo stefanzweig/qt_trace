@@ -4,7 +4,10 @@
 #include "TraceTreeWidgetItem.h"
 
 multiThread::multiThread()
-    :is_stop(true),is_paused(false)
+    :is_stop(true),
+    is_paused(false),
+    queue_(nullptr),
+    tree_(nullptr)
 {
 }
 
@@ -173,10 +176,8 @@ void multiThread::setLinParserSubscriber(ZoneMasterLinParserSubscriber* subscrib
 void multiThread::formatRow_canparser_thread(canframe frame)
 {
     full_count_canparser++;
-    if (is_paused) { return; }
 
     last_timestamp_canparser = frame.timeStamp();
-
     QStringList str_parser = {};
     QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(frame.timeStamp() / 1000000);
     str_parser.append(timestamp.toString("hh:mm:ss.zzz"));
