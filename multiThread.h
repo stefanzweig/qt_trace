@@ -32,13 +32,17 @@ public:
     void setCanParserSubscriber(ZoneMasterCanParserSubscriber* subscriber, int samples, QTreeView* treeview);
     void setLinSubscriber(ZoneMasterLinMessageDataSubscriber* subscriber, int samples, QTreeView* treeview);
     void setLinParserSubscriber(ZoneMasterLinParserSubscriber* subscriber, int samples, QTreeView* treeview);
-
     void setFilterOption(QString colName, QList<QList<QString>> items);
+
     uint64_t full_count_canparser = 0;
     uint64_t full_count_canframes = 0;
+    uint64_t full_count_linparser = 0;
+    uint64_t full_count_linframes = 0;
+    
     bool isSTOPPED() { return is_stop; };
     bool isPAUSED() { return is_paused; }
     bool isRUN() { return (!is_stop && !is_paused); }
+    
     QList<QString> monitor_modules;
     QQueue<TraceTreeWidgetItem*> *queue_ = nullptr;
 

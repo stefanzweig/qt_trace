@@ -83,16 +83,14 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
 	state_manager.printHistory();
 
 	print_item_queue(full_queue);
-	print_item_queue(full_queue_backup);
-	print_item_queue(current_page_queue);
+	print_item_queue(full_queue_stream);
 
 	clear_queue(full_queue);
-	clear_queue(full_queue_backup);
+	clear_queue(full_queue_stream);
 	clear_queue(current_page_queue);
 
 	print_item_queue(full_queue);
-	print_item_queue(full_queue_backup);
-	print_item_queue(current_page_queue);
+	print_item_queue(full_queue_stream);
 
 	spdlog::drop_all();
 }
@@ -340,7 +338,7 @@ void QtWidgetsApplication1::initialize_new_session()
 	calc_thread->full_count_canparser = 0;
 	paused_instant_index = -1;
 	clear_queue(full_queue);
-	clear_queue(full_queue_backup);
+	clear_queue(full_queue_stream);
 	clear_queue(current_page_queue);
 }
 
@@ -481,7 +479,7 @@ void QtWidgetsApplication1::pauseTrace()
 	LOGGER_INFO(log_, "==== PAUSE BUTTON CLICKED ====");
 	if (last_status == "STOPPED" || last_status == "READY") return;
 
-	int backup_count = full_queue_backup.size();
+	int backup_count = full_queue_stream.size();
 	qDebug() << "FULL_QUEUE_BACKUP SIZE ->" << backup_count;
 	if (calc_thread->isPAUSED()) {
 		ui.treetrace->clear();
@@ -643,7 +641,7 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 		//m_mutex.lock();
 		if (calc_thread->isPAUSED()) {
 			TraceTreeWidgetItem* item_backup = (TraceTreeWidgetItem*)item->clone();
-			full_queue_backup.enqueue(item_backup);
+			full_queue_stream.enqueue(item_backup);
 			//m_mutex.unlock();
 			QString source = ((TraceTreeWidgetItem*)item_backup)->getSource();
 			QString uuid = ((TraceTreeWidgetItem*)item_backup)->getUUID();
@@ -652,14 +650,14 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 		else {
 			full_queue.enqueue(item);
 			TraceTreeWidgetItem* item_backup = (TraceTreeWidgetItem*)item->clone();
-			full_queue_backup.enqueue(item_backup);
-			construct_page_data(item_backup);
+			full_queue_stream.enqueue(item_backup);
+			// construct_page_data(item_backup);
 			//m_mutex.unlock();
 			QString source = ((TraceTreeWidgetItem*)item_backup)->getSource();
 			QString uuid = ((TraceTreeWidgetItem*)item_backup)->getUUID();
 			LOGGER_INFO(log_, "ENQUEUING -> {}, UUID -> {}", item->text(0).toStdString(), uuid.toStdString());
 		}
-		emit record_latest_index(full_queue_backup.size());
+		emit record_latest_index(full_queue_stream.size());
 	}
 	timer_isRunning = false;
 }
@@ -774,7 +772,7 @@ void QtWidgetsApplication1::update_tracewindow()
 	LOGGER_INFO(log_, "LAST STATUS -> {}", last_status.toStdString());
 	//m_mutex.lock();
 	int queue_size = full_queue.size() - padding;
-	int queue_backup_size = full_queue_backup.size() - padding;
+	int queue_backup_size = full_queue_stream.size() - padding;
 	qDebug() << "FULL -> " << queue_size << "BACKUP -> " << queue_backup_size;
 	LOGGER_INFO(log_, "FULLSIZE -> {}, BACKUP_SIZE -> {}", queue_size, queue_backup_size);
 
@@ -1076,7 +1074,7 @@ bool QtWidgetsApplication1::filter_pass_item(QTreeWidgetItem* it)
 
 	// running, only root items passed. 2024Äê10ÔÂ3ÈÕ 9:39
 	if (calc_thread->isRUN() && it) {
-		matched = filter_run_pass_item(it);
+		matched = filter_run_pass_item_without_children(it);
 		if (!matched) return false;
 	}
 
@@ -1094,7 +1092,7 @@ bool QtWidgetsApplication1::filter_pass_item(QTreeWidgetItem* it)
 	return matched;
 }
 
-bool QtWidgetsApplication1::filter_run_pass_item(QTreeWidgetItem* it)
+bool QtWidgetsApplication1::filter_run_pass_item_without_children(QTreeWidgetItem* it)
 {
 	if (calc_thread->isRUN() && it) {
 		try
@@ -1181,7 +1179,7 @@ void QtWidgetsApplication1::show_fullpage()
 	qDebug() << "PAUSED_INSTANT_INDEX ->" << paused_instant_index;
 	for (;i < paused_instant_index;i++)
 	{
-		TraceTreeWidgetItem* traceItem = full_queue_backup.at(i)->clone();
+		TraceTreeWidgetItem* traceItem = full_queue_stream.at(i)->clone();
 		baseQueue.enqueue(traceItem);
 	}
 	qDebug() << "BASEQUEUE SIZE ->" << baseQueue.size();
@@ -1194,7 +1192,7 @@ void QtWidgetsApplication1::restore_full_queue()
 	if (!full_queue.isEmpty())
 		full_queue.clear();
 	for (int i = 0; i < this->paused_instant_index; i++) {
-		TraceTreeWidgetItem* it = full_queue_backup.at(i)->clone();
+		TraceTreeWidgetItem* it = full_queue_stream.at(i)->clone();
 		full_queue.append(it);
 	}
 }

@@ -56,7 +56,7 @@ private:
 
 	multiThread* calc_thread = nullptr;
 	QQueue<TraceTreeWidgetItem*> full_queue;
-	QQueue<TraceTreeWidgetItem*> full_queue_backup;
+	QQueue<TraceTreeWidgetItem*> full_queue_stream;
 	QQueue<TraceTreeWidgetItem*> current_page_queue;
 
 	uint64_t last_timestamp = 0;
@@ -153,7 +153,7 @@ private slots:
 	void updateProgressLeft();
 	void construct_page_data(TraceTreeWidgetItem* item);
 	bool filter_pass_item(QTreeWidgetItem* it);
-	bool filter_run_pass_item(QTreeWidgetItem* it);
+	bool filter_run_pass_item_without_children(QTreeWidgetItem* it);
 	void show_fullpage();
 	void restore_full_queue();
 	void safe_clear_trace();
