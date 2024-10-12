@@ -206,7 +206,6 @@ void QtWidgetsApplication1::updateProgressRunStatus()
 
 void QtWidgetsApplication1::updateProgressLeft()
 {
-	updateProgressRunStatus();
 	if (calc_thread->isRUN()) {
 		int ncount = ui.treetrace->topLevelItemCount();
 		//ncount = (ncount > page_capacity) ? page_capacity : ncount;
@@ -230,6 +229,7 @@ void QtWidgetsApplication1::updateProgressLeft()
 
 void QtWidgetsApplication1::updateProgressTimer()
 {
+	updateProgressRunStatus();
 	QString strRight; //  = QString("Page Capacity: %1").arg(page_capacity);
 	QDateTime end_time = QDateTime::currentDateTime();
 	qint64 secondsDifference = start_time.secsTo(end_time);
@@ -365,10 +365,6 @@ bool QtWidgetsApplication1::new_session()
 {
 	int ncount = ui.treetrace->topLevelItemCount();
 	if (!ncount) return true;
-
-	//if (ncount) {
-	//	leftLabel->setText(QString("Previous Count: %1").arg(ncount));
-	//}
 
 	if (showNewSession()) {
 		ui.treetrace->clear();
