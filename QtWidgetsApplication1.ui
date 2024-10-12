@@ -65,6 +65,7 @@
        <addaction name="actionstop"/>
        <addaction name="actionmode"/>
        <addaction name="actionreset"/>
+       <addaction name="actionreplay"/>
       </widget>
       <widget class="QMenu" name="menuHelp">
        <property name="title">
@@ -277,7 +278,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
@@ -335,6 +336,11 @@
   <action name="actionreset">
    <property name="text">
     <string>resetAll</string>
+   </property>
+  </action>
+  <action name="actionreplay">
+   <property name="text">
+    <string>replay</string>
    </property>
   </action>
  </widget>

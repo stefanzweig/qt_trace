@@ -108,7 +108,6 @@ void QtWidgetsApplication1::init()
 	sizePolicy.setVerticalStretch(0);
 	sizePolicy.setHeightForWidth(ui.widget->sizePolicy().hasHeightForWidth());
 	ui.Lower->setSizePolicy(sizePolicy);
-	//ui.toolbar_search->setVisible(true);
 
 	get_default_configurations();
 	createActions();
@@ -211,7 +210,7 @@ void QtWidgetsApplication1::updateProgressLeft()
 	if (calc_thread->isRUN()) {
 		int ncount = ui.treetrace->topLevelItemCount();
 		//ncount = (ncount > page_capacity) ? page_capacity : ncount;
-		int page_index = paused_instant_index/page_capacity+1;
+		int page_index = paused_instant_index / page_capacity + 1;
 		QString strLeft_run = QString("Count: %1/%3, Page: %2")
 			.arg(ncount)
 			.arg(page_index)
@@ -220,7 +219,7 @@ void QtWidgetsApplication1::updateProgressLeft()
 	}
 	else {
 		int ncount = ui.treetrace->topLevelItemCount();
-		int page_index = paused_instant_index/count_per_page+1;
+		int page_index = paused_instant_index / count_per_page + 1;
 		QString strLeft_idle = QString("Count: %1/%3, Page: %2")
 			.arg(ncount)
 			.arg(page_index)
@@ -254,6 +253,7 @@ void QtWidgetsApplication1::createActions()
 	connect(ui.actionstart, &QAction::triggered, this, &QtWidgetsApplication1::startTrace);
 	connect(ui.actionstop, &QAction::triggered, this, &QtWidgetsApplication1::stopTrace);
 	connect(ui.actionpause, &QAction::triggered, this, &QtWidgetsApplication1::pauseTrace);
+	connect(ui.actionreplay, &QAction::triggered, this, &QtWidgetsApplication1::replayTrace);
 	connect(ui.actionmode, &QAction::triggered, this, &QtWidgetsApplication1::display_mode_switch);
 	connect(ui.pushButton_search, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonSearchClicked);
 	connect(ui.actionAbout, &QAction::triggered, this, &QtWidgetsApplication1::about);
@@ -272,11 +272,13 @@ void QtWidgetsApplication1::resetLayout()
 	ui.actionstart->setIcon(QIcon(":/QtWidgetsApplication1/res/play.svg"));
 	ui.actionstop->setIcon(QIcon(":/QtWidgetsApplication1/res/maximize.svg"));
 	ui.actionreset->setIcon(QIcon(":/QtWidgetsApplication1/res/tick.svg"));
+	ui.actionreplay->setIcon(QIcon(":/QtWidgetsApplication1/res/replay.svg"));
 
 	// toolbar actions
 	ui.toolbar->addAction(ui.actionstart);
 	ui.toolbar->addAction(ui.actionstop);
 	ui.toolbar->addAction(ui.actionpause);
+	ui.toolbar->addAction(ui.actionreplay);
 	ui.toolbar->addAction(ui.actionmode);
 	ui.toolbar->addAction(ui.actionreset);
 	initialHeaders();
@@ -363,11 +365,11 @@ bool QtWidgetsApplication1::new_session()
 {
 	int ncount = ui.treetrace->topLevelItemCount();
 	if (!ncount) return true;
-	
+
 	//if (ncount) {
 	//	leftLabel->setText(QString("Previous Count: %1").arg(ncount));
 	//}
-	
+
 	if (showNewSession()) {
 		ui.treetrace->clear();
 		initialize_new_session();
@@ -463,7 +465,6 @@ void QtWidgetsApplication1::stopTrace()
 
 	frozen = true;
 	LOGGER_INFO(log_, "==== FROZEN STATUS {} ====", frozen);
-	//freeze_treetrace_items(count_per_page);
 	show_fullpage();
 	LOGGER_INFO(log_, "==== END OF STOPPING TRACE ====");
 	LOGGER_INFO(log_, "\n");
@@ -473,6 +474,7 @@ void QtWidgetsApplication1::stopTrace()
 void QtWidgetsApplication1::replayTrace()
 {
 	// 2024年10月11日 17:46 回放功能
+	qDebug() << "REPLAY...";
 }
 
 void QtWidgetsApplication1::resume_from_pause_trace()
@@ -484,9 +486,6 @@ void QtWidgetsApplication1::resume_from_pause_trace()
 		frozen = false;
 		initial_trace = true;
 		state_manager.changeState(State::RESUMED);
-
-		//ui.treetrace->clear();
-		//restore_full_queue();
 		LOGGER_INFO(log_, "==== FROZEN STATUS {} ====", frozen);
 		LOGGER_INFO(log_, "==== BEFORE RESUME TRACE ====");
 		LOGGER_INFO(log_, "==== QUEUE SIZE BEFORE RESUMING {} ====", full_queue.size() - padding);
@@ -505,32 +504,25 @@ void QtWidgetsApplication1::pauseTrace()
 
 	int backup_count = full_queue_backup.size();
 	qDebug() << "FULL_QUEUE_BACKUP SIZE ->" << backup_count;
-
 	if (calc_thread->isPAUSED()) {
 		ui.treetrace->clear();
 		restore_full_queue();
 		resume_from_pause_trace();
 		return;
 	}
-
 	LOGGER_INFO(log_, "==== PAUSE TRACE ====");
 	calc_thread->pauseThread();
 	timer->stop();
 	qDebug() << "INSTANT INDEX ->" << paused_instant_index;
-	LOGGER_INFO(log_, "==== THREAD PAUSE STATUS -> {} ====", calc_thread->isPAUSED());
-	LOGGER_INFO(log_, "PAUSED FULL QUEUE -> {}", paused_instant_index);
 	LOGGER_INFO(log_, "==== QUEUE SIZE WHEN PAUSE {} ====", full_queue.size() - padding);
 	last_status = "PAUSED";
-	LOGGER_INFO(log_, "BEFORE FREEZING");
 	show_fullpage();
-	LOGGER_INFO(log_, "AFTER FREEZING");
 	updateToolbar();
 	updateProgressLeft();
 	state_manager.changeState(State::PAUSE);
 	LOGGER_INFO(log_, "==== END OF PAUSE BUTTON CLICKED ====");
 	LOGGER_INFO(log_, "\n");
 }
-
 
 void QtWidgetsApplication1::formatRow(int x)
 {
@@ -562,21 +554,6 @@ void QtWidgetsApplication1::setupTreeTrace()
 	t->header()->setHighlightSections(true);
 	t->header()->setStretchLastSection(true);
 	t->header()->setSortIndicator(0, Qt::AscendingOrder);
-	//t->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-
-
-	// setting the widths of the columns
-
-	/*
-	int width = t->viewport()->width();
-	int col_count = t->columnCount();
-	for (int i = 0; i < col_count; i++) {
-		t->resizeColumnToContents(i);
-	}
-	*/
-
-	// end of setting
-
 	t->setWindowTitle(QObject::tr("CAN Frames"));
 	QFont font("SimSun", 8);
 	t->setFont(font);
@@ -694,7 +671,6 @@ void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
 	}
 	new_filters.insert(colName, single_config);
 }
-
 
 void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 {
