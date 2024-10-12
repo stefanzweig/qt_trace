@@ -251,12 +251,7 @@ void multiThread::formatRow_canparser_thread(canframe frame)
 
 void multiThread::formatRow_canframe_thread(can_frame frame)
 {
-    //full_canframes.append(frame);
-    full_count_canframes++; // message counts
-    //return;
-
-    if (is_paused) { return; }
-
+    full_count_canframes++;
     QStringList can_list = {};
     QStringList filter_value = {};
     bool bFilter = false;
@@ -288,7 +283,6 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
         Item->setUUID(uuid_str);
         emit(popToRoot(Item));
     }
-        
 }
 
 void multiThread::formatRow_linframe_thread(linFrame frame)

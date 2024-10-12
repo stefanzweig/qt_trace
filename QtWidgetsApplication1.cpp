@@ -10,13 +10,12 @@
 #include <QSplashScreen>
 #include <QPixmap>
 
-#include "columnfilter.h"
-#include "multiThread.h"
-#include "my_spdlog.h"
-#include "newsession_dialog.h"
-#include "spdlog/sinks/basic_file_sink.h"
-#include "spdlog/spdlog.h"
 #include "TraceTreeWidgetItem.h"
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/basic_file_sink.h"
+#include "my_spdlog.h"
+#include "multiThread.h"
+#include "columnfilter.h"
 
 QSize getItemSize(QTreeWidgetItem* item, int column, const QFont& font) {
 	QFontMetrics fontMetrics(font);
@@ -53,7 +52,6 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
 		delete mysub_can_parser;
 		mysub_can_parser = nullptr;
 	}
-
 	if (mysub_lin_frames != nullptr) {
 		delete mysub_lin_frames;
 		mysub_lin_frames = nullptr;
@@ -65,13 +63,12 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
 
 	if (calc_thread != nullptr) {
 		calc_thread->stopFlag();
-
 		calc_thread->quit();
 		calc_thread->wait();
-
 		delete calc_thread;
 		calc_thread = nullptr;
 	}
+
 	for (QPushButton* button : headerButtonList)
 	{
 		delete button;
@@ -119,25 +116,14 @@ void QtWidgetsApplication1::init()
 
 	calc_thread = new multiThread();
 	calc_thread->monitor_modules = monitor_modules;
-	qDebug() << "Copied List 1:" << calc_thread->monitor_modules;
 	calc_thread->queue_ = &full_queue;
-
 	connect(calc_thread, &multiThread::popToRoot, this, &QtWidgetsApplication1::on_pop_to_root);
 	connect(this, &QtWidgetsApplication1::record_latest_index, this, &QtWidgetsApplication1::update_latest_index);
 
+	filter = new columnFilterDialog(this);
 	resetLayout();
 	resetStatusBar();
-
-
 	setupTreeTrace();
-	//init_mylogger();
-	//INITLOG("path");
-
-	filter = new columnFilterDialog(this);
-	ui.treetrace->setAttribute(Qt::WA_OpaquePaintEvent);
-	ui.treetrace->setAttribute(Qt::WA_NoSystemBackground);
-
-	ui.treetrace->installEventFilter(this);
 
 	showMaximized();
 }
@@ -155,6 +141,7 @@ void QtWidgetsApplication1::init_mylogger()
 		std::cout << "Log init failed: " << ex.what() << std::endl;
 	}
 }
+
 void QtWidgetsApplication1::get_default_configurations()
 {
 	QSettings settings("settings.ini", QSettings::IniFormat);
@@ -169,7 +156,7 @@ void QtWidgetsApplication1::get_default_configurations()
 	kv = settings.value("app/count_per_page", 4000).toInt();
 	count_per_page = kv;
 
-	kv = settings.value("app/padding", 1).toInt();
+	kv = settings.value("app/padding", 0).toInt();
 	padding = kv;
 
 	kv = settings.value("app/debuglog", 1).toInt();
@@ -180,10 +167,6 @@ void QtWidgetsApplication1::get_default_configurations()
 	for (QVariant m : modules) {
 		monitor_modules.append(m.toString());
 	}
-}
-
-void QtWidgetsApplication1::_updateCurrentState()
-{
 }
 
 void QtWidgetsApplication1::updateProgressRunStatus()
@@ -230,7 +213,6 @@ void QtWidgetsApplication1::updateProgressLeft()
 
 void QtWidgetsApplication1::updateProgressTimer()
 {
-	updateProgressRunStatus();
 	QString strRight; //  = QString("Page Capacity: %1").arg(page_capacity);
 	QDateTime end_time = QDateTime::currentDateTime();
 	qint64 secondsDifference = start_time.secsTo(end_time);
@@ -521,38 +503,21 @@ void QtWidgetsApplication1::pauseTrace()
 	LOGGER_INFO(log_, "\n");
 }
 
-void QtWidgetsApplication1::formatRow(int x)
-{
-}
-
-void QtWidgetsApplication1::formatRow_str(QString s)
-{
-}
-
-
-void QtWidgetsApplication1::formatRow_canframe(can_frame cf)
-{
-}
-
-void QtWidgetsApplication1::formatRow_canparser(unsigned long long i)
-{
-}
-
-void QtWidgetsApplication1::internal_canparser(canframe frame)
-{
-}
-
 void QtWidgetsApplication1::setupTreeTrace()
 {
 	QTreeWidget* t = ui.treetrace;
+
 	t->setSelectionBehavior(QTreeView::SelectRows);
 	t->setSelectionMode(QTreeView::SingleSelection);
-	t->setFocusPolicy(Qt::NoFocus);
+	t->setFocusPolicy(Qt::WheelFocus);
 	t->header()->setHighlightSections(true);
 	t->header()->setStretchLastSection(true);
 	t->header()->setSortIndicator(0, Qt::AscendingOrder);
-	t->setFocusPolicy(Qt::WheelFocus);
+
 	t->setWindowTitle(QObject::tr("CAN Frames"));
+	t->setAttribute(Qt::WA_OpaquePaintEvent);
+	t->setAttribute(Qt::WA_NoSystemBackground);
+	t->installEventFilter(this);
 	QFont font("SimSun", 8);
 	t->setFont(font);
 }
@@ -701,7 +666,6 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 
 void QtWidgetsApplication1::ChangeHeader(const QString& text)
 {
-	//qDebug() << "ChangeHeader -> " << text;
 	if (text == "Initial") {
 		ui.treetrace->setColumnCount(initialHeader.count()); //set column number
 		ui.treetrace->setHeaderLabels(initialHeader);        //set header labels
@@ -728,12 +692,10 @@ void QtWidgetsApplication1::ChangeHeader(const QString& text)
 void QtWidgetsApplication1::ButtonSearchClicked()
 {
 	calc_thread->pauseThread();
-	// search...
 }
 
 void QtWidgetsApplication1::hide_filtered_items(int column_idx, QList<QList<QString>> items)
 {
-	//qDebug() << "COL -> " << column_idx << "ITEMS -> " << items.size();
 	QStringList filtered_value = {};
 	if (items.size() > 0) {
 		for (int k = 0; k < items.size(); k++) {
@@ -762,6 +724,7 @@ void QtWidgetsApplication1::hide_filtered_items(int column_idx, QList<QList<QStr
 
 void QtWidgetsApplication1::dustbin()
 {
+	updateProgressRunStatus();
 	updateProgressTimer();
 }
 
@@ -796,24 +759,12 @@ void QtWidgetsApplication1::updateToolbar()
 
 void QtWidgetsApplication1::display_mode_switch()
 {
-	//ui.treetrace->clear();
-	//restore_full_queue();
-	//print_item_queue(full_queue_backup);
-	//print_item_queue(full_queue);
 	if (display_mode)
 		display_mode = 0;
 	else
 		display_mode = 1;
 	updateToolbar();
 	update_tracewindow();
-}
-
-void QtWidgetsApplication1::get_refreshed_items()
-{
-	/*   QList<QTreeWidgetItem*> visibleItems =
-		   getVisibleItems(ui.treetrace);
-	   qDebug() << "Visual Items ->" << visibleItems.size();
-   */
 }
 
 void QtWidgetsApplication1::update_tracewindow()
@@ -873,11 +824,8 @@ void QtWidgetsApplication1::refresh_full_tree(int capacity)
 {
 	auto log_ = GETLOG("WORKFLOW");
 	LOGGER_INFO(log_, "==== REFRESH_FULL_TREE ====");
-	QTreeWidget* tree = ui.treetrace;
-	int tree_count = tree->topLevelItemCount();
 	draw_trace_window(capacity);
 	LOGGER_INFO(log_, "==== END OF REFRESH_FULL_TREE ====");
-	return;
 }
 
 void QtWidgetsApplication1::draw_trace_window(int capacity)
@@ -908,8 +856,6 @@ void QtWidgetsApplication1::draw_trace_window(int capacity)
 				{
 					int item_idx = count - changes + i;
 					TraceTreeWidgetItem* lastItem = (TraceTreeWidgetItem*)tree->topLevelItem(item_idx);
-					LOGGER_INFO(log_, "ORIGINAL -> {}", lastItem->text(0).toStdString());
-					LOGGER_INFO(log_, "REPLACED -> {}", it->text(0).toStdString());
 					for (int k = 0; k < it->columnCount(); k++) {
 						lastItem->setText(k, it->text(k));
 						lastItem->setDirty(true);
@@ -917,22 +863,19 @@ void QtWidgetsApplication1::draw_trace_window(int capacity)
 						bchanged = true;
 					}
 					if (bchanged) {
-						LOGGER_INFO(log_, "NACH -> {}", lastItem->text(0).toStdString());
 						QStringList original_data = lastItem->get_original_data();
 						int ref = lastItem->get_ref();
 						LOGGER_INFO(log_, "REF COUNTER -> {}", ref);
+						qDebug() << "REF COUNTER" << ref;
 					}
 				}
 			}
 		}
 	}
-
 }
 
 void QtWidgetsApplication1::fill_up_to_count(int count)
 {
-	qDebug() << "UPTO ->" << count;
-
 	int queue_size = full_queue.size() - padding;
 	if (queue_size <= 0) return;
 
@@ -976,7 +919,6 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 	int changes = std::min(queue_size, gap);
 	LOGGER_INFO(log_, "PARTIAL CHANGES -> {}", changes);
 
-	// mark from here
 	if (changes > 0) {
 		int queue_original_size = full_queue.size();
 		qDebug() << "ORIGINAL QUEUE SIZE -> " << queue_original_size;
@@ -985,23 +927,15 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 			int idx = queue_size - changes + i;
 			LOGGER_INFO(log_, "PARTIAL INDEX -> {}", idx);
 			if (idx >= 0) {
-				if (idx >= queue_original_size)
-				{
-					//qDebug() << "overflow -> " << queue_original_size;
-				}
 				TraceTreeWidgetItem* it0 = read_item_from_queue(idx);
-				//TraceTreeWidgetItem* it1 = read_item_from_dumb(idx);
 				int it0colcount = it0->columnCount();
-				//int it1colcount = it1->columnCount();
 				if (filter_pass_item(it0)) {
 					ui.treetrace->addTopLevelItem(it0);
 				}
 			}
 		}
 	}
-
-	// end of mark
-	//m_mutex.unlock(); 
+	//m_mutex.unlock();
 	LOGGER_INFO(log_, "END OF PARTIAL FILLING");
 	LOGGER_INFO(log_, "====================");
 }
@@ -1036,7 +970,6 @@ void QtWidgetsApplication1::fill_empty_tree(int capacity)
 
 void QtWidgetsApplication1::trace_scroll_changed(int value)
 {
-	//qDebug() << "QScrollBar Changed -> " << value;
 	QScrollBar* scrollBar = ui.treetrace->verticalScrollBar();
 	if (scrollBar->value() == scrollBar->maximum()) { return; }
 	State current_state = this->state_manager.current_state();
@@ -1147,7 +1080,7 @@ bool QtWidgetsApplication1::filter_pass_item(QTreeWidgetItem* it)
 		if (!matched) return false;
 	}
 
-	// filters. 2024年10月3日 9:39 
+	// filters. 2024年10月3日 9:39
 	if (new_filters.isEmpty())
 		return true;
 	for (const auto& key : new_filters.keys()) {
@@ -1206,8 +1139,7 @@ TraceTreeWidgetItem* QtWidgetsApplication1::read_item_from_queue(int index)
 TraceTreeWidgetItem* QtWidgetsApplication1::read_item_from_dumb(int index)
 {
 	/* This function is a mock one to generate 10 rows data
-	*  to the tracewidget to show.
-	*  2024年10月2日 22:14
+	*  to the tracewidget to show. 2024年10月2日 22:14
 	*/
 
 	QStringList str_pdu = {};
@@ -1243,11 +1175,11 @@ void QtWidgetsApplication1::show_fullpage()
 
 	ui.treetrace->clear();
 	safe_clear_trace();
-
+	
 	QQueue<QTreeWidgetItem*> baseQueue;
 	int i = (paused_instant_index > count_per_page) ? paused_instant_index - count_per_page : 0;
 	qDebug() << "PAUSED_INSTANT_INDEX ->" << paused_instant_index;
-	for (; i < paused_instant_index; i++)
+	for (;i < paused_instant_index;i++)
 	{
 		TraceTreeWidgetItem* traceItem = full_queue_backup.at(i)->clone();
 		baseQueue.enqueue(traceItem);
@@ -1297,32 +1229,30 @@ void QtWidgetsApplication1::print_item_queue(QQueue<TraceTreeWidgetItem*> q)
 void QtWidgetsApplication1::clear_queue(QQueue<TraceTreeWidgetItem*>& queue)
 {
 	queue.clear();
-	qDebug() << "PRINT ITEM -> " << "SIZE -> " << queue.size();
-}
-
-void QtWidgetsApplication1::compare_item()
-{
+	//qDebug() << "PRINT ITEM -> " << "SIZE -> " << queue.size();
 }
 
 void QtWidgetsApplication1::update_latest_index(uint64_t index)
 {
 	paused_instant_index = index;
-	qDebug() << "Received LATEST INDEX:" << index;
+	qDebug() << "LATEST INDEX ->" << index;
 	current_page_index = paused_instant_index / count_per_page;
 	current_item_index = paused_instant_index % count_per_page;
+	qDebug() << "CURRENT PAGE INDEX:" << current_item_index;
+	qDebug() << "CURRENT ITEM INDEX:" << current_page_index;
 }
 
 bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
 	if (obj == ui.treetrace && event->type() == QEvent::KeyPress) {
 		QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
 		if (keyEvent->key() == Qt::Key_Up) {
-			qDebug() << "Up key pressed";
-			return true; // 处理事件
+			qDebug() << "UP KEY PRESSED";
+			return true;
 		}
 		else if (keyEvent->key() == Qt::Key_Down) {
-			qDebug() << "Down key pressed";
-			return true; // 处理事件
+			qDebug() << "DOWN KEY PRESSED";
+			return true;
 		}
 	}
-	return QWidget::eventFilter(obj, event); 
+	return QWidget::eventFilter(obj, event);
 }

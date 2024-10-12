@@ -39,7 +39,6 @@ private:
 	void init();
 	void setupTreeTrace();
 	void initialHeaders();
-	void _updateCurrentState();
 	void hide_filtered_items(int idx, QList<QList<QString>> items);
 	void get_default_configurations();
 	void compare_item();
@@ -125,11 +124,6 @@ private slots:
 	void resumeTrace();
 	void updateState();
 	void onActionTriggered();
-	void formatRow(int x);
-	void formatRow_str(QString s);
-	void formatRow_canframe(can_frame cf);
-	void formatRow_canparser(unsigned long long i);
-	void internal_canparser(canframe frame);
 	void applyFilter(QList<QList<QString>> items, int count);
 	void on_pop_to_root(TraceTreeWidgetItem* item);
 	void headerButtonClicked();
@@ -140,7 +134,6 @@ private slots:
 	void dustbin();
 	void updateToolbar();
 	void update_tracewindow();
-	void get_refreshed_items();
 	void trace_scroll_changed(int value);
 	bool new_session();
 	void freeze_treetrace_items(int ncount);
