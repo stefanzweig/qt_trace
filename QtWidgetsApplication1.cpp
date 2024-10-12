@@ -137,6 +137,8 @@ void QtWidgetsApplication1::init()
 	ui.treetrace->setAttribute(Qt::WA_OpaquePaintEvent);
 	ui.treetrace->setAttribute(Qt::WA_NoSystemBackground);
 
+	ui.treetrace->installEventFilter(this);
+
 	showMaximized();
 }
 
@@ -208,7 +210,6 @@ void QtWidgetsApplication1::updateProgressLeft()
 {
 	if (calc_thread->isRUN()) {
 		int ncount = ui.treetrace->topLevelItemCount();
-		//ncount = (ncount > page_capacity) ? page_capacity : ncount;
 		int page_index = paused_instant_index / page_capacity + 1;
 		QString strLeft_run = QString("Count: %1/%3, Page: %2")
 			.arg(ncount)
@@ -550,6 +551,7 @@ void QtWidgetsApplication1::setupTreeTrace()
 	t->header()->setHighlightSections(true);
 	t->header()->setStretchLastSection(true);
 	t->header()->setSortIndicator(0, Qt::AscendingOrder);
+	t->setFocusPolicy(Qt::WheelFocus);
 	t->setWindowTitle(QObject::tr("CAN Frames"));
 	QFont font("SimSun", 8);
 	t->setFont(font);
@@ -1308,4 +1310,19 @@ void QtWidgetsApplication1::update_latest_index(uint64_t index)
 	qDebug() << "Received LATEST INDEX:" << index;
 	current_page_index = paused_instant_index / count_per_page;
 	current_item_index = paused_instant_index % count_per_page;
+}
+
+bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
+	if (obj == ui.treetrace && event->type() == QEvent::KeyPress) {
+		QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+		if (keyEvent->key() == Qt::Key_Up) {
+			qDebug() << "Up key pressed";
+			return true; // 处理事件
+		}
+		else if (keyEvent->key() == Qt::Key_Down) {
+			qDebug() << "Down key pressed";
+			return true; // 处理事件
+		}
+	}
+	return QWidget::eventFilter(obj, event); 
 }

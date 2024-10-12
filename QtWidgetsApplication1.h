@@ -32,6 +32,7 @@ public:
 
 protected:
 	void createActions();
+	bool eventFilter(QObject* obj, QEvent* event) override;
 
 private:
 	Ui::QtWidgetsApplication1Class ui;
@@ -112,7 +113,6 @@ private:
 	StateManager state_manager;
 	QMutex m_mutex;
 	int debuglog = 1; // not in use so far
-
 
 private slots:
 	void startTrace();
