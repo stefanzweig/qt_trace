@@ -657,9 +657,12 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 		}
 		else {
 			shown_queue.enqueue(item);
+			// limit the shown_queue size
+			if (shown_queue.size() > count_per_page)
+				shown_queue.dequeue();
+
 			TraceTreeWidgetItem* item_backup = (TraceTreeWidgetItem*)item->clone();
 			full_queue_stream.enqueue(item_backup);
-			// construct_page_data(item_backup);
 			//m_mutex.unlock();
 			QString source = ((TraceTreeWidgetItem*)item_backup)->getSource();
 			QString uuid = ((TraceTreeWidgetItem*)item_backup)->getUUID();
@@ -1208,10 +1211,13 @@ void QtWidgetsApplication1::restore_full_queue()
 {
 	if (!shown_queue.isEmpty())
 		shown_queue.clear();
-	for (int i = 0; i < this->paused_instant_index; i++) {
+
+	int i = paused_instant_index >= this->count_per_page ? paused_instant_index - count_per_page : 0;
+	for (; i < this->paused_instant_index; i++) {
 		TraceTreeWidgetItem* it = full_queue_stream.at(i)->clone();
 		shown_queue.append(it);
 	}
+	qDebug() << "SHOWN Size ->" << shown_queue.size();
 }
 
 void QtWidgetsApplication1::safe_clear_trace()
