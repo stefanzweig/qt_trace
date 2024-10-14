@@ -155,7 +155,7 @@ private slots:
 	void updateProgressTimer();
 	bool showNewSession();
 	void clearance();
-	void updateProgressLeft();
+	void updateContinuousProgress();
 	void construct_page_data(TraceTreeWidgetItem* item);
 	bool filter_pass_item(QTreeWidgetItem* it);
 	bool filter_run_pass_item_without_children(QTreeWidgetItem* it);

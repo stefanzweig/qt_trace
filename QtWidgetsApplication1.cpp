@@ -188,7 +188,7 @@ void QtWidgetsApplication1::updateProgressRunStatus()
 	ui.statusBar->showMessage(status_string);
 }
 
-void QtWidgetsApplication1::updateProgressLeft()
+void QtWidgetsApplication1::updateContinuousProgress()
 {
 	int page_index = 1;
 	if (calc_thread->isRUN()) {
@@ -210,6 +210,28 @@ void QtWidgetsApplication1::updateProgressLeft()
 	QString strPage = QString("%1").arg(page_index);
 	ui.label_Current->setText(strPage);
 
+	State current_state = state_manager.current_state();
+	switch (current_state) {
+	case State::PAUSE:
+	case State::STOPPED:
+		ui.comboBox_Page->setEnabled(true);
+		ui.pb_First->setEnabled(true);
+		ui.pb_Prev->setEnabled(true);
+		ui.pb_Next->setEnabled(true);
+		ui.pb_Last->setEnabled(true);
+		ui.pb_Goto->setEnabled(true);
+		break;
+	default:
+		ui.comboBox_Page->setCurrentIndex(0);
+		ui.comboBox_Page->setEnabled(false);
+		ui.pb_First->setEnabled(false);
+		ui.pb_Prev->setEnabled(false);
+		ui.pb_Next->setEnabled(false);
+		ui.pb_Last->setEnabled(false);
+		ui.pb_Goto->setEnabled(false);
+		break;
+	}
+
 }
 
 void QtWidgetsApplication1::updateProgressTimer()
@@ -227,7 +249,7 @@ void QtWidgetsApplication1::updateState()
 	if (timer_isRunning) return;
 	timer_isRunning = true;
 	update_tracewindow();
-	updateProgressLeft();
+	updateContinuousProgress();
 	timer_isRunning = false;
 }
 
@@ -442,7 +464,7 @@ void QtWidgetsApplication1::stopTrace()
 
 	initial_trace = true;
 	updateToolbar();
-	updateProgressLeft();
+	updateContinuousProgress();
 
 	last_status = "STOPPED";
 
@@ -501,10 +523,10 @@ void QtWidgetsApplication1::pauseTrace()
 	qDebug() << "INSTANT INDEX ->" << paused_instant_index;
 	LOGGER_INFO(log_, "==== QUEUE SIZE WHEN PAUSE {} ====", shown_queue.size() - padding);
 	show_fullpage();
-	updateToolbar();
-	updateProgressLeft();
 	last_status = "PAUSED";
 	state_manager.changeState(State::PAUSE);
+	updateToolbar();
+	updateContinuousProgress();
 	LOGGER_INFO(log_, "==== END OF PAUSE BUTTON CLICKED ====");
 	LOGGER_INFO(log_, "\n");
 }
@@ -763,18 +785,6 @@ void QtWidgetsApplication1::updateToolbar()
 	else {
 		ui.actionpause->setIcon(QIcon(":/QtWidgetsApplication1/res/pause.svg"));
 	}
-
-	State current_state = state_manager.current_state();
-	switch (current_state) {
-	case State::PAUSE:
-	case State::STOPPED:
-		ui.comboBox_Page->setEnabled(true);
-		break;
-	default:
-		ui.comboBox_Page->setCurrentIndex(0);
-		ui.comboBox_Page->setEnabled(false);
-		break;
-	}
 }
 
 void QtWidgetsApplication1::display_mode_switch()
@@ -1003,7 +1013,7 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
 		state_manager.changeState(State::PAUSE);
 	}
 	updateToolbar();
-	updateProgressLeft();
+	updateContinuousProgress();
 }
 
 void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
