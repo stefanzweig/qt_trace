@@ -22,6 +22,11 @@
 #define TIMER_HEARTBEAT 100
 #define MAX_ITEM_COUNT 5000
 
+enum DISPLAY_MODE
+{
+	APPEND=0,
+	UPDATE=1,
+};
 class QtWidgetsApplication1 : public QMainWindow
 {
 	Q_OBJECT
@@ -55,7 +60,7 @@ private:
 	ZoneMasterLinParserSubscriber* mysub_lin_parser = nullptr;
 
 	multiThread* calc_thread = nullptr;
-	QQueue<TraceTreeWidgetItem*> full_queue;
+	QQueue<TraceTreeWidgetItem*> shown_queue;
 	QQueue<TraceTreeWidgetItem*> full_queue_stream;
 	QQueue<TraceTreeWidgetItem*> current_page_queue;
 
@@ -90,7 +95,7 @@ private:
 	QHBoxLayout* rightLayout = nullptr;
 
 	// further configurations
-	int display_mode = 0; // 0 - append, 1 - update
+	DISPLAY_MODE display_mode = DISPLAY_MODE::APPEND;
 	int visible_height = 700;
 	int item_height = 20;  /* default item height in the trace widget. */
 	int item_width = 20;

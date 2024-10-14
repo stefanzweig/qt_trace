@@ -82,14 +82,14 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
 	state_manager.changeState(State::COMPLETE);
 	state_manager.printHistory();
 
-	print_item_queue(full_queue);
+	print_item_queue(shown_queue);
 	print_item_queue(full_queue_stream);
 
-	clear_queue(full_queue);
+	clear_queue(shown_queue);
 	clear_queue(full_queue_stream);
 	clear_queue(current_page_queue);
 
-	print_item_queue(full_queue);
+	print_item_queue(shown_queue);
 	print_item_queue(full_queue_stream);
 
 	spdlog::drop_all();
@@ -114,7 +114,7 @@ void QtWidgetsApplication1::init()
 
 	calc_thread = new multiThread();
 	calc_thread->monitor_modules = monitor_modules;
-	calc_thread->queue_ = &full_queue;
+	calc_thread->queue_ = &shown_queue;
 	connect(calc_thread, &multiThread::popToRoot, this, &QtWidgetsApplication1::on_pop_to_root);
 	connect(this, &QtWidgetsApplication1::record_latest_index, this, &QtWidgetsApplication1::update_latest_index);
 
@@ -337,7 +337,7 @@ void QtWidgetsApplication1::initialize_new_session()
 	calc_thread->full_count_canframes = 0;
 	calc_thread->full_count_canparser = 0;
 	paused_instant_index = -1;
-	clear_queue(full_queue);
+	clear_queue(shown_queue);
 	clear_queue(full_queue_stream);
 	clear_queue(current_page_queue);
 }
@@ -465,7 +465,7 @@ void QtWidgetsApplication1::resume_from_pause_trace()
 		state_manager.changeState(State::RESUMED);
 		LOGGER_INFO(log_, "==== FROZEN STATUS {} ====", frozen);
 		LOGGER_INFO(log_, "==== BEFORE RESUME TRACE ====");
-		LOGGER_INFO(log_, "==== QUEUE SIZE BEFORE RESUMING {} ====", full_queue.size() - padding);
+		LOGGER_INFO(log_, "==== QUEUE SIZE BEFORE RESUMING {} ====", shown_queue.size() - padding);
 		resumeTrace();
 		LOGGER_INFO(log_, "==== AFTER RESUME TRACE ====");
 		LOGGER_INFO(log_, "\n");
@@ -491,7 +491,7 @@ void QtWidgetsApplication1::pauseTrace()
 	calc_thread->pauseThread();
 	timer->stop();
 	qDebug() << "INSTANT INDEX ->" << paused_instant_index;
-	LOGGER_INFO(log_, "==== QUEUE SIZE WHEN PAUSE {} ====", full_queue.size() - padding);
+	LOGGER_INFO(log_, "==== QUEUE SIZE WHEN PAUSE {} ====", shown_queue.size() - padding);
 	last_status = "PAUSED";
 	show_fullpage();
 	updateToolbar();
@@ -648,7 +648,7 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 			LOGGER_INFO(log_, "ENQUEUING -> {}, UUID -> {}", item->text(0).toStdString(), uuid.toStdString());
 		}
 		else {
-			full_queue.enqueue(item);
+			shown_queue.enqueue(item);
 			TraceTreeWidgetItem* item_backup = (TraceTreeWidgetItem*)item->clone();
 			full_queue_stream.enqueue(item_backup);
 			// construct_page_data(item_backup);
@@ -757,10 +757,10 @@ void QtWidgetsApplication1::updateToolbar()
 
 void QtWidgetsApplication1::display_mode_switch()
 {
-	if (display_mode)
-		display_mode = 0;
+	if (display_mode == DISPLAY_MODE::UPDATE)
+		display_mode = DISPLAY_MODE::APPEND;
 	else
-		display_mode = 1;
+		display_mode = DISPLAY_MODE::UPDATE;
 	updateToolbar();
 	update_tracewindow();
 }
@@ -771,7 +771,7 @@ void QtWidgetsApplication1::update_tracewindow()
 	LOGGER_INFO(log_, "======= UPDATE_TRACEWINDOW =======");
 	LOGGER_INFO(log_, "LAST STATUS -> {}", last_status.toStdString());
 	//m_mutex.lock();
-	int queue_size = full_queue.size() - padding;
+	int queue_size = shown_queue.size() - padding;
 	int queue_backup_size = full_queue_stream.size() - padding;
 	qDebug() << "FULL -> " << queue_size << "BACKUP -> " << queue_backup_size;
 	LOGGER_INFO(log_, "FULLSIZE -> {}, BACKUP_SIZE -> {}", queue_size, queue_backup_size);
@@ -831,7 +831,7 @@ void QtWidgetsApplication1::draw_trace_window(int capacity)
 	auto log_ = GETLOG("WORKFLOW");
 	LOGGER_INFO(log_, "DRAW TRACE WINDOW -> {}", capacity);
 
-	int queue_size = full_queue.size() - padding;
+	int queue_size = shown_queue.size() - padding;
 	LOGGER_INFO(log_, "DRAW QUEUE SIZE -> {}", queue_size);
 	LOGGER_INFO(log_, "PADDING -> {}", padding);
 
@@ -848,7 +848,7 @@ void QtWidgetsApplication1::draw_trace_window(int capacity)
 			int idx = queue_size - changes + i;
 			LOGGER_INFO(log_, "DRAW ITEM -> {}", idx);
 			bool bchanged = false;
-			it = full_queue.at(idx);
+			it = shown_queue.at(idx);
 			if (filter_pass_item(it)) {
 				if (count > 0)
 				{
@@ -874,7 +874,7 @@ void QtWidgetsApplication1::draw_trace_window(int capacity)
 
 void QtWidgetsApplication1::fill_up_to_count(int count)
 {
-	int queue_size = full_queue.size() - padding;
+	int queue_size = shown_queue.size() - padding;
 	if (queue_size <= 0) return;
 
 	QTreeWidget* tree = ui.treetrace;
@@ -887,7 +887,7 @@ void QtWidgetsApplication1::fill_up_to_count(int count)
 		qDebug() << "UPTO PAGE CHANGES ->" << changes;
 		for (int i = 0; i < changes; i++) {
 			int idx = queue_size - changes + i;
-			it = full_queue.at(idx);
+			it = shown_queue.at(idx);
 			if (it != nullptr && filter_pass_item(it)) {
 				ui.treetrace->addTopLevelItem(it);
 			}
@@ -899,7 +899,7 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 {
 	auto log_ = GETLOG("WORKFLOW");
 	//m_mutex.lock();
-	int queue_size = full_queue.size() - padding;
+	int queue_size = shown_queue.size() - padding;
 	if (queue_size <= 0) {
 		//m_mutex.unlock();
 		return;
@@ -918,7 +918,7 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 	LOGGER_INFO(log_, "PARTIAL CHANGES -> {}", changes);
 
 	if (changes > 0) {
-		int queue_original_size = full_queue.size();
+		int queue_original_size = shown_queue.size();
 		qDebug() << "ORIGINAL QUEUE SIZE -> " << queue_original_size;
 		QList<QTreeWidgetItem*> item_list;
 		for (int i = 0; i < changes; i++) {
@@ -942,7 +942,7 @@ void QtWidgetsApplication1::fill_empty_tree(int capacity)
 {
 	auto log_ = GETLOG("WORKFLOW");
 
-	int queue_size = full_queue.size() - padding;
+	int queue_size = shown_queue.size() - padding;
 	LOGGER_INFO(log_, "FULL QUEUE SIZE IN EMPTY FUNC -> {}", queue_size);
 	if (queue_size <= 0) return;
 
@@ -985,22 +985,15 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
 void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
 {
 	auto log_ = GETLOG("WORKFLOW");
-
-	//LOGGER_INFO(log_, "NOTHING. EXITING...");
-	//LOGGER_INFO(log_, "====================");
-	//return;
-
 	qDebug() << "SHOW_FULLPAGE...";
 	show_fullpage();
 	qDebug() << "END OF SHOW_FULLPAGE";
+/*
 	return;
-
 	if (frozen) return;
-
-	int size = full_queue.size() - padding;
+	int size = shown_queue.size() - padding;
 	LOGGER_INFO(log_, "SIZE -> {}", size);
 	if (size <= 0) return;
-
 	LOGGER_INFO(log_, "TARGET -> {}", ncount);
 	ui.treetrace->clear();
 	int total = std::min(size, ncount) - 5;
@@ -1012,7 +1005,7 @@ void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
 	{
 		int idx = size - i;
 		LOGGER_INFO(log_, "INDEX -> {}", idx);
-		it = full_queue.at(idx);
+		it = shown_queue.at(idx);
 		if (it != nullptr && filter_pass_item(it)) {
 			item_list.append(it);
 		}
@@ -1023,6 +1016,7 @@ void QtWidgetsApplication1::freeze_treetrace_items(int ncount)
 		int frozen_size = item_list.size();
 		LOGGER_INFO(log_, "FRONZEN -> {}", frozen_size);
 	}
+*/
 }
 
 void QtWidgetsApplication1::adjust_filter_buttons()
@@ -1129,7 +1123,7 @@ TraceTreeWidgetItem* QtWidgetsApplication1::read_item_from_queue(int index)
 {
 	auto log_ = GETLOG("WORKFLOW");
 	TraceTreeWidgetItem* item = nullptr;
-	item = this->full_queue.at(index);
+	item = this->shown_queue.at(index);
 	LOGGER_INFO(log_, "ITEM CONTENT -> {}", item->text(0).toStdString());
 	return item;
 }
@@ -1189,17 +1183,17 @@ void QtWidgetsApplication1::show_fullpage()
 
 void QtWidgetsApplication1::restore_full_queue()
 {
-	if (!full_queue.isEmpty())
-		full_queue.clear();
+	if (!shown_queue.isEmpty())
+		shown_queue.clear();
 	for (int i = 0; i < this->paused_instant_index; i++) {
 		TraceTreeWidgetItem* it = full_queue_stream.at(i)->clone();
-		full_queue.append(it);
+		shown_queue.append(it);
 	}
 }
 
 void QtWidgetsApplication1::safe_clear_trace()
 {
-	clear_queue(full_queue);
+	clear_queue(shown_queue);
 }
 
 QString QtWidgetsApplication1::previous_state()

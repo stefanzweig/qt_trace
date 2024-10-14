@@ -18,7 +18,7 @@ enum MyItemType {
 	lin_container_pdu_signal_
 };
 
-const QString& typeToString(MyItemType type) {
+const QString& MyTypeToString(MyItemType type) {
 	static const QString typeNames[] = {
 		"canframe",
 		"can_parser",
@@ -36,16 +36,16 @@ const QString& typeToString(MyItemType type) {
 	return typeNames[type];
 }
 
-QTreeWidgetItem* deepCopyTreeWidgetItem(QTreeWidgetItem* originalItem) {
-	QTreeWidgetItem* copiedItem = new QTreeWidgetItem(*originalItem);
-
-	for (int i = 0; i < originalItem->childCount(); ++i) {
-		QTreeWidgetItem* childCopy = deepCopyTreeWidgetItem(originalItem->child(i));
-		copiedItem->addChild(childCopy);
-	}
-
-	return copiedItem;
-}
+//QTreeWidgetItem* deepCopyTreeWidgetItem(QTreeWidgetItem* originalItem) {
+//	QTreeWidgetItem* copiedItem = new QTreeWidgetItem(*originalItem);
+//
+//	for (int i = 0; i < originalItem->childCount(); ++i) {
+//		QTreeWidgetItem* childCopy = deepCopyTreeWidgetItem(originalItem->child(i));
+//		copiedItem->addChild(childCopy);
+//	}
+//
+//	return copiedItem;
+//}
 
 
 class TraceTreeWidgetItem :
