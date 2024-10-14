@@ -175,7 +175,7 @@ private slots:
 	void ButtonNextClicked();
 	void ButtonLastClicked();
 	void ButtonGotoClicked();
-
+	void show_fullpage_with_findings();
 
 signals:
 	void record_latest_index(uint64_t index);

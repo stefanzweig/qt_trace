@@ -722,7 +722,17 @@ void QtWidgetsApplication1::ChangeHeader(const QString& text)
 
 void QtWidgetsApplication1::ButtonSearchClicked()
 {
-	calc_thread->pauseThread();
+	State current_state = this->state_manager.current_state();
+	if (current_state == State::START || current_state == State::RESUMED) {
+		calc_thread->pauseThread();
+		timer->stop();
+		last_status = "PAUSED";
+		state_manager.changeState(State::PAUSE);
+	}
+	show_fullpage_with_findings();
+	updateToolbar();
+	updateContinuousProgress();
+
 }
 
 void QtWidgetsApplication1::hide_filtered_items(int column_idx, QList<QList<QString>> items)
@@ -1310,4 +1320,7 @@ void QtWidgetsApplication1::ButtonLastClicked()
 {}
 
 void QtWidgetsApplication1::ButtonGotoClicked()
+{}
+
+void QtWidgetsApplication1::show_fullpage_with_findings()
 {}
