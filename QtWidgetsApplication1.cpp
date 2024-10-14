@@ -971,12 +971,14 @@ void QtWidgetsApplication1::trace_scroll_changed(int value)
 	QScrollBar* scrollBar = ui.treetrace->verticalScrollBar();
 	if (scrollBar->value() == scrollBar->maximum()) { return; }
 	State current_state = this->state_manager.current_state();
+	if (current_state == State::PAUSE) { return; }
 	if (current_state == State::START || current_state == State::RESUMED) {
 		auto log_ = GETLOG("WORKFLOW");
 		calc_thread->pauseThread();
 		timer->stop();
 		show_fullpage();
 		last_status = "PAUSED";
+		state_manager.changeState(State::PAUSE);
 	}
 	updateToolbar();
 	updateProgressLeft();
