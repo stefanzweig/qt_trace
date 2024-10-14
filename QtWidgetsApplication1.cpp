@@ -190,8 +190,10 @@ void QtWidgetsApplication1::updateProgressRunStatus()
 
 void QtWidgetsApplication1::updateProgressLeft()
 {
+	int page_index = 1;
 	if (calc_thread->isRUN()) {
 		int ncount = ui.treetrace->topLevelItemCount();
+		page_index = paused_instant_index / page_capacity + 1;
 		QString strLeft_run = QString("Count: %1/%2")
 			.arg(ncount)
 			.arg(page_capacity);
@@ -199,12 +201,12 @@ void QtWidgetsApplication1::updateProgressLeft()
 	}
 	else {
 		int ncount = ui.treetrace->topLevelItemCount();
+		page_index = paused_instant_index / count_per_page + 1;
 		QString strLeft_idle = QString("Count: %1/%2")
 			.arg(ncount)
 			.arg(count_per_page);
 		leftLabel->setText(strLeft_idle);
 	}
-	int page_index = paused_instant_index / page_capacity + 1;
 	QString strPage = QString("%1").arg(page_index);
 	ui.label_Current->setText(strPage);
 
@@ -1262,7 +1264,7 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
 void QtWidgetsApplication1::updateComoboPage()
 {
 	ui.comboBox_Page->clear();
-	int ncount = paused_instant_index / page_capacity + 1;
+	int ncount = paused_instant_index / count_per_page + 1;
 	for (int i = 1; i <= ncount; i++) {
 		ui.comboBox_Page->addItem(QString::number(i));
 	}
