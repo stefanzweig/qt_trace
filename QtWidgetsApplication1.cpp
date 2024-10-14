@@ -103,6 +103,7 @@ void QtWidgetsApplication1::init()
 	sizePolicy.setVerticalStretch(0);
 	sizePolicy.setHeightForWidth(ui.widget->sizePolicy().hasHeightForWidth());
 	ui.Lower->setSizePolicy(sizePolicy);
+	ui.comboBox_Page->addItem(QString::number(1));
 
 	get_default_configurations();
 	createActions();
@@ -191,22 +192,22 @@ void QtWidgetsApplication1::updateProgressLeft()
 {
 	if (calc_thread->isRUN()) {
 		int ncount = ui.treetrace->topLevelItemCount();
-		int page_index = paused_instant_index / page_capacity + 1;
-		QString strLeft_run = QString("Count: %1/%3, Page: %2")
+		QString strLeft_run = QString("Count: %1/%2")
 			.arg(ncount)
-			.arg(page_index)
 			.arg(page_capacity);
 		leftLabel->setText(strLeft_run);
 	}
 	else {
 		int ncount = ui.treetrace->topLevelItemCount();
-		int page_index = paused_instant_index / count_per_page + 1;
-		QString strLeft_idle = QString("Count: %1/%3, Page: %2")
+		QString strLeft_idle = QString("Count: %1/%2")
 			.arg(ncount)
-			.arg(page_index)
 			.arg(count_per_page);
 		leftLabel->setText(strLeft_idle);
 	}
+	int page_index = paused_instant_index / page_capacity + 1;
+	QString strPage = QString("%1").arg(page_index);
+	ui.label_Current->setText(strPage);
+
 }
 
 void QtWidgetsApplication1::updateProgressTimer()
@@ -239,6 +240,11 @@ void QtWidgetsApplication1::createActions()
 	connect(ui.pushButton_search, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonSearchClicked);
 	connect(ui.actionAbout, &QAction::triggered, this, &QtWidgetsApplication1::about);
 	connect(ui.actionreset, &QAction::triggered, this, &QtWidgetsApplication1::reset_all_filters);
+	connect(ui.pb_First, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonFirstClicked);
+	connect(ui.pb_Prev, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonPreviousClicked);
+	connect(ui.pb_Next, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonNextClicked);
+	connect(ui.pb_Last, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonLastClicked);
+	connect(ui.pb_Goto, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonGotoClicked);
 }
 
 void QtWidgetsApplication1::resetLayout()
@@ -279,7 +285,7 @@ void QtWidgetsApplication1::resetLayout()
 
 void QtWidgetsApplication1::resetStatusBar()
 {
-	QString strLeftTemplate = "Count: 0, Page: 0";
+	QString strLeftTemplate = "Count: 0";
 	QString strRightTemplate = "00:00:00";
 	leftLabel = new QLabel(strLeftTemplate, this);
 	leftWidget = new QWidget(this);
@@ -492,10 +498,10 @@ void QtWidgetsApplication1::pauseTrace()
 	timer->stop();
 	qDebug() << "INSTANT INDEX ->" << paused_instant_index;
 	LOGGER_INFO(log_, "==== QUEUE SIZE WHEN PAUSE {} ====", shown_queue.size() - padding);
-	last_status = "PAUSED";
 	show_fullpage();
 	updateToolbar();
 	updateProgressLeft();
+	last_status = "PAUSED";
 	state_manager.changeState(State::PAUSE);
 	LOGGER_INFO(log_, "==== END OF PAUSE BUTTON CLICKED ====");
 	LOGGER_INFO(log_, "\n");
@@ -1169,6 +1175,8 @@ void QtWidgetsApplication1::show_fullpage()
 
 	ui.treetrace->clear();
 	safe_clear_trace();
+
+	updateComoboPage();
 	
 	QQueue<QTreeWidgetItem*> baseQueue;
 	int i = (paused_instant_index > count_per_page) ? paused_instant_index - count_per_page : 0;
@@ -1250,3 +1258,27 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
 	}
 	return QWidget::eventFilter(obj, event);
 }
+
+void QtWidgetsApplication1::updateComoboPage()
+{
+	ui.comboBox_Page->clear();
+	int ncount = paused_instant_index / page_capacity + 1;
+	for (int i = 1; i <= ncount; i++) {
+		ui.comboBox_Page->addItem(QString::number(i));
+	}
+}
+
+void QtWidgetsApplication1::ButtonFirstClicked()
+{}
+
+void QtWidgetsApplication1::ButtonPreviousClicked()
+{}
+
+void QtWidgetsApplication1::ButtonNextClicked()
+{}
+
+void QtWidgetsApplication1::ButtonLastClicked()
+{}
+
+void QtWidgetsApplication1::ButtonGotoClicked()
+{}

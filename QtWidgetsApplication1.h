@@ -169,6 +169,13 @@ private slots:
 	void initialize_new_session();
 	void update_latest_index(uint64_t index);
 	void updateProgressRunStatus();
+	void updateComoboPage();
+	void ButtonFirstClicked();
+	void ButtonPreviousClicked();
+	void ButtonNextClicked();
+	void ButtonLastClicked();
+	void ButtonGotoClicked();
+
 
 signals:
 	void record_latest_index(uint64_t index);
