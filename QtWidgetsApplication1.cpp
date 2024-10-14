@@ -751,7 +751,6 @@ void QtWidgetsApplication1::updateToolbar()
 	}
 	if (!calc_thread->isSTOPPED()) {
 		ui.actionstart->setEnabled(false);
-		ui.actionstop->setEnabled(true);
 	}
 	if (calc_thread->isPAUSED()) {
 		ui.actionstart->setEnabled(false);
@@ -760,6 +759,18 @@ void QtWidgetsApplication1::updateToolbar()
 	}
 	else {
 		ui.actionpause->setIcon(QIcon(":/QtWidgetsApplication1/res/pause.svg"));
+	}
+
+	State current_state = state_manager.current_state();
+	switch (current_state) {
+	case State::PAUSE:
+	case State::STOPPED:
+		ui.comboBox_Page->setEnabled(true);
+		break;
+	default:
+		ui.comboBox_Page->setCurrentIndex(0);
+		ui.comboBox_Page->setEnabled(false);
+		break;
 	}
 }
 
