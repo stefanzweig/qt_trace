@@ -1377,6 +1377,60 @@ void QtWidgetsApplication1::ButtonGotoClicked()
 
 void QtWidgetsApplication1::show_fullpage_with_findings()
 {
+	QString search_str = ui.mysearch->toPlainText().trimmed();
+	QStringList items = search_str.split(QRegExp("[,;|]"), QString::SkipEmptyParts);
+	//QMap<QString, QString> map;
+	//QMap<int, QString> raw_map;
+	QMap<int, QStringList> list_map;
+	for (const QString& item : items) {
+		qDebug() << item.trimmed();
+		if (item.contains("=")) {
+			QStringList item_map = item.split("=", QString::SkipEmptyParts);
+			qDebug() << "ITEM MAP SIZE ->" << item_map.size();
+			QString k = item_map[0].trimmed();
+			QString v = item_map[1].trimmed();
+			int nk = -1;
+			for (int i = 0; i < CurrentHeader.size(); ++i) {
+				if (CurrentHeader[i] == k) { 
+					//raw_map.insert(i, v); 
+					list_map[i] << v;
+					break;
+				}
+			}
+			//map.insert(k, v);
+		}
+	}
+
+	for (int key : list_map.keys()) {
+		qDebug() << "Key:" << key;
+		const QStringList& list = list_map[key];
+		for (const QString& item : list) {
+			qDebug() << "  Value:" << item;
+		}
+	}
+
+	QTreeWidgetItem* invisible_root_item = ui.treetrace->invisibleRootItem();
+	int child_count = invisible_root_item->childCount();
+	for (int i = 0; i < child_count; ++i) {
+		QTreeWidgetItem* item = invisible_root_item->child(i);
+		bool hidden = false;
+		//for (const int& key : raw_map.keys()) {
+		//	if (item->text(key) != raw_map.value(key)) {
+		//		hidden = true;
+		//		continue;
+		//	}
+		//}
+
+		for (const int& key : list_map.keys()) {
+			QStringList values = list_map.value(key);
+			if (!values.contains(item->text(key))) {
+				hidden = true;
+				continue;
+			}
+		}
+		item->setHidden(hidden);
+	}
+	updateContinuousProgress();
 }
 
 void QtWidgetsApplication1::show_fullpage_with_index(int index)
