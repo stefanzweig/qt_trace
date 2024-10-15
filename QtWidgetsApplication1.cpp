@@ -16,6 +16,7 @@
 #include "my_spdlog.h"
 #include "multiThread.h"
 #include "columnfilter.h"
+#include "LineEditFilter.h"
 
 QSize getItemSize(QTreeWidgetItem* item, int column, const QFont& font) {
 	QFontMetrics fontMetrics(font);
@@ -326,6 +327,10 @@ void QtWidgetsApplication1::resetLayout()
 	connect(ui.treetrace->verticalScrollBar(), &QScrollBar::valueChanged, this, &QtWidgetsApplication1::trace_scroll_changed);
 	setWindowIcon(QIcon(":/QtWidgetsApplication1/res/spreadsheet.png"));
 	updateToolbar();
+
+	// mysearch
+	LineEditFilter* lineeditfilter = new LineEditFilter();
+	ui.mysearch->installEventFilter(lineeditfilter);
 }
 
 void QtWidgetsApplication1::resetStatusBar()
