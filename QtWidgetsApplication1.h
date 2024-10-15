@@ -71,7 +71,7 @@ private:
 	uint64_t count_per_page = 4000; // the full length of data in the window when it is paused.
 	int page_capacity = 300; // the trace windows maximal rows of data
 	bool isHex = true; // repr in hex
-	int page_count = 0; // (full_count_canframes / count_per_page) 
+	int max_page_count = 0; // (full_count_canframes / count_per_page) 
 	int current_page_index = 0; // the current page index of all items
 	int current_item_index = 0; // the index of the item inside a page
 

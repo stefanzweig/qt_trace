@@ -171,12 +171,33 @@ void QtWidgetsApplication1::get_default_configurations()
 void QtWidgetsApplication1::updateProgressRunStatus()
 {
 	QString runStatus = "";
-	if (calc_thread->isSTOPPED())
-		runStatus = "READY. ";
-	if (!calc_thread->isSTOPPED())
-		runStatus = "RUNNING. ";
-	if (calc_thread->isPAUSED())
-		runStatus = "PAUSED. ";
+	State state = state_manager.current_state();
+	switch (state) {
+		case State::INIT:
+			runStatus = "READY. ";
+			break;
+		case State::RESUMED:
+		case State::START:
+			runStatus = "RUNNING. ";
+			break;
+		case State::PAUSE:
+			runStatus = "PAUSED. ";
+			break;
+		case State::STOPPED:
+		case State::COMPLETE:
+			runStatus = "COMPLETED. ";
+			break;
+		default:
+			runStatus = "READY. ";
+	}
+
+	//if (calc_thread->isSTOPPED())
+	//	runStatus = "READY. ";
+	//if (!calc_thread->isSTOPPED())
+	//	runStatus = "RUNNING. ";
+	//if (calc_thread->isPAUSED())
+	//	runStatus = "PAUSED. ";
+
 	int canframe_count = calc_thread->full_count_canframes - padding;
 	if (canframe_count <= 0)
 		canframe_count = 0;
@@ -190,6 +211,7 @@ void QtWidgetsApplication1::updateProgressRunStatus()
 
 void QtWidgetsApplication1::updateContinuousProgress()
 {
+	updateProgressRunStatus();
 	int page_index = 1;
 	if (calc_thread->isRUN()) {
 		int ncount = ui.treetrace->topLevelItemCount();
@@ -231,7 +253,6 @@ void QtWidgetsApplication1::updateContinuousProgress()
 		ui.pb_Goto->setEnabled(false);
 		break;
 	}
-
 }
 
 void QtWidgetsApplication1::updateProgressTimer()
@@ -463,16 +484,11 @@ void QtWidgetsApplication1::stopTrace()
 	mysub_lin_parser = nullptr;
 
 	initial_trace = true;
+	last_status = "STOPPED";
+	frozen = true;
+	show_fullpage();
 	updateToolbar();
 	updateContinuousProgress();
-
-	last_status = "STOPPED";
-
-	LOGGER_INFO(log_, "==== GOING TO FREEZE ====");
-
-	frozen = true;
-	LOGGER_INFO(log_, "==== FROZEN STATUS {} ====", frozen);
-	show_fullpage();
 	LOGGER_INFO(log_, "==== END OF STOPPING TRACE ====");
 	LOGGER_INFO(log_, "\n");
 
@@ -1279,8 +1295,10 @@ void QtWidgetsApplication1::update_latest_index(uint64_t index)
 	qDebug() << "LATEST INDEX ->" << index;
 	current_page_index = paused_instant_index / count_per_page;
 	current_item_index = paused_instant_index % count_per_page;
-	qDebug() << "CURRENT PAGE INDEX:" << current_item_index;
-	qDebug() << "CURRENT ITEM INDEX:" << current_page_index;
+	max_page_count = current_page_index + 1;
+	//qDebug() << "CURRENT PAGE INDEX:" << current_item_index;
+	//qDebug() << "CURRENT ITEM INDEX:" << current_page_index;
+	qDebug() << "MAX PAGE COUNT -> " << max_page_count;
 }
 
 bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
@@ -1308,19 +1326,47 @@ void QtWidgetsApplication1::updateComoboPage()
 }
 
 void QtWidgetsApplication1::ButtonFirstClicked()
-{}
+{
+	qDebug() << "MAX_PAGE_COUNT -> " << max_page_count;
+	int target_page = 1;
+	qDebug() << "TARGET_PAGE -> " << target_page;
+	ui.label_Current->setText(QString::number(target_page));
+}
 
 void QtWidgetsApplication1::ButtonPreviousClicked()
-{}
+{
+	qDebug() << "MAX_PAGE_COUNT -> " << max_page_count;
+	bool ok;
+	int current_page = ui.label_Current->text().toInt(&ok);
+	int target_page = (current_page -1) < 1 ? 1: current_page - 1;
+	qDebug() << "TARGET_PAGE -> " << target_page;
+	ui.label_Current->setText(QString::number(target_page));
+}
 
 void QtWidgetsApplication1::ButtonNextClicked()
-{}
+{
+	qDebug() << "MAX_PAGE_COUNT -> " << max_page_count;
+	bool ok;
+	int current_page = ui.label_Current->text().toInt(&ok);
+	int target_page = (current_page + 1) > max_page_count ? max_page_count : current_page + 1;
+	qDebug() << "TARGET_PAGE -> " << target_page;
+	ui.label_Current->setText(QString::number(target_page));
+}
 
 void QtWidgetsApplication1::ButtonLastClicked()
-{}
+{
+	qDebug() << "MAX_PAGE_COUNT -> " << max_page_count;
+	int target_page = max_page_count;
+	qDebug() << "TARGET_PAGE -> " << target_page;
+	ui.label_Current->setText(QString::number(target_page));
+}
 
 void QtWidgetsApplication1::ButtonGotoClicked()
-{}
+{
+	qDebug() << "MAX_PAGE_COUNT -> " << max_page_count;
+	int target_page = 1;
+	qDebug() << "TARGET_PAGE -> " << target_page;
+}
 
 void QtWidgetsApplication1::show_fullpage_with_findings()
 {}
