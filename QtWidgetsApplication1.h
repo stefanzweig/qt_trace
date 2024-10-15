@@ -160,6 +160,7 @@ private slots:
 	bool filter_pass_item(QTreeWidgetItem* it);
 	bool filter_run_pass_item_without_children(QTreeWidgetItem* it);
 	void show_fullpage();
+	void show_fullpage_with_index(int index);
 	void restore_full_queue();
 	void safe_clear_trace();
 	QString previous_state();

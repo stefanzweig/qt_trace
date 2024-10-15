@@ -1330,6 +1330,7 @@ void QtWidgetsApplication1::ButtonFirstClicked()
 	qDebug() << "MAX_PAGE_COUNT -> " << max_page_count;
 	int target_page = 1;
 	qDebug() << "TARGET_PAGE -> " << target_page;
+	show_fullpage_with_index(target_page);
 	ui.label_Current->setText(QString::number(target_page));
 }
 
@@ -1340,6 +1341,7 @@ void QtWidgetsApplication1::ButtonPreviousClicked()
 	int current_page = ui.label_Current->text().toInt(&ok);
 	int target_page = (current_page -1) < 1 ? 1: current_page - 1;
 	qDebug() << "TARGET_PAGE -> " << target_page;
+	show_fullpage_with_index(target_page);
 	ui.label_Current->setText(QString::number(target_page));
 }
 
@@ -1350,6 +1352,7 @@ void QtWidgetsApplication1::ButtonNextClicked()
 	int current_page = ui.label_Current->text().toInt(&ok);
 	int target_page = (current_page + 1) > max_page_count ? max_page_count : current_page + 1;
 	qDebug() << "TARGET_PAGE -> " << target_page;
+	show_fullpage_with_index(target_page);
 	ui.label_Current->setText(QString::number(target_page));
 }
 
@@ -1358,15 +1361,44 @@ void QtWidgetsApplication1::ButtonLastClicked()
 	qDebug() << "MAX_PAGE_COUNT -> " << max_page_count;
 	int target_page = max_page_count;
 	qDebug() << "TARGET_PAGE -> " << target_page;
+	show_fullpage_with_index(target_page);
 	ui.label_Current->setText(QString::number(target_page));
 }
 
 void QtWidgetsApplication1::ButtonGotoClicked()
 {
 	qDebug() << "MAX_PAGE_COUNT -> " << max_page_count;
-	int target_page = 1;
+	bool ok;
+	int target_page = ui.comboBox_Page->currentText().toInt(&ok);
 	qDebug() << "TARGET_PAGE -> " << target_page;
+	show_fullpage_with_index(target_page);
+	ui.label_Current->setText(QString::number(target_page));
 }
 
 void QtWidgetsApplication1::show_fullpage_with_findings()
-{}
+{
+}
+
+void QtWidgetsApplication1::show_fullpage_with_index(int index)
+{
+	// index is the page index  starting from 1
+	if (timer_isRunning) return;
+	timer_isRunning = true;
+	qDebug() << "SHOW_FULLPAGE_WITH_INDEX";
+	int page_index = index - 1;
+	ui.treetrace->clear();
+	safe_clear_trace();
+	QQueue<QTreeWidgetItem*> baseQueue;
+	int i = count_per_page*page_index;
+	int stop = (count_per_page * index > paused_instant_index)? paused_instant_index : i+count_per_page;
+	qDebug() << "INDEX FROM ->" << i << "TO ->" << stop;
+	for (; i < stop; i++)
+	{
+		TraceTreeWidgetItem* traceItem = full_queue_stream.at(i)->clone();
+		baseQueue.enqueue(traceItem);
+	}
+	qDebug() << "BASEQUEUE SIZE ->" << baseQueue.size();
+	ui.treetrace->addTopLevelItems(baseQueue);
+	ui.treetrace->scrollToBottom();
+	timer_isRunning = false;
+}
