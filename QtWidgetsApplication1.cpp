@@ -1311,10 +1311,28 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
 		QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
 		if (keyEvent->key() == Qt::Key_Up) {
 			qDebug() << "UP KEY PRESSED";
+			QTreeWidgetItem* current = ui.treetrace->currentItem();
+			if (current) {
+				highlight_previous_item(current);
+			}
 			return true;
 		}
 		else if (keyEvent->key() == Qt::Key_Down) {
 			qDebug() << "DOWN KEY PRESSED";
+			QTreeWidgetItem* current = ui.treetrace->currentItem();
+			if (current) {
+				highlight_next_item(current);
+			}
+			return true;
+		}
+		else if (keyEvent->key() == Qt::Key_Tab) {
+			QTreeWidgetItem* current = ui.treetrace->currentItem();
+			if (current) {
+				if (current->isExpanded())
+					collapse_item(current);
+				else
+					extract_item(current);
+			}
 			return true;
 		}
 	}
@@ -1460,4 +1478,52 @@ void QtWidgetsApplication1::show_fullpage_with_index(int index)
 	ui.treetrace->addTopLevelItems(baseQueue);
 	ui.treetrace->scrollToBottom();
 	timer_isRunning = false;
+}
+
+void QtWidgetsApplication1::highlight_previous_item(QTreeWidgetItem* item)
+{
+	QTreeWidgetItem* parent = item->parent();
+	QTreeWidgetItem* prevSibling;
+	if (parent) {
+		prevSibling = parent->child(parent->indexOfChild(item) - 1);
+	}
+	else {
+		QTreeWidget* treeWidget = item->treeWidget();
+		prevSibling = treeWidget->topLevelItem(treeWidget->indexOfTopLevelItem(item) - 1);
+	}
+	if (prevSibling) {
+		ui.treetrace->setCurrentItem(prevSibling);
+	}
+}
+
+void QtWidgetsApplication1::highlight_next_item(QTreeWidgetItem* item)
+{
+	QTreeWidgetItem* parent = item->parent();
+	QTreeWidgetItem* nextSibling;
+	if (parent) {
+		nextSibling = parent->child(parent->indexOfChild(item) + 1);
+	}
+	else {
+		QTreeWidget* treeWidget = item->treeWidget();
+		nextSibling = treeWidget->topLevelItem(treeWidget->indexOfTopLevelItem(item) + 1);
+	}
+	if (nextSibling) {
+		ui.treetrace->setCurrentItem(nextSibling);
+	}
+}
+
+void QtWidgetsApplication1::extract_item(QTreeWidgetItem* item)
+{
+	item->setExpanded(true);
+	for (int i = 0; i < item->childCount(); i++) {
+		extract_item(item->child(i));
+	}
+}
+
+void QtWidgetsApplication1::collapse_item(QTreeWidgetItem* item)
+{
+	item->setExpanded(false);
+	for (int i = 0; i < item->childCount(); i++) {
+		collapse_item(item->child(i));
+	}
 }

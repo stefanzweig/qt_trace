@@ -177,6 +177,10 @@ private slots:
 	void ButtonLastClicked();
 	void ButtonGotoClicked();
 	void show_fullpage_with_findings();
+	void highlight_previous_item(QTreeWidgetItem* item);
+	void highlight_next_item(QTreeWidgetItem* item);
+	void extract_item(QTreeWidgetItem* item);
+	void collapse_item(QTreeWidgetItem* item);
 
 signals:
 	void record_latest_index(uint64_t index);
