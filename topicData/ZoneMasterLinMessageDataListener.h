@@ -37,9 +37,7 @@ public:
     {
     }
 
-    void on_subscription_matched(
-        DataReader*,
-        const SubscriptionMatchedStatus& info) override
+    void on_subscription_matched(DataReader*,const SubscriptionMatchedStatus& info) override
     {
         if (info.current_count_change == 1)
         {
@@ -55,15 +53,33 @@ public:
         }
     }
 
-    void on_data_available(
-        DataReader* reader) override
+    void on_data_available(DataReader* reader) override
     {
+        SampleInfo info;
+        if (reader->take_next_sample(&lin_messages_, &info) == ReturnCode_t::RETCODE_OK)
+        {
+            if (info.valid_data)
+            {
+                samples_++;
+                for (int i = 0; i < lin_messages_.len(); i++) {
+                    linMessage msg = lin_messages_.linMsgs()[i];
+                    QString repr = QString::number(msg.id());
+                    qDebug() << "LIN ID -> " << repr;
+                    lin_Frame lf;
+                    lf.ID = msg.id();
+                    emit ItemUpdate_internal_lin_frame(msg);
+                    emit ItemUpdate_internal_lin_integer(i);
+                }
+            }
+        }
     }
 
-    //canMessages can_messages_;
+    linMessages lin_messages_;
+    std::atomic_int samples_;
     QThread* outerThread = nullptr;
     QTreeView* tree_ = nullptr;
 
 signals:
-    void traceItemUpdate_internal_lin_frame(linFrame lf);
+    void ItemUpdate_internal_lin_frame(linMessage lf);
+    void ItemUpdate_internal_lin_integer(int i);
 };

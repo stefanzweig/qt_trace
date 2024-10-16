@@ -25,6 +25,12 @@ struct can_frame : public BaseStruct {
     QVector<canpdu> pdus;                                                       //Ãû³Æ
 };
 
+struct lin_Frame : public BaseStruct {
+    uint64_t Timestamp;
+    uint32_t Chn;                                                                 //Í¨µÀ
+    uint32_t ID;                                               //ID
+};
+
 
 /*
 

@@ -156,7 +156,8 @@ void multiThread::setLinSubscriber(ZoneMasterLinMessageDataSubscriber* subscribe
         mysub_lin_frames = subscriber;
         samples_ = samples;
         subscriber->setOuterThread(this, treeview);
-        QObject::connect(&mysub_lin_frames->listener_, &LinSubListener::traceItemUpdate_internal_lin_frame, this, &multiThread::formatRow_linframe_thread);
+        QObject::connect(&mysub_lin_frames->listener_, &LinSubListener::ItemUpdate_internal_lin_frame, this, &multiThread::formatRow_linframe_thread);
+        QObject::connect(&mysub_lin_frames->listener_, &LinSubListener::ItemUpdate_internal_lin_integer, this, &multiThread::formatRow_linframe_thread_i);
         bconnected_lf = true;
     }
 }
@@ -286,19 +287,14 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
     }
 }
 
-void multiThread::formatRow_linframe_thread(linFrame frame)
+void multiThread::formatRow_linframe_thread(linMessage lf)
 {
-    full_count_linframes++;
-    QStringList lin_list = {};
-    TraceTreeWidgetItem* Item = new TraceTreeWidgetItem(lin_list);
-    if (Item != nullptr) {
-        Item->setSource("lin_frame");
-        UUIDv4::UUID uuid = uuidGenerator.getUUID();
-        std::string s = uuid.str();
-        QString uuid_str = QString::fromStdString(s);
-        Item->setUUID(uuid_str);
-        emit(popToRoot(Item));
-    }
+    qDebug() << "LIN";
+}
+
+void multiThread::formatRow_linframe_thread_i(int i)
+{
+    qDebug() << "LIN" << i; 
 }
 
 void multiThread::formatRow_linparser_thread(linFrame frame)

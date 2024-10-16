@@ -439,7 +439,7 @@ void QtWidgetsApplication1::resumeTrace()
 
 	if (mysub_lin_frames == nullptr) {
 		mysub_lin_frames = new ZoneMasterLinMessageDataSubscriber(dds_domainid);
-		qRegisterMetaType <linFrame>("linFrame");
+		qRegisterMetaType <linMessage>("linMessage");
 	}
 
 	if (mysub_lin_parser == nullptr) {
@@ -574,7 +574,8 @@ void QtWidgetsApplication1::setupTreeTrace()
 void QtWidgetsApplication1::initialHeaders()
 {
 	QHeaderView* header = ui.treetrace->header();
-	for (int i = 0; i < header->count(); i++) {
+	int button_count = std::max(header->count(), 5);
+	for (int i = 0; i < button_count; i++) {
 		QPushButton* button;
 		button = new QPushButton(header);
 		connect(button, &QPushButton::clicked, this, &QtWidgetsApplication1::headerButtonClicked);
@@ -605,7 +606,9 @@ void QtWidgetsApplication1::headerButtonClicked()
 	filter->columnIndex = columnButton;
 	filter->new_checks;
 	int column_index = filter->columnIndex;
-	QString colName = initialHeader[column_index];
+	if (column_index >= CurrentHeader.count())
+		return;
+	QString colName = CurrentHeader[column_index];
 	filter->colName = colName;
 	QList<QVariant> vlist = filter->new_checks.value(colName);
 	qDebug() << vlist.length();
@@ -621,7 +624,6 @@ void QtWidgetsApplication1::headerButtonClicked()
 	}
 	filterConfig.removeAll("");
 	filterConfig.sort();
-
 	filter->ui->tableWidget->setRowCount(filterConfig.count());
 	filter->ui->tableWidget->setColumnCount(1);
 	filter->ui->tableWidget->horizontalHeader()->setVisible(false);
@@ -652,7 +654,8 @@ void QtWidgetsApplication1::headerButtonClicked()
 void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
 {
 	int column_index = filter->columnIndex;
-	QString colName = initialHeader[column_index];
+	QString colName = CurrentHeader[column_index];
+	
 	if (items.size() == 0) {
 		headerButtonList[column_index]->setIcon(QIcon(":/QtWidgetsApplication1/res/funnel-icon.ico"));
 	}
@@ -1079,7 +1082,9 @@ void QtWidgetsApplication1::adjust_filter_buttons()
 {
 	QTreeWidget* tree = ui.treetrace;
 	QHeaderView* header = tree->header();
-	for (int i = 0; i < headerButtonList.count(); i++) {
+	if (!headerButtonList.count())
+		return;
+	for (int i = 0; i < header->count(); i++) {
 		QPushButton* button = headerButtonList[i];
 		int length = header->sectionPosition(i) + header->sectionSize(i);
 		button->setGeometry(length - 20, 2, 16, 16);
