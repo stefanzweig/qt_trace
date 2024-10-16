@@ -105,6 +105,7 @@ void QtWidgetsApplication1::init()
 	sizePolicy.setHeightForWidth(ui.widget->sizePolicy().hasHeightForWidth());
 	ui.Lower->setSizePolicy(sizePolicy);
 	ui.comboBox_Page->addItem(QString::number(1));
+	ui.actionreplay->setVisible(false);
 
 	get_default_configurations();
 	createActions();
@@ -124,7 +125,7 @@ void QtWidgetsApplication1::init()
 	resetLayout();
 	resetStatusBar();
 	setupTreeTrace();
-	//showMaximized();
+	showMaximized();
 }
 
 void QtWidgetsApplication1::init_mylogger()
@@ -190,13 +191,6 @@ void QtWidgetsApplication1::updateProgressRunStatus()
 		default:
 			runStatus = "READY. ";
 	}
-
-	//if (calc_thread->isSTOPPED())
-	//	runStatus = "READY. ";
-	//if (!calc_thread->isSTOPPED())
-	//	runStatus = "RUNNING. ";
-	//if (calc_thread->isPAUSED())
-	//	runStatus = "PAUSED. ";
 
 	int canframe_count = calc_thread->full_count_canframes - padding;
 	if (canframe_count <= 0)
@@ -454,11 +448,12 @@ void QtWidgetsApplication1::resumeTrace()
 	}
 
 	calc_thread->restartThread();
-	LOGGER_INFO(log_, "==== THREAD RESTARTED ====");
-	calc_thread->setCanSubscriber(mysub_can_frames, samples, ui.treetrace);
 	LOGGER_INFO(log_, "==== CAN SUB SET ====");
+	calc_thread->setCanSubscriber(mysub_can_frames, samples, ui.treetrace);
 	calc_thread->setCanParserSubscriber(mysub_can_parser, samples, ui.treetrace);
-	LOGGER_INFO(log_, "==== PDU SUB SET ====");
+	calc_thread->setLinSubscriber(mysub_lin_frames, samples, ui.treetrace);
+	calc_thread->setLinParserSubscriber(mysub_lin_parser, samples, ui.treetrace);
+	LOGGER_INFO(log_, "==== THREAD RESTARTED ====");
 	calc_thread->start();
 	timer->start(TIMER_HEARTBEAT);
 	LOGGER_INFO(log_, "==== HEARTBEAT STARTED ====");
@@ -734,6 +729,7 @@ void QtWidgetsApplication1::ChangeHeader(const QString& text)
 		ui.treetrace->setHeaderLabels(ethHeader);
 		CurrentHeader = ethHeader;
 	}
+	adjust_filter_buttons();
 }
 
 void QtWidgetsApplication1::ButtonSearchClicked()
