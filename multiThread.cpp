@@ -304,12 +304,25 @@ void multiThread::formatRow_linframe_thread(linMessage frame)
     QStringList str_lm = {};
     QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(frame.timeStamp() / 1000000);
     str_lm.append(timestamp.toString("hh:mm:ss.zzz"));
+    str_lm.append("LIN " + QString::number(frame.channel()));
+    str_lm.append(QString::number(frame.id(), 16).toUpper());
+    str_lm.append("LIN Frame");
+
+    QString sDir = "Rx";
+    if (frame.rxtx() == 1) sDir = "Tx";
+    str_lm.append(sDir);
+    str_lm.append(QString::number(frame.dlc()));
+    str_lm.append(QString::number(frame.data().size()));
+    str_lm.append(QString::number(frame.flags()));
     str_lm.append("");
-    str_lm.append("");
+    QByteArray output;
+    std::copy(frame.data().begin(), frame.data().end(), std::back_inserter(output));
+    QString myData = output.toHex(' ');
+    str_lm.append(myData);
+
     UUIDv4::UUID uuid = uuidGenerator.getUUID();
     std::string s = uuid.str();
     QString uuid_str = QString::fromStdString(s);
-    str_lm.append(uuid_str);
 
     TraceTreeWidgetItem* Item = new TraceTreeWidgetItem(str_lm);
     Item->setSource("linframe");
