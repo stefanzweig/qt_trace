@@ -694,8 +694,10 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 		else {
 			shown_queue.enqueue(item);
 			// limit the shown_queue size
-			if (shown_queue.size() > count_per_page)
-				shown_queue.dequeue();
+			if (shown_queue.size() > count_per_page) {
+				TraceTreeWidgetItem* it_remove = shown_queue.dequeue();
+				delete it_remove;
+			}
 
 			TraceTreeWidgetItem* item_backup = (TraceTreeWidgetItem*)item->clone();
 			full_queue_stream.enqueue(item_backup);
