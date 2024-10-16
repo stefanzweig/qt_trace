@@ -157,7 +157,7 @@ void multiThread::setLinSubscriber(ZoneMasterLinMessageDataSubscriber* subscribe
         samples_ = samples;
         subscriber->setOuterThread(this, treeview);
         QObject::connect(&mysub_lin_frames->listener_, &LinSubListener::ItemUpdate_internal_lin_frame, this, &multiThread::formatRow_linframe_thread);
-        QObject::connect(&mysub_lin_frames->listener_, &LinSubListener::ItemUpdate_internal_lin_integer, this, &multiThread::formatRow_linframe_thread_i);
+        //QObject::connect(&mysub_lin_frames->listener_, &LinSubListener::ItemUpdate_internal_lin_integer, this, &multiThread::formatRow_linframe_thread_i);
         bconnected_lf = true;
     }
 }
@@ -287,9 +287,38 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
     }
 }
 
-void multiThread::formatRow_linframe_thread(linMessage lf)
+void multiThread::formatRow_linframe_thread(linMessage frame)
 {
-    qDebug() << "LIN";
+    /*    
+    eProsima_user_DllExport uint32_t channel() const;
+    eProsima_user_DllExport uint32_t id() const;
+    eProsima_user_DllExport uint8_t dlc() const;
+    eProsima_user_DllExport const std::vector<uint8_t>& data() const;
+    eProsima_user_DllExport const std::vector<uint8_t>& dataParser() const;
+    eProsima_user_DllExport uint16_t flags() const;
+    eProsima_user_DllExport uint8_t rxtx() const;
+    eProsima_user_DllExport uint8_t errorCode() const;
+    eProsima_user_DllExport uint8_t NMstate() const;
+    eProsima_user_DllExport uint8_t isMasterFrame() const;
+    */
+    QStringList str_lm = {};
+    QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(frame.timeStamp() / 1000000);
+    str_lm.append(timestamp.toString("hh:mm:ss.zzz"));
+    str_lm.append("");
+    str_lm.append("");
+    UUIDv4::UUID uuid = uuidGenerator.getUUID();
+    std::string s = uuid.str();
+    QString uuid_str = QString::fromStdString(s);
+    str_lm.append(uuid_str);
+
+    TraceTreeWidgetItem* Item = new TraceTreeWidgetItem(str_lm);
+    Item->setSource("linframe");
+    Item->setUUID(uuid_str);
+
+    if (Item == nullptr)
+        return;
+    else 
+        emit(popToRoot(Item));
 }
 
 void multiThread::formatRow_linframe_thread_i(int i)
@@ -297,7 +326,7 @@ void multiThread::formatRow_linframe_thread_i(int i)
     qDebug() << "LIN" << i; 
 }
 
-void multiThread::formatRow_linparser_thread(linFrame frame)
+void multiThread::formatRow_linparser_thread(linMessage frame)
 {
     full_count_linparser++;
     QStringList lin_list = {};

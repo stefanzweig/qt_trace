@@ -444,7 +444,7 @@ void QtWidgetsApplication1::resumeTrace()
 
 	if (mysub_lin_parser == nullptr) {
 		mysub_lin_parser = new ZoneMasterLinParserSubscriber(dds_domainid);
-		qRegisterMetaType <linFrame>("linFrame");
+		qRegisterMetaType <linMessage>("linMessage");
 	}
 
 	calc_thread->restartThread();
