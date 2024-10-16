@@ -82,7 +82,6 @@ public:
     //canMessages can_messages_;
     canframe canframe_;
 
-
     std::atomic_int samples_;
 
     QThread* outerThread;

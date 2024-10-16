@@ -198,8 +198,15 @@ void QtWidgetsApplication1::updateProgressRunStatus()
 	int canparser_count = calc_thread->full_count_canparser - padding;
 	if (canparser_count <= 0)
 		canparser_count = 0;
-	QString status_string = runStatus + "CAN Frames: " + QString::number(canframe_count)
-		+ ". PDUs: " + QString::number(canparser_count);
+	int linframe_count = calc_thread->full_count_linframes - padding;
+	if (linframe_count <= 0)
+		linframe_count = 0;
+
+	QString status_string = runStatus 
+	    + "CAN Frames: " + QString::number(canframe_count)
+		+ ". CAN PDUs: " + QString::number(canparser_count);
+	    + ". LIN Frames: " + QString::number(linframe_count)
+	    + ". Total: " + QString::number(canframe_count + canparser_count + linframe_count)
 	ui.statusBar->showMessage(status_string);
 }
 
@@ -366,7 +373,7 @@ void QtWidgetsApplication1::newDev()
 
 void QtWidgetsApplication1::onActionTriggered()
 {
-	qDebug() << tr("²Ëµ¥ÏîÒÑ´¥·¢£¡");
+	qDebug() << tr("ï¿½Ëµï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½ï¿½ï¿½ï¿½");
 }
 
 
@@ -376,7 +383,7 @@ void QtWidgetsApplication1::clearance()
 	calc_thread->full_count_canparser = 0;
 
 	// todo: how to delete the items in the queue safely?
-	// 2024Äê10ÔÂ3ÈÕ 11:23
+	// 2024ï¿½ï¿½10ï¿½ï¿½3ï¿½ï¿½ 11:23
 	safe_clear_trace();
 }
 
@@ -494,7 +501,7 @@ void QtWidgetsApplication1::stopTrace()
 
 void QtWidgetsApplication1::replayTrace()
 {
-	// 2024Äê10ÔÂ11ÈÕ 17:46 »Ø·Å¹¦ÄÜ
+	// 2024ï¿½ï¿½10ï¿½ï¿½11ï¿½ï¿½ 17:46 ï¿½Ø·Å¹ï¿½ï¿½ï¿½
 	qDebug() << "REPLAY...";
 }
 
@@ -853,19 +860,19 @@ void QtWidgetsApplication1::update_tracewindow()
 	LOGGER_INFO(log_, "TREE COUNT -> {}", tree_count);
 
 	/*
-	Ò»¸ö´°¿ÚÈç¹ûÄÜ¹»´æÏÂ60ÐÐ£¬ÄÇÃ´window_capacity¾ÍÊÇ60¡£
-	 1.Èç¹ûÄ¿Ç°´°¿ÚÄÚÎª¿Õ£¬ÔòÌî¿ÕÒ»ÐÐ¡£
-	 2.Èç¹ûÄ¿Ç°´°¿ÚÄÚÓÐÄÚÈÝµ«ÊÇ²»×ãµ±Ò³ÈÝÁ¿£¨±äÁ¿Îªpage_capacity)£¬ÔòÌîÂúµ½page_capacityÐÐ¡£
-	 3.Èç¹û´°¿ÚÄÚÓÐpage_capacityÐÐ£¬ÔòÌæ»»ÂúÆÁÊý¾Ý¡£
+	Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¹ï¿½ï¿½ï¿½ï¿½ï¿½60ï¿½Ð£ï¿½ï¿½ï¿½Ã´window_capacityï¿½ï¿½ï¿½ï¿½60ï¿½ï¿½
+	 1.ï¿½ï¿½ï¿½Ä¿Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½Õ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Ð¡ï¿½
+	 2.ï¿½ï¿½ï¿½Ä¿Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ýµï¿½ï¿½Ç²ï¿½ï¿½ãµ±Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªpage_capacity)ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½page_capacityï¿½Ð¡ï¿½
+	 3.ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½page_capacityï¿½Ð£ï¿½ï¿½ï¿½ï¿½æ»»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¡ï¿½
 	 */
 
 	if (tree_count == 0) {
 		LOGGER_INFO(log_, "==== EMPTY TREE ====");
-		fill_empty_tree(window_capacity); // Ìî¿ÕÒ»Ìõ
+		fill_empty_tree(window_capacity); // ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
 	}
 	else if (tree_count > 0 && tree_count < page_capacity) {
 		LOGGER_INFO(log_, "==== HALF TREE ====");
-		fill_partial_tree(page_capacity); // ×·¼Ó
+		fill_partial_tree(page_capacity); // ×·ï¿½ï¿½
 	}
 	else {
 		LOGGER_INFO(log_, "==== REDRAW TREE ====");
@@ -1129,13 +1136,13 @@ bool QtWidgetsApplication1::filter_pass_item(QTreeWidgetItem* it)
 
 	bool matched = true;
 
-	// running, only root items passed. 2024Äê10ÔÂ3ÈÕ 9:39
+	// running, only root items passed. 2024ï¿½ï¿½10ï¿½ï¿½3ï¿½ï¿½ 9:39
 	if (calc_thread->isRUN() && it) {
 		matched = filter_run_pass_item_without_children(it);
 		if (!matched) return false;
 	}
 
-	// filters. 2024Äê10ÔÂ3ÈÕ 9:39
+	// filters. 2024ï¿½ï¿½10ï¿½ï¿½3ï¿½ï¿½ 9:39
 	if (new_filters.isEmpty())
 		return true;
 	for (const auto& key : new_filters.keys()) {
@@ -1194,7 +1201,7 @@ TraceTreeWidgetItem* QtWidgetsApplication1::read_item_from_queue(int index)
 TraceTreeWidgetItem* QtWidgetsApplication1::read_item_from_dumb(int index)
 {
 	/* This function is a mock one to generate 10 rows data
-	*  to the tracewidget to show. 2024Äê10ÔÂ2ÈÕ 22:14
+	*  to the tracewidget to show. 2024ï¿½ï¿½10ï¿½ï¿½2ï¿½ï¿½ 22:14
 	*/
 
 	QStringList str_pdu = {};
@@ -1214,7 +1221,7 @@ void QtWidgetsApplication1::construct_page_data(TraceTreeWidgetItem* item)
 	*  to the *count_per_page*.
 	*  because the queue stores the pointers, so this queue do not
 	*  delete the item manually.
-	*  2024Äê10ÔÂ2ÈÕ 22:06
+	*  2024ï¿½ï¿½10ï¿½ï¿½2ï¿½ï¿½ 22:06
 	*/
 	current_page_queue.enqueue(item->clone());
 	if (current_page_queue.size() > count_per_page)

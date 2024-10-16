@@ -341,11 +341,17 @@ void multiThread::formatRow_linframe_thread_i(int i)
 
 void multiThread::formatRow_linparser_thread(linMessage frame)
 {
+    last_timestamp_canparser = frame.timeStamp();
     full_count_linparser++;
-    QStringList lin_list = {};
-    TraceTreeWidgetItem* Item = new TraceTreeWidgetItem(lin_list);
+    QStringList str_parser = {};
+    QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(frame.timeStamp() / 1000000);
+    str_parser.append(timestamp.toString("hh:mm:ss.zzz"));
+    str_parser.append("");
+    str_parser.append("");
+    str_parser.append(QString::fromStdString(frame.name()));
+    TraceTreeWidgetItem* Item = new TraceTreeWidgetItem(str_parser);
+    Item->setSource("lin_parser");
     if (Item != nullptr) {
-        Item->setSource("lin_parser");
         UUIDv4::UUID uuid = uuidGenerator.getUUID();
         std::string s = uuid.str();
         QString uuid_str = QString::fromStdString(s);

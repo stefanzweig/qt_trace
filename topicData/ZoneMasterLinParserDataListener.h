@@ -29,7 +29,6 @@ class LinParserListener : public QObject, public DataReaderListener
 {
     Q_OBJECT
 public:
-
     LinParserListener()
         : samples_(0)
     {
@@ -39,9 +38,7 @@ public:
     {
     }
 
-    void on_subscription_matched(
-        DataReader*,
-        const SubscriptionMatchedStatus& info) override
+    void on_subscription_matched(DataReader*, const SubscriptionMatchedStatus& info) override
     {
         if (info.current_count_change == 1)
         {
@@ -57,8 +54,7 @@ public:
         }
     }
 
-    void on_data_available(
-        DataReader* reader) override
+    void on_data_available(DataReader* reader) override
     {
         SampleInfo info;
         if (reader->take_next_sample(&linframe_, &info) == ReturnCode_t::RETCODE_OK)
