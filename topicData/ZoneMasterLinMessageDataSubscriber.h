@@ -44,7 +44,7 @@ public:
         linMessagesPubSubType* lin_messages_pubsubtype = new linMessagesPubSubType();
         lin_messages_pubsubtype->setName("linMessageData");
         type_ = TypeSupport(lin_messages_pubsubtype);
-        domainid = domainid;
+        this->domainid = domainid;
     }
 
     virtual ~ZoneMasterLinMessageDataSubscriber()
