@@ -38,6 +38,10 @@ public:
 protected:
 	void createActions();
 	bool eventFilter(QObject* obj, QEvent* event) override;
+	void resizeEvent(QResizeEvent* event) override {
+		QMainWindow::resizeEvent(event);
+		this->adjust_filter_buttons();
+	}
 
 private:
 	Ui::QtWidgetsApplication1Class ui;

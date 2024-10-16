@@ -124,8 +124,7 @@ void QtWidgetsApplication1::init()
 	resetLayout();
 	resetStatusBar();
 	setupTreeTrace();
-
-	showMaximized();
+	//showMaximized();
 }
 
 void QtWidgetsApplication1::init_mylogger()
@@ -314,7 +313,6 @@ void QtWidgetsApplication1::resetLayout()
 	ui.toolbar->addAction(ui.actionreplay);
 	ui.toolbar->addAction(ui.actionmode);
 	ui.toolbar->addAction(ui.actionreset);
-	initialHeaders();
 
 	//ui.treetrace->setContextMenuPolicy(Qt::CustomContextMenu);
 	// connect(ui.treetrace, &QTreeWidget::customContextMenuRequested, this, &QtWidgetsApplication1::prepareMenu);
@@ -555,35 +553,32 @@ void QtWidgetsApplication1::pauseTrace()
 void QtWidgetsApplication1::setupTreeTrace()
 {
 	QTreeWidget* t = ui.treetrace;
-
+	QHeaderView* header = t->header();
 	t->setSelectionBehavior(QTreeView::SelectRows);
-	t->setSelectionMode(QTreeView::SingleSelection);
 	t->setFocusPolicy(Qt::WheelFocus);
 	t->header()->setHighlightSections(true);
 	t->header()->setStretchLastSection(true);
 	t->header()->setSortIndicator(0, Qt::AscendingOrder);
-
 	t->setWindowTitle(QObject::tr("CAN Frames"));
 	t->setAttribute(Qt::WA_OpaquePaintEvent);
 	t->setAttribute(Qt::WA_NoSystemBackground);
+	t->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+	t->setHeaderLabels(initialHeader);
+	t->setSortingEnabled(true);
+	t->setColumnWidth(0, 150);
+	t->sortByColumn(0, Qt::SortOrder::AscendingOrder);
+	t->invisibleRootItem()->setHidden(true);
 	t->installEventFilter(this);
+	header->setDefaultSectionSize(150);
+	header->setSectionResizeMode(QHeaderView::Interactive);
 	QFont font("SimSun", 8);
 	t->setFont(font);
+	initialHeaders();
 }
 
 void QtWidgetsApplication1::initialHeaders()
 {
-	QTreeWidget* tree = ui.treetrace;
-	QHeaderView* header = tree->header();
-	header->setDefaultSectionSize(150);
-	header->setSectionResizeMode(QHeaderView::Interactive);
-	tree->setHeaderLabels(initialHeader);
-	tree->setSortingEnabled(true);
-	tree->setColumnWidth(0, 150);
-	tree->header()->setStretchLastSection(true);
-	tree->sortByColumn(0, Qt::SortOrder::AscendingOrder);
-	tree->invisibleRootItem()->setHidden(true);
-
+	QHeaderView* header = ui.treetrace->header();
 	for (int i = 0; i < header->count(); i++) {
 		QPushButton* button;
 		button = new QPushButton(header);
