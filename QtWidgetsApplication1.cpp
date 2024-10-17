@@ -204,9 +204,9 @@ void QtWidgetsApplication1::updateProgressRunStatus()
 
 	QString status_string = runStatus 
 	    + "CAN Frames: " + QString::number(canframe_count)
-		+ ". CAN PDUs: " + QString::number(canparser_count);
-	    + ". LIN Frames: " + QString::number(linframe_count)
-	    + ". Total: " + QString::number(canframe_count + canparser_count + linframe_count)
+		+ ". CAN PDUs: " + QString::number(canparser_count)
+		+". LIN Frames: " + QString::number(linframe_count)
+		+ ". Total: " + QString::number(canframe_count + canparser_count + linframe_count);
 	ui.statusBar->showMessage(status_string);
 }
 
@@ -322,6 +322,7 @@ void QtWidgetsApplication1::resetLayout()
 	connect(ui.treetrace->horizontalScrollBar(), &QScrollBar::valueChanged, this, &QtWidgetsApplication1::on_horizontal_scroll);
 
 	datachoice = ui.comboBox;
+	datachoice->setEnabled(false);
 	connect(datachoice, &QComboBox::currentTextChanged, this, &QtWidgetsApplication1::ChangeHeader);
 	connect(ui.treetrace->verticalScrollBar(), &QScrollBar::valueChanged, this, &QtWidgetsApplication1::trace_scroll_changed);
 	setWindowIcon(QIcon(":/QtWidgetsApplication1/res/spreadsheet.png"));
@@ -720,7 +721,7 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 
 void QtWidgetsApplication1::ChangeHeader(const QString& text)
 {
-	if (text == "Initial") {
+	if (text == "CAN/LIN") {
 		ui.treetrace->setColumnCount(initialHeader.count()); //set column number
 		ui.treetrace->setHeaderLabels(initialHeader);        //set header labels
 		CurrentHeader = initialHeader;                       //save current header for data match
@@ -1379,18 +1380,22 @@ void QtWidgetsApplication1::ButtonNextClicked()
 	bool ok;
 	int current_page = ui.label_Current->text().toInt(&ok);
 	int target_page = (current_page + 1) > max_page_count ? max_page_count : current_page + 1;
-	qDebug() << "TARGET_PAGE -> " << target_page;
-	show_fullpage_with_index(target_page);
-	ui.label_Current->setText(QString::number(target_page));
+	if (target_page > 0) {
+		qDebug() << "TARGET_PAGE -> " << target_page;
+		show_fullpage_with_index(target_page);
+		ui.label_Current->setText(QString::number(target_page));
+	}
 }
 
 void QtWidgetsApplication1::ButtonLastClicked()
 {
 	qDebug() << "MAX_PAGE_COUNT -> " << max_page_count;
 	int target_page = max_page_count;
-	qDebug() << "TARGET_PAGE -> " << target_page;
-	show_fullpage_with_index(target_page);
-	ui.label_Current->setText(QString::number(target_page));
+	if (target_page > 0) {
+		qDebug() << "TARGET_PAGE -> " << target_page;
+		show_fullpage_with_index(target_page);
+		ui.label_Current->setText(QString::number(target_page));
+	}
 }
 
 void QtWidgetsApplication1::ButtonGotoClicked()
@@ -1470,8 +1475,10 @@ void QtWidgetsApplication1::show_fullpage_with_index(int index)
 	int page_index = index - 1;
 	ui.treetrace->clear();
 	safe_clear_trace();
+	if (full_queue_stream.isEmpty()) return;
 	QQueue<QTreeWidgetItem*> baseQueue;
-	int i = count_per_page*page_index;
+	int pi = (page_index<0)?0:page_index;
+	int i = count_per_page*pi;
 	int stop = (count_per_page * index > paused_instant_index)? paused_instant_index : i+count_per_page;
 	qDebug() << "INDEX FROM ->" << i << "TO ->" << stop;
 	for (; i < stop; i++)

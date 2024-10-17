@@ -348,7 +348,7 @@ void multiThread::formatRow_linparser_thread(linMessage frame)
     str_parser.append(timestamp.toString("hh:mm:ss.zzz"));
     str_parser.append("");
     str_parser.append("");
-    str_parser.append(QString::fromStdString(frame.name()));
+    str_parser.append(QString::fromStdString("LIN PDU"));
     TraceTreeWidgetItem* Item = new TraceTreeWidgetItem(str_parser);
     Item->setSource("lin_parser");
     if (Item != nullptr) {

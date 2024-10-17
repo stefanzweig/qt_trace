@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>696</width>
+    <width>801</width>
     <height>426</height>
    </rect>
   </property>
@@ -207,9 +207,12 @@
                   <layout class="QHBoxLayout" name="horizontalLayout_6">
                    <item>
                     <widget class="QComboBox" name="comboBox">
+                     <property name="currentText">
+                      <string>CAN/LIN</string>
+                     </property>
                      <item>
                       <property name="text">
-                       <string>Initial</string>
+                       <string>CAN/LIN</string>
                       </property>
                      </item>
                      <item>
@@ -362,8 +365,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>696</width>
-     <height>23</height>
+     <width>801</width>
+     <height>26</height>
     </rect>
    </property>
   </widget>
