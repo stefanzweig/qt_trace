@@ -232,7 +232,7 @@ void QtWidgetsApplication1::updateContinuousProgress()
 		else {
 			page_index = paused_instant_index / count_per_page + 1;
 		}
-		
+
 		QString strLeft_idle = QString("Count: %1/%2")
 			.arg(ncount)
 			.arg(count_per_page);
@@ -272,11 +272,11 @@ void QtWidgetsApplication1::updateContinuousProgress()
 		ui.label_Filtered->setStyleSheet("color: black;");
 		ui.label_Filtered->setText("Normal");
 	}
-	else { 
+	else {
 		ui.label_Filtered->setStyleSheet("color: red;");
 		ui.label_Filtered->setText("Filtered");
 	}
-		
+
 }
 
 void QtWidgetsApplication1::updateProgressTimer()
@@ -1160,6 +1160,11 @@ void QtWidgetsApplication1::reset_all_filters()
 		new_filters.clear();
 	}
 	filter->new_checks.clear();
+	for (TraceTreeWidgetItem* it: this->filtered_queue) {
+	  delete it;
+	  it = nullptr;
+	}
+	filtered_queue.clear();
 }
 
 bool QtWidgetsApplication1::filter_pass_item(QTreeWidgetItem* it)
@@ -1183,13 +1188,13 @@ bool QtWidgetsApplication1::filter_pass_item(QTreeWidgetItem* it)
 		int length = vlist.length();
 		QList<QVariant> slice = vlist.mid(1, length);
 		if (!slice.contains(it->text(col_index)))
-		{ 
+		{
 			for (const QVariant& value : slice) {
 				qDebug() << "COL ->" << col_index << "Text ->" << it->text(col_index) << "Not Matched ->" << value;
 			}
 			matched = false;
 		}
-			
+
 	}
 	return matched;
 }
@@ -1356,7 +1361,6 @@ void QtWidgetsApplication1::print_item_queue(QQueue<TraceTreeWidgetItem*> q)
 void QtWidgetsApplication1::clear_queue(QQueue<TraceTreeWidgetItem*>& queue)
 {
 	queue.clear();
-	//qDebug() << "PRINT ITEM -> " << "SIZE -> " << queue.size();
 }
 
 void QtWidgetsApplication1::update_latest_index(uint64_t index)
@@ -1472,8 +1476,6 @@ void QtWidgetsApplication1::show_fullpage_with_findings()
 {
 	QString search_str = ui.mysearch->toPlainText().trimmed();
 	QStringList items = search_str.split(QRegExp("[,;|]"), QString::SkipEmptyParts);
-	//QMap<QString, QString> map;
-	//QMap<int, QString> raw_map;
 	QMap<int, QStringList> list_map;
 	for (const QString& item : items) {
 		qDebug() << item.trimmed();
@@ -1485,12 +1487,10 @@ void QtWidgetsApplication1::show_fullpage_with_findings()
 			int nk = -1;
 			for (int i = 0; i < CurrentHeader.size(); ++i) {
 				if (CurrentHeader[i] == k) {
-					//raw_map.insert(i, v);
 					list_map[i] << v;
 					break;
 				}
 			}
-			//map.insert(k, v);
 		}
 	}
 
@@ -1507,13 +1507,6 @@ void QtWidgetsApplication1::show_fullpage_with_findings()
 	for (int i = 0; i < child_count; ++i) {
 		QTreeWidgetItem* item = invisible_root_item->child(i);
 		bool hidden = false;
-		//for (const int& key : raw_map.keys()) {
-		//	if (item->text(key) != raw_map.value(key)) {
-		//		hidden = true;
-		//		continue;
-		//	}
-		//}
-
 		for (const int& key : list_map.keys()) {
 			QStringList values = list_map.value(key);
 			if (!values.contains(item->text(key))) {
@@ -1543,7 +1536,7 @@ void QtWidgetsApplication1::show_fullpage_with_index(int index)
 		search_queue = &filtered_queue;
 
 	if (search_queue->isEmpty()) return;
-	
+
 	QQueue<QTreeWidgetItem*> baseQueue;
 	int pi = (page_index<0)? 0 : page_index;
 	int i = count_per_page*pi;
