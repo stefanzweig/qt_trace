@@ -66,7 +66,7 @@ private:
 	multiThread* calc_thread = nullptr;
 	QQueue<TraceTreeWidgetItem*> shown_queue;
 	QQueue<TraceTreeWidgetItem*> full_queue_stream;
-	QQueue<TraceTreeWidgetItem*> current_page_queue;
+	QQueue<TraceTreeWidgetItem*> filtered_queue;
 
 	uint64_t last_timestamp = 0;
 	uint64_t last_timestamp_canparser = 0;

@@ -88,7 +88,7 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
 
 	clear_queue(shown_queue);
 	clear_queue(full_queue_stream);
-	clear_queue(current_page_queue);
+	clear_queue(filtered_queue);
 
 	print_item_queue(shown_queue);
 	print_item_queue(full_queue_stream);
@@ -381,9 +381,9 @@ void QtWidgetsApplication1::clearance()
 {
 	calc_thread->full_count_canframes = 0;
 	calc_thread->full_count_canparser = 0;
+	calc_thread->full_count_linframes = 0;
+	calc_thread->full_count_linparser = 0;
 
-	// todo: how to delete the items in the queue safely?
-	// 2024��10��3�� 11:23
 	safe_clear_trace();
 }
 
@@ -391,10 +391,14 @@ void QtWidgetsApplication1::initialize_new_session()
 {
 	calc_thread->full_count_canframes = 0;
 	calc_thread->full_count_canparser = 0;
+	calc_thread->full_count_linframes = 0;
+	calc_thread->full_count_linparser = 0;
+
 	paused_instant_index = -1;
+
 	clear_queue(shown_queue);
 	clear_queue(full_queue_stream);
-	clear_queue(current_page_queue);
+	clear_queue(filtered_queue);
 }
 
 bool QtWidgetsApplication1::new_session()
@@ -1218,11 +1222,10 @@ void QtWidgetsApplication1::construct_page_data(TraceTreeWidgetItem* item)
 	*  to the *count_per_page*.
 	*  because the queue stores the pointers, so this queue do not
 	*  delete the item manually.
-	*  2024��10��2�� 22:06
 	*/
-	current_page_queue.enqueue(item->clone());
-	if (current_page_queue.size() > count_per_page)
-		current_page_queue.dequeue();
+	filtered_queue.enqueue(item->clone());
+	if (filtered_queue.size() > count_per_page)
+		filtered_queue.dequeue();
 }
 
 void QtWidgetsApplication1::show_fullpage()
@@ -1243,16 +1246,16 @@ void QtWidgetsApplication1::show_fullpage()
 
 QQueue<QTreeWidgetItem*> QtWidgetsApplication1::get_filtered_queue_front()
 {
-	QQueue<QTreeWidgetItem*> baseQueue;
+	QQueue<QTreeWidgetItem*> queue_;
 	int i = (paused_instant_index > count_per_page) ? paused_instant_index - count_per_page : 0;
 	qDebug() << "PAUSED_INSTANT_INDEX ->" << paused_instant_index;
 	for (; i < paused_instant_index; i++)
 	{
 		TraceTreeWidgetItem* traceItem = full_queue_stream.at(i)->clone();
-		if (filter_pass_item(traceItem)) baseQueue.enqueue(traceItem);
+		if (filter_pass_item(traceItem)) queue_.enqueue(traceItem);
 	}
-	qDebug() << "BASEQUEUE SIZE ->" << baseQueue.size();
-	return baseQueue;
+	qDebug() << "QUEUE_ SIZE ->" << queue_.size();
+	return queue_;
 }
 
 QQueue<QTreeWidgetItem*> QtWidgetsApplication1::get_filtered_queue_tail()
@@ -1494,7 +1497,15 @@ void QtWidgetsApplication1::show_fullpage_with_index(int index)
 	int page_index = index - 1;
 	ui.treetrace->clear();
 	safe_clear_trace();
-	if (full_queue_stream.isEmpty()) return;
+
+	QQueue<TraceTreeWidgetItem*> *search_queue;
+	if (filtered_queue.isEmpty())
+		search_queue = &full_queue_stream;
+	else
+		search_queue = &filtered_queue;
+
+	if (search_queue->isEmpty()) return;
+	
 	QQueue<QTreeWidgetItem*> baseQueue;
 	int pi = (page_index<0)?0:page_index;
 	int i = count_per_page*pi;
@@ -1502,7 +1513,7 @@ void QtWidgetsApplication1::show_fullpage_with_index(int index)
 	qDebug() << "INDEX FROM ->" << i << "TO ->" << stop;
 	for (; i < stop; i++)
 	{
-		TraceTreeWidgetItem* traceItem = full_queue_stream.at(i)->clone();
+		TraceTreeWidgetItem* traceItem = search_queue->at(i)->clone();
 		baseQueue.enqueue(traceItem);
 	}
 	qDebug() << "BASEQUEUE SIZE ->" << baseQueue.size();
