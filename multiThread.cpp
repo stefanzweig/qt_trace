@@ -302,6 +302,7 @@ void multiThread::formatRow_linframe_thread(linMessage frame)
     */
 
     // { "Time[ms]", "Chn", "ID", "Name", "Dir", "DLC",  "EventType", "DataLength", "BusType", "Data" };
+    full_count_linframes++;
     QStringList str_lm = {};
     QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(frame.timeStamp() / 1000000);
     str_lm.append(timestamp.toString("hh:mm:ss.zzz"));		// Timestamp
@@ -335,7 +336,7 @@ void multiThread::formatRow_linframe_thread(linMessage frame)
         emit(popToRoot(Item));
 }
 
-void multiThread::formatRow_linparser_thread(linMessage frame)
+void multiThread::formatRow_linparser_thread(linFrame frame)
 {
     last_timestamp_canparser = frame.timeStamp();
     full_count_linparser++;

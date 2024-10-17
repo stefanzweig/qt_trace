@@ -90,7 +90,7 @@ private:
     void bindDataToTraceTree();
     void formatRow_canparser_thread(canframe frame);
     void formatRow_canframe_thread(can_frame frame);
-    void formatRow_linparser_thread(linMessage frame);
+    void formatRow_linparser_thread(linFrame frame);
     void formatRow_linframe_thread(linMessage frame);
 
 signals:

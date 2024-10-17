@@ -192,21 +192,23 @@ void QtWidgetsApplication1::updateProgressRunStatus()
 			runStatus = "READY. ";
 	}
 
-	int canframe_count = calc_thread->full_count_canframes - padding;
-	if (canframe_count <= 0)
-		canframe_count = 0;
-	int canparser_count = calc_thread->full_count_canparser - padding;
-	if (canparser_count <= 0)
-		canparser_count = 0;
-	int linframe_count = calc_thread->full_count_linframes - padding;
-	if (linframe_count <= 0)
-		linframe_count = 0;
+	int can_messages_count = calc_thread->full_count_canframes - padding;
+	if (can_messages_count <= 0)
+		can_messages_count = 0;
+	int canpdu_count = calc_thread->full_count_canparser - padding;
+	if (canpdu_count <= 0)
+		canpdu_count = 0;
+	int lin_messages_count = calc_thread->full_count_linframes - padding;
+	if (lin_messages_count <= 0)
+		lin_messages_count = 0;
 
 	QString status_string = runStatus
-	    + "CAN Frames: " + QString::number(canframe_count)
-		+ ". CAN PDUs: " + QString::number(canparser_count)
-		+". LIN Frames: " + QString::number(linframe_count)
-		+ ". Total: " + QString::number(canframe_count + canparser_count + linframe_count);
+	    + "CAN Messages: " + QString::number(can_messages_count)
+		//+ ". CAN PDUs: " + QString::number(canparser_count)
+		+". LIN Messages: " + QString::number(lin_messages_count)
+		+ ". Total: " + QString::number(can_messages_count
+			//+ canparser_count 
+			+ lin_messages_count);
 	ui.statusBar->showMessage(status_string);
 }
 
@@ -452,7 +454,7 @@ void QtWidgetsApplication1::resumeTrace()
 
 	if (mysub_lin_parser == nullptr) {
 		mysub_lin_parser = new ZoneMasterLinParserSubscriber(dds_domainid);
-		qRegisterMetaType <linMessage>("linMessage");
+		qRegisterMetaType <linFrame>("linFrame");
 	}
 
 	calc_thread->restartThread();
@@ -1244,7 +1246,6 @@ void QtWidgetsApplication1::show_fullpage()
 
 	ui.treetrace->clear();
 	safe_clear_trace();
-
 	updateComoboPage();
 
 	QQueue<QTreeWidgetItem*> baseQueue;

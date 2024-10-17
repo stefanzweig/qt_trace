@@ -75,8 +75,7 @@ public:
         (void)status;
     }
 
-    //linMessages lin_messages_;
-    linMessage linframe_;
+    linFrame linframe_;
 
 
     std::atomic_int samples_;
@@ -85,5 +84,5 @@ public:
     QTreeView* tree_;
 
 signals:
-    void traceItemUpdate_internal_linparser(linMessage lin_frame);
+    void traceItemUpdate_internal_linparser(linFrame lin_frame);
 };
