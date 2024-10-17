@@ -204,11 +204,8 @@ void QtWidgetsApplication1::updateProgressRunStatus()
 
 	QString status_string = runStatus
 	    + "CAN Messages: " + QString::number(can_messages_count)
-		//+ ". CAN PDUs: " + QString::number(canparser_count)
 		+". LIN Messages: " + QString::number(lin_messages_count)
-		+ ". Total: " + QString::number(can_messages_count
-			//+ canparser_count 
-			+ lin_messages_count);
+		+ ". Total: " + QString::number(can_messages_count + lin_messages_count);
 	ui.statusBar->showMessage(status_string);
 }
 
@@ -697,24 +694,24 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 			TraceTreeWidgetItem* item_backup = (TraceTreeWidgetItem*)item->clone();
 			full_queue_stream.enqueue(item_backup);
 			//m_mutex.unlock();
-			QString source = ((TraceTreeWidgetItem*)item_backup)->getSource();
-			QString uuid = ((TraceTreeWidgetItem*)item_backup)->getUUID();
-			LOGGER_INFO(log_, "ENQUEUING -> {}, UUID -> {}", item->text(0).toStdString(), uuid.toStdString());
+			//QString source = ((TraceTreeWidgetItem*)item_backup)->getSource();
+			//QString uuid = ((TraceTreeWidgetItem*)item_backup)->getUUID();
+			//LOGGER_INFO(log_, "ENQUEUING -> {}, UUID -> {}", item->text(0).toStdString(), uuid.toStdString());
 		}
 		else {
 			shown_queue.enqueue(item);
 			// limit the shown_queue size
-			if (shown_queue.size() > count_per_page) {
-				TraceTreeWidgetItem* it_remove = shown_queue.dequeue();
-				delete it_remove;
-			}
+			//if (shown_queue.size() > count_per_page) {
+			//	TraceTreeWidgetItem* it_remove = shown_queue.dequeue();
+			//	delete it_remove;
+			//}
 
 			TraceTreeWidgetItem* item_backup = (TraceTreeWidgetItem*)item->clone();
 			full_queue_stream.enqueue(item_backup);
 			//m_mutex.unlock();
-			QString source = ((TraceTreeWidgetItem*)item_backup)->getSource();
-			QString uuid = ((TraceTreeWidgetItem*)item_backup)->getUUID();
-			LOGGER_INFO(log_, "ENQUEUING -> {}, UUID -> {}", item->text(0).toStdString(), uuid.toStdString());
+			//QString source = ((TraceTreeWidgetItem*)item_backup)->getSource();
+			//QString uuid = ((TraceTreeWidgetItem*)item_backup)->getUUID();
+			//LOGGER_INFO(log_, "ENQUEUING -> {}, UUID -> {}", item->text(0).toStdString(), uuid.toStdString());
 		}
 		emit record_latest_index(full_queue_stream.size());
 	}
@@ -737,7 +734,6 @@ void QtWidgetsApplication1::ChangeHeader(const QString& text)
 		ui.treetrace->setColumnCount(linHeader.count());
 		ui.treetrace->setHeaderLabels(linHeader);
 		CurrentHeader = linHeader;
-
 	}
 	if (text == "ETH") {
 		ui.treetrace->setColumnCount(ethHeader.count());
@@ -759,7 +755,6 @@ void QtWidgetsApplication1::ButtonSearchClicked()
 	show_fullpage_with_findings();
 	updateToolbar();
 	updateContinuousProgress();
-
 }
 
 void QtWidgetsApplication1::hide_filtered_items(int column_idx, QList<QList<QString>> items)
@@ -862,20 +857,13 @@ void QtWidgetsApplication1::update_tracewindow()
 	int tree_count = ui.treetrace->topLevelItemCount();
 	LOGGER_INFO(log_, "TREE COUNT -> {}", tree_count);
 
-	/*
-	һ����������ܹ�����60�У���ôwindow_capacity����60��
-	 1.���Ŀǰ������Ϊ�գ������һ�С�
-	 2.���Ŀǰ�����������ݵ��ǲ��㵱ҳ����������Ϊpage_capacity)����������page_capacity�С�
-	 3.�����������page_capacity�У����滻�������ݡ�
-	 */
-
 	if (tree_count == 0) {
 		LOGGER_INFO(log_, "==== EMPTY TREE ====");
-		fill_empty_tree(window_capacity); // ���һ��
+		fill_empty_tree(window_capacity);
 	}
 	else if (tree_count > 0 && tree_count < page_capacity) {
 		LOGGER_INFO(log_, "==== HALF TREE ====");
-		fill_partial_tree(page_capacity); // ׷��
+		fill_partial_tree(page_capacity);
 	}
 	else {
 		LOGGER_INFO(log_, "==== REDRAW TREE ====");
@@ -1247,18 +1235,42 @@ void QtWidgetsApplication1::show_fullpage()
 	ui.treetrace->clear();
 	safe_clear_trace();
 	updateComoboPage();
+	//QQueue<QTreeWidgetItem*> baseQueue = get_filtered_queue_front();
+	QQueue<QTreeWidgetItem*> baseQueue = get_filtered_queue_tail();
+	ui.treetrace->addTopLevelItems(baseQueue);
+	timer_isRunning = false;
+}
 
+QQueue<QTreeWidgetItem*> QtWidgetsApplication1::get_filtered_queue_front()
+{
 	QQueue<QTreeWidgetItem*> baseQueue;
 	int i = (paused_instant_index > count_per_page) ? paused_instant_index - count_per_page : 0;
 	qDebug() << "PAUSED_INSTANT_INDEX ->" << paused_instant_index;
-	for (;i < paused_instant_index;i++)
+	for (; i < paused_instant_index; i++)
 	{
 		TraceTreeWidgetItem* traceItem = full_queue_stream.at(i)->clone();
 		if (filter_pass_item(traceItem)) baseQueue.enqueue(traceItem);
 	}
 	qDebug() << "BASEQUEUE SIZE ->" << baseQueue.size();
-	ui.treetrace->addTopLevelItems(baseQueue);
-	timer_isRunning = false;
+	return baseQueue;
+}
+
+QQueue<QTreeWidgetItem*> QtWidgetsApplication1::get_filtered_queue_tail()
+{
+	QQueue<QTreeWidgetItem*> queue_;
+	int count = 0;
+	for (int i=1;i<paused_instant_index;i++)
+	{
+		int idx = paused_instant_index - i;
+		TraceTreeWidgetItem* traceItem = full_queue_stream.at(idx)->clone();
+		if (filter_pass_item(traceItem)) {
+			queue_.enqueue(traceItem);
+			count++;
+		}
+		if (count >= count_per_page) { break; }
+	}
+	qDebug() << "From Tail Count ->" << queue_.size();
+	return queue_;
 }
 
 void QtWidgetsApplication1::restore_full_queue()

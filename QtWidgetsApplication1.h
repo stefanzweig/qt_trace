@@ -185,6 +185,9 @@ private slots:
 	void highlight_next_item(QTreeWidgetItem* item);
 	void extract_item(QTreeWidgetItem* item);
 	void collapse_item(QTreeWidgetItem* item);
+	QQueue<QTreeWidgetItem*> get_filtered_queue_front();
+	QQueue<QTreeWidgetItem*> get_filtered_queue_tail();
+
 
 signals:
 	void record_latest_index(uint64_t index);
