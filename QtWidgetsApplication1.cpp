@@ -202,7 +202,7 @@ void QtWidgetsApplication1::updateProgressRunStatus()
 	if (linframe_count <= 0)
 		linframe_count = 0;
 
-	QString status_string = runStatus 
+	QString status_string = runStatus
 	    + "CAN Frames: " + QString::number(canframe_count)
 		+ ". CAN PDUs: " + QString::number(canparser_count)
 		+". LIN Frames: " + QString::number(linframe_count)
@@ -663,7 +663,7 @@ void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
 {
 	int column_index = filter->columnIndex;
 	QString colName = CurrentHeader[column_index];
-	
+
 	if (items.size() == 0) {
 		headerButtonList[column_index]->setIcon(QIcon(":/QtWidgetsApplication1/res/funnel-icon.ico"));
 	}
@@ -1152,7 +1152,13 @@ bool QtWidgetsApplication1::filter_pass_item(QTreeWidgetItem* it)
 		int length = vlist.length();
 		QList<QVariant> slice = vlist.mid(1, length);
 		if (!slice.contains(it->text(col_index)))
+		{ 
+			for (const QVariant& value : slice) {
+				qDebug() << "COL ->" << col_index << "Text ->" << it->text(col_index) << "Not Matched ->" << value;
+			}
 			matched = false;
+		}
+			
 	}
 	return matched;
 }
@@ -1240,14 +1246,14 @@ void QtWidgetsApplication1::show_fullpage()
 	safe_clear_trace();
 
 	updateComoboPage();
-	
+
 	QQueue<QTreeWidgetItem*> baseQueue;
 	int i = (paused_instant_index > count_per_page) ? paused_instant_index - count_per_page : 0;
 	qDebug() << "PAUSED_INSTANT_INDEX ->" << paused_instant_index;
 	for (;i < paused_instant_index;i++)
 	{
 		TraceTreeWidgetItem* traceItem = full_queue_stream.at(i)->clone();
-		baseQueue.enqueue(traceItem);
+		if (filter_pass_item(traceItem)) baseQueue.enqueue(traceItem);
 	}
 	qDebug() << "BASEQUEUE SIZE ->" << baseQueue.size();
 	ui.treetrace->addTopLevelItems(baseQueue);
@@ -1424,8 +1430,8 @@ void QtWidgetsApplication1::show_fullpage_with_findings()
 			QString v = item_map[1].trimmed();
 			int nk = -1;
 			for (int i = 0; i < CurrentHeader.size(); ++i) {
-				if (CurrentHeader[i] == k) { 
-					//raw_map.insert(i, v); 
+				if (CurrentHeader[i] == k) {
+					//raw_map.insert(i, v);
 					list_map[i] << v;
 					break;
 				}

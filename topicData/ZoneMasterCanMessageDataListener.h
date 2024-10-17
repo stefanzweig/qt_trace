@@ -82,7 +82,11 @@ public:
                     QByteArray output;
                     std::copy(msg.data().begin(), msg.data().end(), std::back_inserter(output));
                     cf.Data_Str = output.toHex(' ');
-                    cf.EventType = QString::number(msg.isFd());
+                    switch (msg.isFd())
+                    {
+                    case 0: cf.EventType = "CAN"; break;
+                    case 1: cf.EventType = "CANFD"; break;
+                    }
                     cf.DataLength = msg.dataLen();
                     cf.BusType = "0";
                     emit traceItemUpdate_internal_cf(cf);

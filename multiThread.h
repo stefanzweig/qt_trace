@@ -92,7 +92,6 @@ private:
     void formatRow_canframe_thread(can_frame frame);
     void formatRow_linparser_thread(linMessage frame);
     void formatRow_linframe_thread(linMessage frame);
-    void formatRow_linframe_thread_i(int i);
 
 signals:
     void popToRoot(TraceTreeWidgetItem* item);

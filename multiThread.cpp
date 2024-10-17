@@ -18,24 +18,24 @@ void multiThread::stopThread() {
     is_paused = false;
 
     if (mysub_can_frames != nullptr) {
-        delete mysub_can_frames;
-        mysub_can_frames = nullptr;
-        bconnected_cf = false;
+	delete mysub_can_frames;
+	mysub_can_frames = nullptr;
+	bconnected_cf = false;
     }
     if (mysub_can_parser != nullptr) {
-        delete mysub_can_parser;
-        mysub_can_parser = nullptr;
-        bconnected_cp = false;
+	delete mysub_can_parser;
+	mysub_can_parser = nullptr;
+	bconnected_cp = false;
     }
     if (mysub_lin_frames != nullptr) {
-        delete mysub_lin_frames;
-        mysub_lin_frames = nullptr;
-        bconnected_lf = false;
+	delete mysub_lin_frames;
+	mysub_lin_frames = nullptr;
+	bconnected_lf = false;
     }
     if (mysub_lin_parser != nullptr) {
-        delete mysub_lin_parser;
-        mysub_lin_parser = nullptr;
-        bconnected_lp = false;
+	delete mysub_lin_parser;
+	mysub_lin_parser = nullptr;
+	bconnected_lp = false;
     }
 }
 
@@ -47,7 +47,7 @@ void multiThread::stopFlag()
 
 void multiThread::pauseThread() {
     if (!is_stop) {
-        is_paused = true;
+	is_paused = true;
     }
 }
 
@@ -59,45 +59,45 @@ void multiThread::restartThread() {
 void multiThread::run() {
     // key function
     if (monitor_modules.contains("can")) {
-        if (mysub_can_frames != nullptr) {
-            if (mysub_can_frames->init()) {
-            }
-        }
+	if (mysub_can_frames != nullptr) {
+	    if (mysub_can_frames->init()) {
+	    }
+	}
     }
 
     if (monitor_modules.contains("canpdu")) {
-        if (mysub_can_parser != nullptr) {
-            if (mysub_can_parser->init()) {
-            }
-        }
+	if (mysub_can_parser != nullptr) {
+	    if (mysub_can_parser->init()) {
+	    }
+	}
     }
     if (monitor_modules.contains("lin")) {
-        if (mysub_lin_frames != nullptr) {
-            if (mysub_lin_frames->init()) {
-            }
-        }
+	if (mysub_lin_frames != nullptr) {
+	    if (mysub_lin_frames->init()) {
+	    }
+	}
     }
     if (monitor_modules.contains("linpdu")) {
-        if (mysub_lin_parser != nullptr) {
-            if (mysub_lin_parser->init()) {
-            }
-        }
+	if (mysub_lin_parser != nullptr) {
+	    if (mysub_lin_parser->init()) {
+	    }
+	}
     }
     while (true) {
-        if (!is_stop) {
-            msleep(100); // every 1 second
-        }
-        else {
-            break;
-        }
+	if (!is_stop) {
+	    msleep(100); // every 1 second
+	}
+	else {
+	    break;
+	}
     }
 }
 
 std::time_t multiThread::get_timestamp()
 {
     std::chrono::time_point<std::chrono::system_clock,
-        std::chrono::microseconds> tp =
-        std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
+	std::chrono::microseconds> tp =
+	std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
     std::time_t timestamp = tp.time_since_epoch().count() * 1000;
     return timestamp;
 }
@@ -106,19 +106,19 @@ void multiThread::bindDataToTraceTree()
 {
 
     try {
-        m_from_id = to_id;
+	m_from_id = to_id;
     }
     catch (...) {
-        //qDebug() << "mongodb problem from " << from_t << " to " << to_t;
+	//qDebug() << "mongodb problem from " << from_t << " to " << to_t;
     }
 
     try {
-            m_from_id = to_id;
-            m_lock.unlock();
-            msleep(20);
+	    m_from_id = to_id;
+	    m_lock.unlock();
+	    msleep(20);
     }
     catch (...) {
-        //qDebug() << "handling result problem.";
+	//qDebug() << "handling result problem.";
     }
 }
 
@@ -133,10 +133,10 @@ void multiThread::setCanSubscriber(ZoneMasterCanMessageDataSubscriber* subscribe
         mysub_can_frames = subscriber;
         samples_ = samples;
         subscriber->setOuterThread(this, treeview);
-        QObject::connect(&mysub_can_frames->listener_, &SubListener::traceItemUpdate_internal_cf, this, &multiThread::formatRow_canframe_thread); 
+        QObject::connect(&mysub_can_frames->listener_, &SubListener::traceItemUpdate_internal_cf, this, &multiThread::formatRow_canframe_thread);
         bconnected_cf = true;
     }
-    
+
 }
 
 void multiThread::setCanParserSubscriber(ZoneMasterCanParserSubscriber* subscriber, int samples, QTreeView* treeview)
@@ -157,7 +157,6 @@ void multiThread::setLinSubscriber(ZoneMasterLinMessageDataSubscriber* subscribe
         samples_ = samples;
         subscriber->setOuterThread(this, treeview);
         QObject::connect(&mysub_lin_frames->listener_, &LinSubListener::ItemUpdate_internal_lin_frame, this, &multiThread::formatRow_linframe_thread);
-        //QObject::connect(&mysub_lin_frames->listener_, &LinSubListener::ItemUpdate_internal_lin_integer, this, &multiThread::formatRow_linframe_thread_i);
         bconnected_lf = true;
     }
 }
@@ -192,62 +191,62 @@ void multiThread::formatRow_canparser_thread(canframe frame)
     QString uuid_str = QString::fromStdString(s);
     Item->setUUID(uuid_str);
     if (Item == nullptr)
-        return;
+	return;
 
     std::vector<canpdu> pdus = frame.pdus();
     std::vector<canpdu> containspdus = frame.containPdus();
-        
+
     for (int k = 0; k < pdus.size(); k++) {
-        canpdu current_pdu = pdus[k];
-        QString pdu_name = QString::fromStdString(current_pdu.name());
-        QString pdu_size = QString::number(current_pdu.zone_signals().size());
-        QStringList str_pdu = {};
-        str_pdu.append(pdu_name);
-        str_pdu.append(pdu_size);
-        TraceTreeWidgetItem* item_pdu = new TraceTreeWidgetItem(str_pdu);
-        item_pdu->setSource("can_pdu");
-        
-        for (int m = 0; m < current_pdu.zone_signals().size(); m++) {
-            QStringList str_signal = {};
-            cansignal current_signal = current_pdu.zone_signals()[m];
-            str_signal.append(QString::fromStdString(current_signal.name()));
-            str_signal.append(QString::number(current_signal.raw_value()));
-            str_signal.append(QString::fromStdString(current_signal.phy_value()));
-            //QTreeWidgetItem* item_signal = new QTreeWidgetItem(str_signal);
-            TraceTreeWidgetItem* item_signal = new TraceTreeWidgetItem(str_pdu);
-            item_signal->setSource("can_pdu_signal");
-            item_pdu->addChild(item_signal);
-        }
-        Item->addChild(item_pdu);
+	canpdu current_pdu = pdus[k];
+	QString pdu_name = QString::fromStdString(current_pdu.name());
+	QString pdu_size = QString::number(current_pdu.zone_signals().size());
+	QStringList str_pdu = {};
+	str_pdu.append(pdu_name);
+	str_pdu.append(pdu_size);
+	TraceTreeWidgetItem* item_pdu = new TraceTreeWidgetItem(str_pdu);
+	item_pdu->setSource("can_pdu");
+
+	for (int m = 0; m < current_pdu.zone_signals().size(); m++) {
+	    QStringList str_signal = {};
+	    cansignal current_signal = current_pdu.zone_signals()[m];
+	    str_signal.append(QString::fromStdString(current_signal.name()));
+	    str_signal.append(QString::number(current_signal.raw_value()));
+	    str_signal.append(QString::fromStdString(current_signal.phy_value()));
+	    //QTreeWidgetItem* item_signal = new QTreeWidgetItem(str_signal);
+	    TraceTreeWidgetItem* item_signal = new TraceTreeWidgetItem(str_pdu);
+	    item_signal->setSource("can_pdu_signal");
+	    item_pdu->addChild(item_signal);
+	}
+	Item->addChild(item_pdu);
     }
 
     if (containspdus.size() == 0)
     {
-        emit popToRoot(Item);
+	emit popToRoot(Item);
     }
     else {
-        for (int k = 0; k < containspdus.size(); k++) {
-            canpdu current_pdu = containspdus[k];
-            QString pdu_name = QString::fromStdString(current_pdu.name());
-            QString pdu_size = QString::number(current_pdu.zone_signals().size());
-            QStringList str_pdu = {};
-            str_pdu.append(pdu_name);
-            str_pdu.append(pdu_size);
-            TraceTreeWidgetItem* item_pdu = new TraceTreeWidgetItem(str_pdu);
-            item_pdu->setSource("can_container_pdu");
-            for (int m = 0; m < current_pdu.zone_signals().size(); m++) {
-                QStringList str_signal = {};
-                cansignal current_signal = current_pdu.zone_signals()[m];
-                str_signal.append(QString::fromStdString(current_signal.name()));
-                str_signal.append(QString::number(current_signal.raw_value()));
-                str_signal.append(QString::fromStdString(current_signal.phy_value()));
-                TraceTreeWidgetItem* item_signal = new TraceTreeWidgetItem(str_pdu);
-                item_signal->setSource("can_container_pdu_signal");
-                item_pdu->addChild(item_signal);
-            }
-            Item->addChild(item_pdu);
-        }
-        emit popToRoot(Item);
+	for (int k = 0; k < containspdus.size(); k++) {
+	    canpdu current_pdu = containspdus[k];
+	    QString pdu_name = QString::fromStdString(current_pdu.name());
+	    QString pdu_size = QString::number(current_pdu.zone_signals().size());
+	    QStringList str_pdu = {};
+	    str_pdu.append(pdu_name);
+	    str_pdu.append(pdu_size);
+	    TraceTreeWidgetItem* item_pdu = new TraceTreeWidgetItem(str_pdu);
+	    item_pdu->setSource("can_container_pdu");
+	    for (int m = 0; m < current_pdu.zone_signals().size(); m++) {
+		QStringList str_signal = {};
+		cansignal current_signal = current_pdu.zone_signals()[m];
+		str_signal.append(QString::fromStdString(current_signal.name()));
+		str_signal.append(QString::number(current_signal.raw_value()));
+		str_signal.append(QString::fromStdString(current_signal.phy_value()));
+		TraceTreeWidgetItem* item_signal = new TraceTreeWidgetItem(str_pdu);
+		item_signal->setSource("can_container_pdu_signal");
+		item_pdu->addChild(item_signal);
+	    }
+	    Item->addChild(item_pdu);
+	}
+	emit popToRoot(Item);
     }
 }
 
@@ -263,33 +262,33 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
     can_list.append(timestamp.toString("hh:mm:ss.zzz"));
     can_list.append("CAN " +QString::number(frame.Chn));
     can_list.append(QString::number(frame.ID, 16).toUpper());
-    can_list.append("CAN Frame");
+    can_list.append("");
 
     QString sDir = "Rx";
     if (frame.Dir == "1") sDir = "Tx";
     can_list.append(sDir);
-    
+
     can_list.append(QString::number(frame.DLC));
     can_list.append(frame.EventType);
     can_list.append(QString::number(frame.DataLength));
-    can_list.append(frame.BusType);
-    
+    can_list.append("CAN Message");
+
     QString myData = frame.Data_Str;
     can_list.append(myData);
-    
+
     TraceTreeWidgetItem* Item = new TraceTreeWidgetItem(can_list);
     if (Item != nullptr) {
-        UUIDv4::UUID uuid = uuidGenerator.getUUID();
-        std::string s = uuid.str();
-        QString uuid_str = QString::fromStdString(s);
-        Item->setUUID(uuid_str);
-        emit(popToRoot(Item));
+	UUIDv4::UUID uuid = uuidGenerator.getUUID();
+	std::string s = uuid.str();
+	QString uuid_str = QString::fromStdString(s);
+	Item->setUUID(uuid_str);
+	emit(popToRoot(Item));
     }
 }
 
 void multiThread::formatRow_linframe_thread(linMessage frame)
 {
-    /*    
+    /*
     eProsima_user_DllExport uint32_t channel() const;
     eProsima_user_DllExport uint32_t id() const;
     eProsima_user_DllExport uint8_t dlc() const;
@@ -301,24 +300,26 @@ void multiThread::formatRow_linframe_thread(linMessage frame)
     eProsima_user_DllExport uint8_t NMstate() const;
     eProsima_user_DllExport uint8_t isMasterFrame() const;
     */
+
+    // { "Time[ms]", "Chn", "ID", "Name", "Dir", "DLC",  "EventType", "DataLength", "BusType", "Data" };
     QStringList str_lm = {};
     QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(frame.timeStamp() / 1000000);
-    str_lm.append(timestamp.toString("hh:mm:ss.zzz"));
-    str_lm.append("LIN " + QString::number(frame.channel()));
-    str_lm.append(QString::number(frame.id(), 16).toUpper());
-    str_lm.append("LIN Frame");
+    str_lm.append(timestamp.toString("hh:mm:ss.zzz"));		// Timestamp
+    str_lm.append("LIN " + QString::number(frame.channel()));	// Chn
+    str_lm.append(QString::number(frame.id(), 16).toUpper());	// ID
+    str_lm.append("");					// Name
 
     QString sDir = "Rx";
     if (frame.rxtx() == 1) sDir = "Tx";
-    str_lm.append(sDir);
-    str_lm.append(QString::number(frame.dlc()));
-    str_lm.append(QString::number(frame.data().size()));
-    str_lm.append(QString::number(frame.flags()));
-    str_lm.append("");
+    str_lm.append(sDir);				// Dir
+    str_lm.append(QString::number(frame.dlc()));	// DLC
+    str_lm.append("LIN Frame");	// EventType
+    str_lm.append(QString::number(frame.dlc())); // Datalength
+    str_lm.append("LIN"); // bustype
     QByteArray output;
     std::copy(frame.data().begin(), frame.data().end(), std::back_inserter(output));
     QString myData = output.toHex(' ');
-    str_lm.append(myData);
+    str_lm.append(myData); //data
 
     UUIDv4::UUID uuid = uuidGenerator.getUUID();
     std::string s = uuid.str();
@@ -330,13 +331,8 @@ void multiThread::formatRow_linframe_thread(linMessage frame)
 
     if (Item == nullptr)
         return;
-    else 
+    else
         emit(popToRoot(Item));
-}
-
-void multiThread::formatRow_linframe_thread_i(int i)
-{
-    qDebug() << "LIN" << i; 
 }
 
 void multiThread::formatRow_linparser_thread(linMessage frame)
