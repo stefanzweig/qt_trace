@@ -162,6 +162,9 @@ void QtWidgetsApplication1::get_default_configurations()
 	kv = settings.value("app/debuglog", 1).toInt();
 	debuglog = kv;
 
+	kv = settings.value("app/maximum_total", 400000).toInt();
+	maximum_total = kv;
+
 	QList<QVariant> modules = settings.value("app/modules").toList();
 	qDebug() << "Modules -> " << modules;
 	for (QVariant m : modules) {
@@ -223,7 +226,13 @@ void QtWidgetsApplication1::updateContinuousProgress()
 	}
 	else {
 		int ncount = ui.treetrace->topLevelItemCount();
-		page_index = paused_instant_index / count_per_page + 1;
+		if (filtered_size() > 0) {
+			page_index = filtered_size() / count_per_page + 1;
+		}
+		else {
+			page_index = paused_instant_index / count_per_page + 1;
+		}
+		
 		QString strLeft_idle = QString("Count: %1/%2")
 			.arg(ncount)
 			.arg(count_per_page);
@@ -253,6 +262,21 @@ void QtWidgetsApplication1::updateContinuousProgress()
 		ui.pb_Goto->setEnabled(false);
 		break;
 	}
+
+	bool nonfiltered = new_filters.isEmpty();
+	QFont font("SimSun", 8);
+	font.setBold(true);
+	ui.label_Filtered->setFont(font);
+	if (nonfiltered)
+	{
+		ui.label_Filtered->setStyleSheet("color: black;");
+		ui.label_Filtered->setText("Normal");
+	}
+	else { 
+		ui.label_Filtered->setStyleSheet("color: red;");
+		ui.label_Filtered->setText("Filtered");
+	}
+		
 }
 
 void QtWidgetsApplication1::updateProgressTimer()
@@ -686,6 +710,25 @@ void QtWidgetsApplication1::applyFilter(QList<QList<QString>> items, int count)
 		return;
 	}
 	new_filters.insert(colName, single_config);
+
+	if (!this->filtered_queue.isEmpty()) {
+		for (TraceTreeWidgetItem* it_remove : filtered_queue) {
+			delete it_remove;
+		}
+		filtered_queue.clear();
+	}
+	construct_filtered_queue(paused_instant_index);
+}
+
+void QtWidgetsApplication1::construct_filtered_queue(int full_count)
+{
+	assert(filtered_queue.size() == 0);
+	for (int i = 0; i < full_count; i++) {
+		TraceTreeWidgetItem* it = full_queue_stream.at(i)->clone();
+		if (filter_pass_item(it)) {
+			filtered_queue.enqueue(it);
+		}
+	}
 }
 
 void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
@@ -694,28 +737,22 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 	timer_isRunning = true;
 	if (item != NULL) {
 		//m_mutex.lock();
+		TraceTreeWidgetItem* item_backup = (TraceTreeWidgetItem*)item->clone();
 		if (calc_thread->isPAUSED()) {
-			TraceTreeWidgetItem* item_backup = (TraceTreeWidgetItem*)item->clone();
 			full_queue_stream.enqueue(item_backup);
 			//m_mutex.unlock();
-			//QString source = ((TraceTreeWidgetItem*)item_backup)->getSource();
-			//QString uuid = ((TraceTreeWidgetItem*)item_backup)->getUUID();
-			//LOGGER_INFO(log_, "ENQUEUING -> {}, UUID -> {}", item->text(0).toStdString(), uuid.toStdString());
 		}
 		else {
 			shown_queue.enqueue(item);
-			// limit the shown_queue size
 			//if (shown_queue.size() > count_per_page) {
 			//	TraceTreeWidgetItem* it_remove = shown_queue.dequeue();
 			//	delete it_remove;
 			//}
-
-			TraceTreeWidgetItem* item_backup = (TraceTreeWidgetItem*)item->clone();
-			full_queue_stream.enqueue(item_backup);
 			//m_mutex.unlock();
-			//QString source = ((TraceTreeWidgetItem*)item_backup)->getSource();
-			//QString uuid = ((TraceTreeWidgetItem*)item_backup)->getUUID();
-			//LOGGER_INFO(log_, "ENQUEUING -> {}, UUID -> {}", item->text(0).toStdString(), uuid.toStdString());
+			full_queue_stream.enqueue(item_backup);
+		}
+		if (!this->filtered_queue.isEmpty() && filter_pass_item(item_backup)) {
+			filtered_queue.enqueue(item_backup->clone());
 		}
 		emit record_latest_index(full_queue_stream.size());
 	}
@@ -1223,9 +1260,9 @@ void QtWidgetsApplication1::construct_page_data(TraceTreeWidgetItem* item)
 	*  because the queue stores the pointers, so this queue do not
 	*  delete the item manually.
 	*/
-	filtered_queue.enqueue(item->clone());
-	if (filtered_queue.size() > count_per_page)
-		filtered_queue.dequeue();
+	//filtered_queue.enqueue(item->clone());
+	//if (filtered_queue.size() > count_per_page)
+		//filtered_queue.dequeue();
 }
 
 void QtWidgetsApplication1::show_fullpage()
@@ -1328,10 +1365,9 @@ void QtWidgetsApplication1::update_latest_index(uint64_t index)
 	qDebug() << "LATEST INDEX ->" << index;
 	current_page_index = paused_instant_index / count_per_page;
 	current_item_index = paused_instant_index % count_per_page;
-	max_page_count = current_page_index + 1;
-	//qDebug() << "CURRENT PAGE INDEX:" << current_item_index;
-	//qDebug() << "CURRENT ITEM INDEX:" << current_page_index;
-	qDebug() << "MAX PAGE COUNT -> " << max_page_count;
+	if (paused_instant_index >= maximum_total) {
+		qDebug() << "Exceeding ->" << paused_instant_index << " MAXIMUM ->" << maximum_total;
+	}
 }
 
 bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
@@ -1370,8 +1406,10 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
 void QtWidgetsApplication1::updateComoboPage()
 {
 	ui.comboBox_Page->clear();
-	int ncount = paused_instant_index / count_per_page + 1;
-	for (int i = 1; i <= ncount; i++) {
+	max_page_count = paused_instant_index / count_per_page + 1;
+	int fs = filtered_size();
+	if (fs) max_page_count = fs / count_per_page + 1;
+	for (int i = 1; i <= max_page_count; i++) {
 		ui.comboBox_Page->addItem(QString::number(i));
 	}
 }
@@ -1507,9 +1545,12 @@ void QtWidgetsApplication1::show_fullpage_with_index(int index)
 	if (search_queue->isEmpty()) return;
 	
 	QQueue<QTreeWidgetItem*> baseQueue;
-	int pi = (page_index<0)?0:page_index;
+	int pi = (page_index<0)? 0 : page_index;
 	int i = count_per_page*pi;
-	int stop = (count_per_page * index > paused_instant_index)? paused_instant_index : i+count_per_page;
+	int fs = filtered_size();
+	int max_index = std::min(paused_instant_index, fs);
+	int stop = (count_per_page * index > max_index)? max_index : i+count_per_page;
+	if (fs < count_per_page) stop = fs;
 	qDebug() << "INDEX FROM ->" << i << "TO ->" << stop;
 	for (; i < stop; i++)
 	{

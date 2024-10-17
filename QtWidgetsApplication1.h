@@ -67,11 +67,15 @@ private:
 	QQueue<TraceTreeWidgetItem*> shown_queue;
 	QQueue<TraceTreeWidgetItem*> full_queue_stream;
 	QQueue<TraceTreeWidgetItem*> filtered_queue;
-
+	int filtered_size() { return filtered_queue.size(); }
 	uint64_t last_timestamp = 0;
 	uint64_t last_timestamp_canparser = 0;
+
 	uint64_t full_count_canframes = 0;
 	uint64_t full_count_canparser = 0;
+	uint64_t full_count_linframes = 0;
+	uint64_t full_count_linparser = 0;
+
 	uint64_t count_per_page = 4000; // the full length of data in the window when it is paused.
 	int page_capacity = 300; // the trace windows maximal rows of data
 	bool isHex = true; // repr in hex
@@ -121,6 +125,7 @@ private:
 	StateManager state_manager;
 	QMutex m_mutex;
 	int debuglog = 1; // not in use so far
+	int maximum_total = 400000;
 
 private slots:
 	void startTrace();
@@ -187,7 +192,7 @@ private slots:
 	void collapse_item(QTreeWidgetItem* item);
 	QQueue<QTreeWidgetItem*> get_filtered_queue_front();
 	QQueue<QTreeWidgetItem*> get_filtered_queue_tail();
-
+	void construct_filtered_queue(int full_count);
 
 signals:
 	void record_latest_index(uint64_t index);
