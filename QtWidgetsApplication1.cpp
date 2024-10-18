@@ -174,7 +174,7 @@ void QtWidgetsApplication1::get_default_configurations()
 
 void QtWidgetsApplication1::updateProgressRunStatus()
 {
-	QString runStatus = "";
+	QString runStatus = "READY. ";
 	State state = state_manager.current_state();
 	switch (state) {
 		case State::INIT:
@@ -558,8 +558,9 @@ void QtWidgetsApplication1::pauseTrace()
 	LOGGER_INFO(log_, "==== PAUSE BUTTON CLICKED ====");
 	if (last_status == "STOPPED" || last_status == "READY") return;
 
-	int backup_count = full_queue_stream.size();
-	qDebug() << "FULL_QUEUE_BACKUP SIZE ->" << backup_count;
+	updateProgressRunStatus();
+	//int backup_count = full_queue_stream.size();
+	//qDebug() << "FULL_QUEUE_BACKUP SIZE ->" << backup_count;
 	if (calc_thread->isPAUSED()) {
 		ui.treetrace->clear();
 		restore_full_queue();
@@ -589,12 +590,12 @@ void QtWidgetsApplication1::setupTreeTrace()
 	t->header()->setHighlightSections(true);
 	t->header()->setStretchLastSection(true);
 	t->header()->setSortIndicator(0, Qt::AscendingOrder);
-	t->setWindowTitle(QObject::tr("CAN Frames"));
+	t->setWindowTitle(QObject::tr("CAN/LIN"));
 	t->setAttribute(Qt::WA_OpaquePaintEvent);
 	t->setAttribute(Qt::WA_NoSystemBackground);
 	t->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 	t->setHeaderLabels(initialHeader);
-	t->setSortingEnabled(true);
+	t->setSortingEnabled(false);
 	t->setColumnWidth(0, 150);
 	t->sortByColumn(0, Qt::SortOrder::AscendingOrder);
 	t->invisibleRootItem()->setHidden(true);
@@ -751,7 +752,7 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 			//m_mutex.unlock();
 			full_queue_stream.enqueue(item_backup);
 		}
-		if (!this->filtered_queue.isEmpty() && filter_pass_item(item_backup)) {
+		if (filter_pass_item(item_backup)) {
 			filtered_queue.enqueue(item_backup->clone());
 		}
 		emit record_latest_index(full_queue_stream.size());
@@ -834,6 +835,7 @@ void QtWidgetsApplication1::dustbin()
 
 void QtWidgetsApplication1::updateToolbar()
 {
+	ui.actionmode->setVisible(false);
 	if (display_mode) {
 		ui.actionmode->setIcon(QIcon(":/QtWidgetsApplication1/res/process.svg"));
 		ui.actionmode->setToolTip("Updating...");
@@ -912,6 +914,7 @@ void QtWidgetsApplication1::update_tracewindow()
 	}
 	//m_mutex.unlock();
 	ui.treetrace->scrollToBottom();
+	ui.treetrace->header()->setSortIndicator(0, Qt::AscendingOrder);
 	LOGGER_INFO(log_, "======= END of update_tracewindow =======");
 	LOGGER_INFO(log_, "\n");
 }
@@ -1421,8 +1424,11 @@ void QtWidgetsApplication1::updateComoboPage()
 void QtWidgetsApplication1::ButtonFirstClicked()
 {
 	qDebug() << "MAX_PAGE_COUNT -> " << max_page_count;
+	bool ok;
+	int current_page = ui.label_Current->text().toInt(&ok);
 	int target_page = 1;
 	qDebug() << "TARGET_PAGE -> " << target_page;
+	if (current_page == target_page) return;
 	show_fullpage_with_index(target_page);
 	ui.label_Current->setText(QString::number(target_page));
 }
@@ -1434,6 +1440,7 @@ void QtWidgetsApplication1::ButtonPreviousClicked()
 	int current_page = ui.label_Current->text().toInt(&ok);
 	int target_page = (current_page -1) < 1 ? 1: current_page - 1;
 	qDebug() << "TARGET_PAGE -> " << target_page;
+	if (current_page == target_page) return;
 	show_fullpage_with_index(target_page);
 	ui.label_Current->setText(QString::number(target_page));
 }
@@ -1446,6 +1453,7 @@ void QtWidgetsApplication1::ButtonNextClicked()
 	int target_page = (current_page + 1) > max_page_count ? max_page_count : current_page + 1;
 	if (target_page > 0) {
 		qDebug() << "TARGET_PAGE -> " << target_page;
+		if (current_page == target_page) return;
 		show_fullpage_with_index(target_page);
 		ui.label_Current->setText(QString::number(target_page));
 	}
@@ -1454,9 +1462,13 @@ void QtWidgetsApplication1::ButtonNextClicked()
 void QtWidgetsApplication1::ButtonLastClicked()
 {
 	qDebug() << "MAX_PAGE_COUNT -> " << max_page_count;
+	bool ok;
+	int current_page = ui.label_Current->text().toInt(&ok);
 	int target_page = max_page_count;
+	if (current_page == target_page) return;
 	if (target_page > 0) {
 		qDebug() << "TARGET_PAGE -> " << target_page;
+		if (current_page == target_page) return;
 		show_fullpage_with_index(target_page);
 		ui.label_Current->setText(QString::number(target_page));
 	}
@@ -1467,7 +1479,9 @@ void QtWidgetsApplication1::ButtonGotoClicked()
 	qDebug() << "MAX_PAGE_COUNT -> " << max_page_count;
 	bool ok;
 	int target_page = ui.comboBox_Page->currentText().toInt(&ok);
+	int current_page = ui.label_Current->text().toInt(&ok);
 	qDebug() << "TARGET_PAGE -> " << target_page;
+	if (current_page == target_page) return;
 	show_fullpage_with_index(target_page);
 	ui.label_Current->setText(QString::number(target_page));
 }
@@ -1541,9 +1555,15 @@ void QtWidgetsApplication1::show_fullpage_with_index(int index)
 	int pi = (page_index<0)? 0 : page_index;
 	int i = count_per_page*pi;
 	int fs = filtered_size();
-	int max_index = std::min(paused_instant_index, fs);
+	int max_index = 0;
+	if (fs)
+		max_index = std::min(paused_instant_index, fs);
+	else
+	{
+		max_index = paused_instant_index;
+	}
 	int stop = (count_per_page * index > max_index)? max_index : i+count_per_page;
-	if (fs < count_per_page) stop = fs;
+	if (fs && fs < count_per_page) stop = fs;
 	qDebug() << "INDEX FROM ->" << i << "TO ->" << stop;
 	for (; i < stop; i++)
 	{
@@ -1553,6 +1573,7 @@ void QtWidgetsApplication1::show_fullpage_with_index(int index)
 	qDebug() << "BASEQUEUE SIZE ->" << baseQueue.size();
 	ui.treetrace->addTopLevelItems(baseQueue);
 	ui.treetrace->scrollToBottom();
+	this->updateContinuousProgress();
 	timer_isRunning = false;
 }
 
