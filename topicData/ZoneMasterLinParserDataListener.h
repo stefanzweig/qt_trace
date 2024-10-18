@@ -57,12 +57,13 @@ public:
     void on_data_available(DataReader* reader) override
     {
         SampleInfo info;
-        if (reader->take_next_sample(&linframe_, &info) == ReturnCode_t::RETCODE_OK)
+        auto retcode = reader->take_next_sample(&linframes_, &info);
+        if (retcode == ReturnCode_t::RETCODE_OK)
         {
             if (info.valid_data)
             {
                 samples_++;
-                emit traceItemUpdate_internal_linparser(linframe_);
+                //emit traceItemUpdate_internal_linparser(linframe_);
             }
         }
     }
@@ -75,7 +76,7 @@ public:
         (void)status;
     }
 
-    linFrame linframe_;
+    linFrames linframes_;
 
 
     std::atomic_int samples_;

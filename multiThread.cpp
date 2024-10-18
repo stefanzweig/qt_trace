@@ -18,24 +18,24 @@ void multiThread::stopThread() {
     is_paused = false;
 
     if (mysub_can_frames != nullptr) {
-	delete mysub_can_frames;
-	mysub_can_frames = nullptr;
-	bconnected_cf = false;
+        delete mysub_can_frames;
+        mysub_can_frames = nullptr;
+        bconnected_cf = false;
     }
     if (mysub_can_parser != nullptr) {
-	delete mysub_can_parser;
-	mysub_can_parser = nullptr;
-	bconnected_cp = false;
+        delete mysub_can_parser;
+        mysub_can_parser = nullptr;
+        bconnected_cp = false;
     }
     if (mysub_lin_frames != nullptr) {
-	delete mysub_lin_frames;
-	mysub_lin_frames = nullptr;
-	bconnected_lf = false;
+        delete mysub_lin_frames;
+        mysub_lin_frames = nullptr;
+        bconnected_lf = false;
     }
     if (mysub_lin_parser != nullptr) {
-	delete mysub_lin_parser;
-	mysub_lin_parser = nullptr;
-	bconnected_lp = false;
+        delete mysub_lin_parser;
+        mysub_lin_parser = nullptr;
+        bconnected_lp = false;
     }
 }
 
