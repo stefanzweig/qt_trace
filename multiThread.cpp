@@ -212,8 +212,7 @@ void multiThread::formatRow_canparser_thread(canframe frame)
 	    str_signal.append(QString::fromStdString(current_signal.name()));
 	    str_signal.append(QString::number(current_signal.raw_value()));
 	    str_signal.append(QString::fromStdString(current_signal.phy_value()));
-	    //QTreeWidgetItem* item_signal = new QTreeWidgetItem(str_signal);
-	    TraceTreeWidgetItem* item_signal = new TraceTreeWidgetItem(str_pdu);
+	    TraceTreeWidgetItem* item_signal = new TraceTreeWidgetItem(str_signal);
 	    item_signal->setSource("can_pdu_signal");
 	    item_pdu->addChild(item_signal);
 	}
