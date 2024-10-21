@@ -407,7 +407,7 @@ void QtWidgetsApplication1::clearance()
 	calc_thread->full_count_canparser = 0;
 	calc_thread->full_count_linframes = 0;
 	calc_thread->full_count_linparser = 0;
-
+	passed_uuid_set.clear();
 	safe_clear_trace();
 }
 
@@ -419,6 +419,7 @@ void QtWidgetsApplication1::initialize_new_session()
 	calc_thread->full_count_linparser = 0;
 
 	paused_instant_index = -1;
+	passed_uuid_set.clear();
 
 	clear_queue(shown_queue);
 	clear_queue(full_queue_stream);
@@ -1175,16 +1176,24 @@ bool QtWidgetsApplication1::filter_pass_item(QTreeWidgetItem* it)
 	if (it == NULL) return false;
 
 	bool matched = true;
+	QString uuidstr = ((TraceTreeWidgetItem*)it)->getUUID();
+	if (passed_uuid_set.contains(uuidstr))
+		return true;
 
-	// running, only root items passed. 2024��10��3�� 9:39
 	if (calc_thread->isRUN() && it) {
 		matched = filter_run_pass_item_without_children(it);
-		if (!matched) return false;
+		if (!matched) { return false; }
+		else { 
+			passed_uuid_set.insert(uuidstr); 
+			return true;
+		}
 	}
 
-	// filters. 2024��10��3�� 9:39
 	if (new_filters.isEmpty())
+	{
+		passed_uuid_set.insert(uuidstr);
 		return true;
+	}
 	for (const auto& key : new_filters.keys()) {
 		QList<QVariant> vlist = new_filters.value(key);
 		int col_index = vlist[0].toInt();
@@ -1192,12 +1201,14 @@ bool QtWidgetsApplication1::filter_pass_item(QTreeWidgetItem* it)
 		QList<QVariant> slice = vlist.mid(1, length);
 		if (!slice.contains(it->text(col_index)))
 		{
-			for (const QVariant& value : slice) {
-				qDebug() << "COL ->" << col_index << "Text ->" << it->text(col_index) << "Not Matched ->" << value;
-			}
+			//for (const QVariant& value : slice) {
+			//	qDebug() << "COL ->" << col_index << "Text ->" << it->text(col_index) << "Not Matched ->" << value;
+			//}
 			matched = false;
 		}
-
+	}
+	if (matched) {
+		passed_uuid_set.insert(uuidstr);
 	}
 	return matched;
 }
@@ -1281,6 +1292,7 @@ void QtWidgetsApplication1::show_fullpage()
 	qDebug() << "SHOW_FULLPAGE()";
 
 	ui.treetrace->clear();
+	passed_uuid_set.clear();
 	safe_clear_trace();
 	updateComoboPage();
 	//QQueue<QTreeWidgetItem*> baseQueue = get_filtered_queue_front();
@@ -1336,6 +1348,7 @@ void QtWidgetsApplication1::restore_full_queue()
 
 void QtWidgetsApplication1::safe_clear_trace()
 {
+	passed_uuid_set.clear();
 	clear_queue(shown_queue);
 }
 
@@ -1541,6 +1554,7 @@ void QtWidgetsApplication1::show_fullpage_with_index(int index)
 	qDebug() << "SHOW_FULLPAGE_WITH_INDEX";
 	int page_index = index - 1;
 	ui.treetrace->clear();
+	passed_uuid_set.clear();
 	safe_clear_trace();
 
 	QQueue<TraceTreeWidgetItem*> *search_queue;

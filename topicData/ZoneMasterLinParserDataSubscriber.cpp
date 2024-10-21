@@ -52,9 +52,17 @@ bool ZoneMasterLinParserSubscriber::init()
 	// Create the DataReader
 	DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
 	reader_qos.reliability().kind = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
+	//reader_qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
 	reader_qos.durability().kind = eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS;
 	reader_qos.data_sharing().automatic();
 	subscriber_->set_default_datareader_qos(reader_qos);
+
+	//self.reader_qos.reliability().kind = fastdds.RELIABLE_RELIABILITY_QOS
+	//self.reader_qos.durability().kind = fastdds.VOLATILE_DURABILITY_QOS
+	//self.reader_qos.data_sharing().automatic()
+	//self.subscriber.set_default_datareader_qos(self.reader_qos)
+	//self.reader = self.subscriber.create_datareader(self.topic_lin_message, self.reader_qos, self.readerListener)
+
 
 	reader_ = subscriber_->create_datareader(topic_, reader_qos, &listener_);
 

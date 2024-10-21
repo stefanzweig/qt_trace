@@ -126,6 +126,7 @@ private:
 	QMutex m_mutex;
 	int debuglog = 1; // not in use so far
 	int maximum_total = 400000;
+	QSet<QString> passed_uuid_set;
 
 private slots:
 	void startTrace();

@@ -66,6 +66,10 @@ public:
                 //emit traceItemUpdate_internal_linparser(linframe_);
             }
         }
+        else if (retcode == ReturnCode_t::RETCODE_NO_DATA) {
+            qDebug() << "No data available, retrying...";
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
     }
 
     void on_requested_incompatible_qos(

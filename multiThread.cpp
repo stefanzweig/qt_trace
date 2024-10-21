@@ -190,62 +190,78 @@ void multiThread::formatRow_canparser_thread(canframe frame)
     std::string s = uuid.str();
     QString uuid_str = QString::fromStdString(s);
     Item->setUUID(uuid_str);
+    Item->setData(0, Qt::UserRole, uuid_str);
     if (Item == nullptr)
-	return;
+        return;
 
     std::vector<canpdu> pdus = frame.pdus();
     std::vector<canpdu> containspdus = frame.containPdus();
 
     for (int k = 0; k < pdus.size(); k++) {
-	canpdu current_pdu = pdus[k];
-	QString pdu_name = QString::fromStdString(current_pdu.name());
-	QString pdu_size = QString::number(current_pdu.zone_signals().size());
-	QStringList str_pdu = {};
-	str_pdu.append(pdu_name);
-	str_pdu.append(pdu_size);
-	TraceTreeWidgetItem* item_pdu = new TraceTreeWidgetItem(str_pdu);
-	item_pdu->setSource("can_pdu");
+        canpdu current_pdu = pdus[k];
+        QString pdu_name = QString::fromStdString(current_pdu.name());
+        QString pdu_size = QString::number(current_pdu.zone_signals().size());
+        QStringList str_pdu = {};
+        str_pdu.append(pdu_name);
+        str_pdu.append(pdu_size);
+        TraceTreeWidgetItem* item_pdu = new TraceTreeWidgetItem(str_pdu);
+        item_pdu->setSource("can_pdu");
 
-	for (int m = 0; m < current_pdu.zone_signals().size(); m++) {
-	    QStringList str_signal = {};
-	    cansignal current_signal = current_pdu.zone_signals()[m];
-	    str_signal.append(QString::fromStdString(current_signal.name()));
-	    str_signal.append(QString::number(current_signal.raw_value()));
-	    str_signal.append(QString::fromStdString(current_signal.phy_value()));
-	    TraceTreeWidgetItem* item_signal = new TraceTreeWidgetItem(str_signal);
-	    item_signal->setSource("can_pdu_signal");
-	    item_pdu->addChild(item_signal);
-	}
-	Item->addChild(item_pdu);
+        for (int m = 0; m < current_pdu.zone_signals().size(); m++) {
+            QStringList str_signal = {};
+            QStringList str_signal_tooltips = {};
+            cansignal current_signal = current_pdu.zone_signals()[m];
+
+            str_signal.append(QString::fromStdString(current_signal.name()));
+            str_signal.append(QString::number(current_signal.raw_value()));
+            str_signal.append(QString::fromStdString(current_signal.phy_value()));
+            str_signal_tooltips << "name: " + QString::fromStdString(current_signal.name())
+                << "raw_value: " + QString::number(current_signal.raw_value())
+                << "phy_value: " + QString::fromStdString(current_signal.phy_value());
+
+            TraceTreeWidgetItem* item_signal = new TraceTreeWidgetItem(str_signal);
+            item_signal->setSource("can_pdu_signal");
+            item_signal->setToolTip(0, str_signal_tooltips.join("<br>"));
+            item_pdu->addChild(item_signal);
+        }
+        Item->addChild(item_pdu);
     }
 
     if (containspdus.size() == 0)
     {
-	emit popToRoot(Item);
+        emit popToRoot(Item);
     }
     else {
-	for (int k = 0; k < containspdus.size(); k++) {
-	    canpdu current_pdu = containspdus[k];
-	    QString pdu_name = QString::fromStdString(current_pdu.name());
-	    QString pdu_size = QString::number(current_pdu.zone_signals().size());
-	    QStringList str_pdu = {};
-	    str_pdu.append(pdu_name);
-	    str_pdu.append(pdu_size);
-	    TraceTreeWidgetItem* item_pdu = new TraceTreeWidgetItem(str_pdu);
-	    item_pdu->setSource("can_container_pdu");
-	    for (int m = 0; m < current_pdu.zone_signals().size(); m++) {
-		QStringList str_signal = {};
-		cansignal current_signal = current_pdu.zone_signals()[m];
-		str_signal.append(QString::fromStdString(current_signal.name()));
-		str_signal.append(QString::number(current_signal.raw_value()));
-		str_signal.append(QString::fromStdString(current_signal.phy_value()));
-		TraceTreeWidgetItem* item_signal = new TraceTreeWidgetItem(str_pdu);
-		item_signal->setSource("can_container_pdu_signal");
-		item_pdu->addChild(item_signal);
-	    }
-	    Item->addChild(item_pdu);
-	}
-	emit popToRoot(Item);
+        for (int k = 0; k < containspdus.size(); k++) {
+            canpdu current_pdu = containspdus[k];
+            QString pdu_name = QString::fromStdString(current_pdu.name());
+            QString pdu_size = QString::number(current_pdu.zone_signals().size());
+            QStringList str_pdu = {};
+            str_pdu.append(pdu_name);
+            str_pdu.append(pdu_size);
+            TraceTreeWidgetItem* item_pdu = new TraceTreeWidgetItem(str_pdu);
+            item_pdu->setSource("can_container_pdu");
+            for (int m = 0; m < current_pdu.zone_signals().size(); m++) {
+                QStringList str_signal = {};
+                QStringList str_signal_tooltips = {};
+                cansignal current_signal = current_pdu.zone_signals()[m];
+
+                str_signal.append(QString::fromStdString(current_signal.name()));
+                str_signal.append(QString::number(current_signal.raw_value()));
+                str_signal.append(QString::fromStdString(current_signal.phy_value()));
+
+                str_signal_tooltips << "name: " + QString::fromStdString(current_signal.name())
+                    << "raw_value: " + QString::number(current_signal.raw_value())
+                    << "phy_value: " + QString::fromStdString(current_signal.phy_value());
+
+                TraceTreeWidgetItem* item_signal = new TraceTreeWidgetItem(str_signal);
+                item_signal->setSource("can_container_pdu_signal");
+                item_signal->setToolTip(0, str_signal_tooltips.join("<br>"));
+                item_pdu->addChild(item_signal);
+            }
+            Item->addChild(item_pdu);
+        }
+        emit popToRoot(Item);
     }
 }
 
@@ -281,6 +297,7 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
 	std::string s = uuid.str();
 	QString uuid_str = QString::fromStdString(s);
 	Item->setUUID(uuid_str);
+    Item->setData(0, Qt::UserRole, uuid_str);
 	emit(popToRoot(Item));
     }
 }
@@ -328,6 +345,8 @@ void multiThread::formatRow_linframe_thread(linMessage frame)
     TraceTreeWidgetItem* Item = new TraceTreeWidgetItem(str_lm);
     Item->setSource("linframe");
     Item->setUUID(uuid_str);
+    Item->setData(0, Qt::UserRole, uuid_str);
+    Item->setToolTip(0, "This is the second item.<br>Details: This item is less important.<br>Usage: Special cases.");
 
     if (Item == nullptr)
         return;
@@ -352,6 +371,7 @@ void multiThread::formatRow_linparser_thread(linFrame frame)
         std::string s = uuid.str();
         QString uuid_str = QString::fromStdString(s);
         Item->setUUID(uuid_str);
+        Item->setData(0, Qt::UserRole, uuid_str);
         emit(popToRoot(Item));
     }
 }
