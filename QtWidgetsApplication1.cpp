@@ -207,8 +207,11 @@ void QtWidgetsApplication1::updateProgressRunStatus()
 
 	QString status_string = runStatus
 	    + "CAN Messages: " + QString::number(can_messages_count)
-		+". LIN Messages: " + QString::number(lin_messages_count)
-		+ ". Total: " + QString::number(can_messages_count + lin_messages_count);
+	    + ". CAN PDUs: " + QString::number(canpdu_count)
+		+ ". LIN Messages: " + QString::number(lin_messages_count)
+		+ ". Total: " + QString::number(can_messages_count 
+			+ canpdu_count 
+			+ lin_messages_count);
 	ui.statusBar->showMessage(status_string);
 }
 
@@ -590,13 +593,13 @@ void QtWidgetsApplication1::setupTreeTrace()
 	t->setFocusPolicy(Qt::WheelFocus);
 	t->header()->setHighlightSections(true);
 	t->header()->setStretchLastSection(true);
-	t->header()->setSortIndicator(0, Qt::AscendingOrder);
+	//t->header()->setSortIndicator(0, Qt::AscendingOrder);
 	t->setWindowTitle(QObject::tr("CAN/LIN"));
 	t->setAttribute(Qt::WA_OpaquePaintEvent);
 	t->setAttribute(Qt::WA_NoSystemBackground);
 	t->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 	t->setHeaderLabels(initialHeader);
-	t->setSortingEnabled(false);
+	t->setSortingEnabled(true);
 	t->setColumnWidth(0, 150);
 	t->sortByColumn(0, Qt::SortOrder::AscendingOrder);
 	t->invisibleRootItem()->setHidden(true);
@@ -915,7 +918,7 @@ void QtWidgetsApplication1::update_tracewindow()
 	}
 	//m_mutex.unlock();
 	ui.treetrace->scrollToBottom();
-	ui.treetrace->header()->setSortIndicator(0, Qt::AscendingOrder);
+	//ui.treetrace->header()->setSortIndicator(0, Qt::AscendingOrder);
 	LOGGER_INFO(log_, "======= END of update_tracewindow =======");
 	LOGGER_INFO(log_, "\n");
 }
@@ -1183,10 +1186,6 @@ bool QtWidgetsApplication1::filter_pass_item(QTreeWidgetItem* it)
 	if (calc_thread->isRUN() && it) {
 		matched = filter_run_pass_item_without_children(it);
 		if (!matched) { return false; }
-		else { 
-			passed_uuid_set.insert(uuidstr); 
-			return true;
-		}
 	}
 
 	if (new_filters.isEmpty())
@@ -1258,7 +1257,7 @@ TraceTreeWidgetItem* QtWidgetsApplication1::read_item_from_queue(int index)
 TraceTreeWidgetItem* QtWidgetsApplication1::read_item_from_dumb(int index)
 {
 	/* This function is a mock one to generate 10 rows data
-	*  to the tracewidget to show. 2024��10��2�� 22:14
+	*  to the tracewidget to show. 2024-10-21 15:27:04
 	*/
 
 	QStringList str_pdu = {};
@@ -1295,7 +1294,6 @@ void QtWidgetsApplication1::show_fullpage()
 	passed_uuid_set.clear();
 	safe_clear_trace();
 	updateComoboPage();
-	//QQueue<QTreeWidgetItem*> baseQueue = get_filtered_queue_front();
 	QQueue<QTreeWidgetItem*> baseQueue = get_filtered_queue_tail();
 	ui.treetrace->addTopLevelItems(baseQueue);
 	timer_isRunning = false;
