@@ -734,6 +734,10 @@ void QtWidgetsApplication1::construct_filtered_queue(int full_count)
 		if (filter_pass_item(it)) {
 			filtered_queue.enqueue(it);
 		}
+		//else {
+		//	delete it;
+		//	it = nullptr;
+		//}
 	}
 }
 
@@ -746,21 +750,33 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 		TraceTreeWidgetItem* item_backup = (TraceTreeWidgetItem*)item->clone();
 		if (calc_thread->isPAUSED()) {
 			full_queue_stream.enqueue(item_backup);
+
+			if (full_queue_stream.size() > maximum_total) {
+				TraceTreeWidgetItem* it_remove = full_queue_stream.dequeue();
+				qDebug() << "TO REMOVE -> " << it_remove->getUUID();
+				delete it_remove;
+				it_remove = nullptr;
+			}
 			//m_mutex.unlock();
 		}
 		else {
-			shown_queue.enqueue(item);
-			//if (shown_queue.size() > count_per_page) {
-			//	TraceTreeWidgetItem* it_remove = shown_queue.dequeue();
-			//	delete it_remove;
-			//}
+			shown_queue.enqueue(item_backup);
 			//m_mutex.unlock();
 			full_queue_stream.enqueue(item_backup);
+
+			if (full_queue_stream.size() > maximum_total) {
+				TraceTreeWidgetItem* it_remove = full_queue_stream.dequeue();
+				qDebug() << "TO REMOVE -> " << it_remove->getUUID();
+				delete it_remove;
+				it_remove = nullptr;
+			}
 		}
 		if (filter_pass_item(item_backup)) {
 			filtered_queue.enqueue(item_backup->clone());
 		}
 		emit record_latest_index(full_queue_stream.size());
+		delete item;
+		item = nullptr;
 	}
 	timer_isRunning = false;
 }
@@ -1309,6 +1325,10 @@ QQueue<QTreeWidgetItem*> QtWidgetsApplication1::get_filtered_queue_front()
 	{
 		TraceTreeWidgetItem* traceItem = full_queue_stream.at(i)->clone();
 		if (filter_pass_item(traceItem)) queue_.enqueue(traceItem);
+		//else {
+		//	delete traceItem;
+		//	traceItem = nullptr;
+		//}
 	}
 	qDebug() << "QUEUE_ SIZE ->" << queue_.size();
 	return queue_;
@@ -1326,6 +1346,10 @@ QQueue<QTreeWidgetItem*> QtWidgetsApplication1::get_filtered_queue_tail()
 			queue_.enqueue(traceItem);
 			count++;
 		}
+		//else {
+		//	delete traceItem;
+		//	traceItem = nullptr;
+		//}
 		if (count >= count_per_page) { break; }
 	}
 	qDebug() << "From Tail Count ->" << queue_.size();
