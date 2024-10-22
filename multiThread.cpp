@@ -11,7 +11,9 @@ multiThread::multiThread()
 {
 }
 
-multiThread::~multiThread() {}
+multiThread::~multiThread() {
+    clear_items_queue();
+}
 
 void multiThread::stopThread() {
     is_stop = true;
@@ -293,12 +295,14 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
 
     TraceTreeWidgetItem* Item = new TraceTreeWidgetItem(can_list);
     if (Item != nullptr) {
-	UUIDv4::UUID uuid = uuidGenerator.getUUID();
-	std::string s = uuid.str();
-	QString uuid_str = QString::fromStdString(s);
-	Item->setUUID(uuid_str);
-    Item->setData(0, Qt::UserRole, uuid_str);
-	emit(popToRoot(Item));
+        UUIDv4::UUID uuid = uuidGenerator.getUUID();
+        std::string s = uuid.str();
+        QString uuid_str = QString::fromStdString(s);
+        Item->setUUID(uuid_str);
+        Item->setData(0, Qt::UserRole, uuid_str);
+        emit(popToRoot(Item));
+        //qDebug() << "CAN FRAME ITEM MEMORY ->" << sizeof(TraceTreeWidgetItem) * list_items_queue.size();
+        list_items_queue.enqueue(Item);
     }
 }
 

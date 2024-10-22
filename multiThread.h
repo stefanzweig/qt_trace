@@ -45,6 +45,16 @@ public:
     
     QList<QString> monitor_modules;
     QQueue<TraceTreeWidgetItem*> *queue_ = nullptr;
+    QQueue<TraceTreeWidgetItem*> list_items_queue;
+    void clear_items_queue() { 
+        //for (TraceTreeWidgetItem* it : list_items_queue)
+        //{
+        //    delete it;
+        //    it = nullptr;
+        //}
+        list_items_queue.clear(); 
+    }
+
 
 public slots:
     void stopThread();
