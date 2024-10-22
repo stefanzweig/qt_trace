@@ -604,7 +604,6 @@ void QtWidgetsApplication1::setupTreeTrace()
 	t->sortByColumn(0, Qt::SortOrder::AscendingOrder);
 	t->invisibleRootItem()->setHidden(true);
 	t->installEventFilter(this);
-	t->setToolTipDuration(0);
 	header->setDefaultSectionSize(150);
 	header->setSectionResizeMode(QHeaderView::Interactive);
 	QFont font("SimSun", 8);
