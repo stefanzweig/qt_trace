@@ -367,12 +367,12 @@ void QtWidgetsApplication1::resetStatusBar()
 	leftWidget = new QWidget(this);
 	leftLayout = new QHBoxLayout(leftWidget);
 	leftLayout->addWidget(leftLabel);
-	leftLayout->addStretch();
+	//leftLayout->addStretch();
 
 	rightLabel = new QLabel(strRightTemplate, this);
 	rightWidget = new QWidget(this);
 	rightLayout = new QHBoxLayout(rightWidget);
-	rightLayout->addStretch();
+	//rightLayout->addStretch();
 	rightLayout->addWidget(rightLabel);
 
 	ui.statusBar->addPermanentWidget(leftWidget);
@@ -770,7 +770,7 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 				delete it_rem2;
 				it_rem2 = nullptr;
 			}
-			if (filtered_queue.size() > 3 * count_per_page) {
+			if (filtered_queue.size() > maximum_total) {
 				TraceTreeWidgetItem* it_rem3 = filtered_queue.dequeue();
 				delete it_rem3;
 				it_rem3 = nullptr;

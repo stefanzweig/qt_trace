@@ -73,7 +73,7 @@ public:
 		newItem->changed = changed;
 		newItem->ref_counter = 0;
 		newItem->uuid_ = uuid_;
-		newItem->original_data.append(original_data);
+		//newItem->original_data.append(original_data);
 		for (int i = 0; i < childCount(); ++i) {
 			newItem->addChild(static_cast<TraceTreeWidgetItem*>(child(i))->clone());
 		}
@@ -81,6 +81,16 @@ public:
 	}
 
 	QVariant data(int column, int role) const override;
+	
+	bool operator==(const TraceTreeWidgetItem& other) const {
+		bool equal = false;
+		equal = (source_ == other.source_);
+		equal = (item_type == other.item_type);
+		equal = (ref_counter == other.ref_counter);
+		equal = (uuid_ == other.uuid_);
+		return equal;
+	}
+
 	void setSource(QString source) {
 		source_ = source;
 	}
