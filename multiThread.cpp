@@ -189,7 +189,7 @@ void multiThread::formatRow_canparser_thread(canframe frame)
     str_parser.append("");
     str_parser.append(QString::number(frame.dlc()));
     int isfd = frame.isFd();
-    QString EventType = (isfd) ? "CAN FD" : "CAN";
+    QString EventType = (isfd) ? "CANFD" : "CAN";
     str_parser.append(EventType);
     str_parser.append(QString::number(frame.dataLen()));
     str_parser.append("CAN FRAME");
@@ -207,13 +207,25 @@ void multiThread::formatRow_canparser_thread(canframe frame)
     std::vector<canpdu> pdus = frame.pdus();
     std::vector<canpdu> containspdus = frame.containPdus();
 
-    for (int k = 0; k < pdus.size(); k++) {
+    for (int k = 0; k < pdus.size(); k++) 
+    {
         canpdu current_pdu = pdus[k];
         QString pdu_name = QString::fromStdString(current_pdu.name());
         QString pdu_size = QString::number(current_pdu.zone_signals().size());
         QStringList str_pdu = {};
         str_pdu.append(pdu_name);
         str_pdu.append(pdu_size);
+        str_pdu.append("");
+        str_pdu.append("");
+        str_pdu.append("");
+        str_pdu.append("");
+        str_pdu.append("");
+        str_pdu.append("");
+        str_pdu.append("");
+        QByteArray output;
+        std::copy(current_pdu.data().begin(), current_pdu.data().end(), std::back_inserter(output));
+        QString myData = output.toHex(' ');
+        str_pdu.append(myData);
         TraceTreeWidgetItem* item_pdu = new TraceTreeWidgetItem(str_pdu);
         item_pdu->setSource("can_pdu");
 
@@ -242,14 +254,28 @@ void multiThread::formatRow_canparser_thread(canframe frame)
         emit popToRoot(Item);
         list_items_queue.enqueue(Item);
     }
-    else {
-        for (int k = 0; k < containspdus.size(); k++) {
+    else 
+    {
+        for (int k = 0; k < containspdus.size(); k++) 
+        {
             canpdu current_pdu = containspdus[k];
             QString pdu_name = QString::fromStdString(current_pdu.name());
             QString pdu_size = QString::number(current_pdu.zone_signals().size());
             QStringList str_pdu = {};
             str_pdu.append(pdu_name);
             str_pdu.append(pdu_size);
+            str_pdu.append("");
+            str_pdu.append("");
+            str_pdu.append("");
+            str_pdu.append("");
+            str_pdu.append("");
+            str_pdu.append("");
+            str_pdu.append("");
+            QByteArray output;
+            std::copy(current_pdu.data().begin(), current_pdu.data().end(), std::back_inserter(output));
+            QString myData = output.toHex(' ');
+            str_pdu.append(myData); //data
+
             TraceTreeWidgetItem* item_pdu = new TraceTreeWidgetItem(str_pdu);
             item_pdu->setSource("can_container_pdu");
             for (int m = 0; m < current_pdu.zone_signals().size(); m++) {
@@ -274,7 +300,6 @@ void multiThread::formatRow_canparser_thread(canframe frame)
         }
         emit popToRoot(Item);
         list_items_queue.enqueue(Item);
-
     }
 }
 
@@ -409,9 +434,9 @@ void multiThread::clear_items_queue()
         if (mysource == "CAN_PARSER") {
             int k = it->childCount();
             if (k > 0) {
-                for (int i = 0; i < k; ++i) {
+                for (int i = 0; i <k; i++) {
                     TraceTreeWidgetItem* p = static_cast<TraceTreeWidgetItem*>(it->child(i));
-                    if (p->getSource() == "can_pdu") {
+                    if (p && p->getSource() == "can_pdu") {
                         for (int m = p->childCount() - 1; m >= 0; m--) {
                             TraceTreeWidgetItem* mc = static_cast<TraceTreeWidgetItem*>(p->child(m));
                             if (mc) {
@@ -423,10 +448,17 @@ void multiThread::clear_items_queue()
                         p = nullptr;
                         continue;
                     } 
-                    if (p->getSource() == "can_container_pdu") {
-                        for (int m = p->childCount() - 1; m >= 0; m--) {
+                    else if (p && p->getSource() == "can_container_pdu") {
+                        qDebug() << "container_pdu ->" << p->getUUID();
+                        for (int m = p->childCount() - 1; m > 0; m--)
+                        {
                             TraceTreeWidgetItem* mc = static_cast<TraceTreeWidgetItem*>(p->child(m));
                             if (mc) {
+                                for (int n = mc->childCount() - 1; n > 0; n--) {
+                                    TraceTreeWidgetItem* msignal = static_cast<TraceTreeWidgetItem*>(mc->child(n));
+                                    delete msignal;
+                                    msignal = nullptr;
+                                }
                                 delete mc;
                                 mc = nullptr;
                             }
@@ -438,7 +470,9 @@ void multiThread::clear_items_queue()
                 }
             }
         }
-        if (mysource == "LIN_PARSER") {}
+        if (mysource == "LIN_PARSER")    {
+            //todo
+        }
         delete it;
         it = nullptr;
     }

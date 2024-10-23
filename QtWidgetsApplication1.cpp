@@ -9,6 +9,7 @@
 #include <QTimer>
 #include <QSplashScreen>
 #include <QPixmap>
+#include <QLineEdit>
 
 #include "TraceTreeWidgetItem.h"
 #include "spdlog/spdlog.h"
@@ -1535,10 +1536,10 @@ void QtWidgetsApplication1::show_fullpage_with_findings()
 			QStringList item_map = item.split("=", QString::SkipEmptyParts);
 			qDebug() << "ITEM MAP SIZE ->" << item_map.size();
 			QString k = item_map[0].trimmed();
-			QString v = item_map[1].trimmed();
+			QString v = item_map[1].trimmed().toLower();
 			int nk = -1;
 			for (int i = 0; i < CurrentHeader.size(); ++i) {
-				if (CurrentHeader[i] == k) {
+				if (CurrentHeader[i].toLower() == k.toLower()) {
 					list_map[i] << v;
 					break;
 				}
@@ -1561,7 +1562,7 @@ void QtWidgetsApplication1::show_fullpage_with_findings()
 		bool hidden = false;
 		for (const int& key : list_map.keys()) {
 			QStringList values = list_map.value(key);
-			if (!values.contains(item->text(key))) {
+			if (!values.contains(item->text(key).toLower())) {
 				hidden = true;
 				continue;
 			}
