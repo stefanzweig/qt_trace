@@ -2,6 +2,7 @@
 #include <qtreewidget.h>
 #include <QQueue>
 #include <QString>
+#include <QDebug>
 
 enum MyItemType {
 	canframe_,
@@ -74,9 +75,21 @@ public:
 		newItem->ref_counter = 0;
 		newItem->uuid_ = uuid_;
 		//newItem->original_data.append(original_data);
+
+		//if (newItem->source_ == "can_pdu") {
+		//	int k = childCount();
+		//	if (k > 0) {
+		//		for (int i = 0; i < k; ++i) {
+		//			TraceTreeWidgetItem* ch = static_cast<TraceTreeWidgetItem*>(child(i));
+		//			qDebug() << "CHILD ->" << ch->uuid_;
+		//		}
+		//	}
+		//}
+
 		for (int i = 0; i < childCount(); ++i) {
 			newItem->addChild(static_cast<TraceTreeWidgetItem*>(child(i))->clone());
 		}
+		//qDebug() << "Cloning SOURCE -> " << newItem->source_.toUpper();
 		return newItem;
 	}
 

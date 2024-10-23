@@ -33,6 +33,7 @@ public:
     void setLinSubscriber(ZoneMasterLinMessageDataSubscriber* subscriber, int samples, QTreeView* treeview);
     void setLinParserSubscriber(ZoneMasterLinParserSubscriber* subscriber, int samples, QTreeView* treeview);
     void setFilterOption(QString colName, QList<QList<QString>> items);
+    void clear_items_queue();
 
     uint64_t full_count_canparser = 0;
     uint64_t full_count_canframes = 0;
@@ -46,14 +47,6 @@ public:
     QList<QString> monitor_modules;
     QQueue<TraceTreeWidgetItem*> *queue_ = nullptr;
     QQueue<TraceTreeWidgetItem*> list_items_queue;
-    void clear_items_queue() { 
-        for (TraceTreeWidgetItem* it : list_items_queue)
-        {
-            delete it;
-            it = nullptr;
-        }
-        list_items_queue.clear(); 
-    }
 
 
 public slots:

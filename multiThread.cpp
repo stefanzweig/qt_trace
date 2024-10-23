@@ -232,6 +232,7 @@ void multiThread::formatRow_canparser_thread(canframe frame)
     if (containspdus.size() == 0)
     {
         emit popToRoot(Item);
+        list_items_queue.enqueue(Item);
     }
     else {
         for (int k = 0; k < containspdus.size(); k++) {
@@ -264,6 +265,8 @@ void multiThread::formatRow_canparser_thread(canframe frame)
             Item->addChild(item_pdu);
         }
         emit popToRoot(Item);
+        list_items_queue.enqueue(Item);
+
     }
 }
 
@@ -301,7 +304,6 @@ void multiThread::formatRow_canframe_thread(can_frame frame)
         Item->setUUID(uuid_str);
         Item->setData(0, Qt::UserRole, uuid_str);
         emit(popToRoot(Item));
-        //qDebug() << "CAN FRAME ITEM MEMORY ->" << sizeof(TraceTreeWidgetItem) * list_items_queue.size();
         list_items_queue.enqueue(Item);
     }
 }
@@ -355,7 +357,10 @@ void multiThread::formatRow_linframe_thread(linMessage frame)
     if (Item == nullptr)
         return;
     else
+    {
         emit(popToRoot(Item));
+        list_items_queue.enqueue(Item);
+    }
 }
 
 void multiThread::formatRow_linparser_thread(linFrame frame)
@@ -377,6 +382,7 @@ void multiThread::formatRow_linparser_thread(linFrame frame)
         Item->setUUID(uuid_str);
         Item->setData(0, Qt::UserRole, uuid_str);
         emit(popToRoot(Item));
+        list_items_queue.enqueue(Item);
     }
 }
 
@@ -385,3 +391,49 @@ void multiThread::setFilterOption(QString colName, QList<QList<QString>> items)
     filter_colName = colName;
     filter_items = items;
 }
+
+void multiThread::clear_items_queue()
+{
+    for (TraceTreeWidgetItem* it : list_items_queue)
+    {
+        QString mysource = it->getSource().toUpper();
+        qDebug() << "ITEM SOURCE ->" << mysource;
+        if (mysource == "CAN_PARSER") {
+            int k = it->childCount();
+            if (k > 0) {
+                for (int i = 0; i < k; ++i) {
+                    TraceTreeWidgetItem* p = static_cast<TraceTreeWidgetItem*>(it->child(i));
+                    if (p->getSource() == "can_pdu") {
+                        for (int m = p->childCount() - 1; m >= 0; m--) {
+                            TraceTreeWidgetItem* mc = static_cast<TraceTreeWidgetItem*>(p->child(m));
+                            if (mc) {
+                                delete mc;
+                                mc = nullptr;
+                            }
+                        }
+                        delete p;
+                        p = nullptr;
+                        continue;
+                    } 
+                    if (p->getSource() == "can_container_pdu") {
+                        for (int m = p->childCount() - 1; m >= 0; m--) {
+                            TraceTreeWidgetItem* mc = static_cast<TraceTreeWidgetItem*>(p->child(m));
+                            if (mc) {
+                                delete mc;
+                                mc = nullptr;
+                            }
+                        }
+                        delete p;
+                        p = nullptr;
+                        continue;
+                    }
+                }
+            }
+        }
+        if (mysource == "LIN_PARSER") {}
+        delete it;
+        it = nullptr;
+    }
+    list_items_queue.clear();
+}
+
