@@ -1236,20 +1236,21 @@ bool QtWidgetsApplication1::filter_pass_item(QTreeWidgetItem* it)
 
 bool QtWidgetsApplication1::filter_run_pass_item_without_children(QTreeWidgetItem* it)
 {
-	if (calc_thread->isRUN() && it) {
-		try
-		{
-			int children_count = it->childCount();
-			if (children_count > 0) {
-				return false;
-			}
-			else return true;
-		}
-		catch (...)
-		{
-		}
-	}
-	else return true;
+	//if (calc_thread->isRUN() && it) {
+	//	try
+	//	{
+	//		int children_count = it->childCount();
+	//		if (children_count > 0) {
+	//			return false;
+	//		}
+	//		else return true;
+	//	}
+	//	catch (...)
+	//	{
+	//	}
+	//}
+	//else 
+		return true;
 }
 
 bool QtWidgetsApplication1::showNewSession()

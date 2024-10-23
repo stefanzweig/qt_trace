@@ -183,9 +183,17 @@ void multiThread::formatRow_canparser_thread(canframe frame)
     QStringList str_parser = {};
     QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(frame.timeStamp() / 1000000);
     str_parser.append(timestamp.toString("hh:mm:ss.zzz"));
-    str_parser.append("");
-    str_parser.append("");
+    str_parser.append("CAN " + QString::number(frame.channel()));
+    str_parser.append(QString::number(frame.id(), 16).toUpper());
     str_parser.append(QString::fromStdString(frame.name()));
+    str_parser.append("");
+    str_parser.append(QString::number(frame.dlc()));
+    int isfd = frame.isFd();
+    QString EventType = (isfd) ? "CAN FD" : "CAN";
+    str_parser.append(EventType);
+    str_parser.append(QString::number(frame.dataLen()));
+    str_parser.append("CAN FRAME");
+
     TraceTreeWidgetItem* Item = new TraceTreeWidgetItem(str_parser);
     Item->setSource("can_parser");
     UUIDv4::UUID uuid = uuidGenerator.getUUID();
