@@ -357,12 +357,22 @@ void QtWidgetsApplication1::resetLayout()
 	updateToolbar();
 
 	// mysearch
+	ui.pushButton_search->setStyleSheet(
+		"QPushButton:focus {"
+		"   background-color: yellow;"
+		"   border: 2px solid blue;"
+		"}");
+	ui.mysearch->setStyleSheet(
+		"QPlainTextEdit:focus {"
+		"   background-color: yellow;"
+		"   border: 2px solid blue;"
+		"}");
 	ui.mysearch->installEventFilter(this);
-	QWidget::setTabOrder(ui.pushButton_search, ui.treetrace);
+	ui.pushButton_search->installEventFilter(this);
 	ui.pushButton_search->setFocusPolicy(Qt::TabFocus);
-	ui.pushButton_search->setFocus();
-	QWidget::setTabOrder(ui.pushButton_search, ui.treetrace);
 	QWidget::setTabOrder(ui.treetrace, ui.mysearch);
+	QWidget::setTabOrder(ui.mysearch, ui.pushButton_search);
+	QWidget::setTabOrder(ui.pushButton_search, ui.treetrace);
 }
 
 void QtWidgetsApplication1::resetStatusBar()
@@ -604,6 +614,12 @@ void QtWidgetsApplication1::setupTreeTrace()
 	QFont font("SimSun", 8);
 	t->setFont(font);
 	initialHeaders();
+	//t->setStyleSheet(
+	//	"QTreeWidget:focus {"
+	//	"   border: 2px solid #FF0000;"
+	//	"   background-color: #FF0000;"
+	//	"}"
+	//);
 }
 
 void QtWidgetsApplication1::initialHeaders()
@@ -799,6 +815,7 @@ void QtWidgetsApplication1::ChangeHeader(const QString& text)
 void QtWidgetsApplication1::ButtonSearchClicked()
 {
 	State current_state = this->state_manager.current_state();
+	ui.pushButton_search->setFocus();
 	if (current_state == State::START || current_state == State::RESUMED) {
 		calc_thread->pauseThread();
 		timer->stop();
@@ -1409,13 +1426,19 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
 				emit buttonClicked();
 				return true;
 			}
-			//else if (keyEvent->key() == Qt::Key_Tab) {
-			//	QWidget* nextWidget = focusNextPrevChild(true);
-			//	if (nextWidget) {
-			//		nextWidget->setFocus();
-			//		return true;
-			//	}
-			//}
+			else if (keyEvent->key() == Qt::Key_Tab) {
+				ui.pushButton_search->setFocus();
+				return true;
+			}
+		}
+	}
+	if (obj == findChild<QPushButton*>()) {
+		if (event->type() == QEvent::KeyPress) {
+			QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+			if (keyEvent->key() == Qt::Key_Tab) {
+				ui.treetrace->setFocus();
+				return true;
+			}
 		}
 	}
 	//return QWidget::eventFilter(obj, event);
@@ -1444,6 +1467,9 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
 					collapse_item(current);
 				else
 					extract_item(current);
+			}
+			else {
+				ui.mysearch->setFocus();
 			}
 			return true;
 		}
