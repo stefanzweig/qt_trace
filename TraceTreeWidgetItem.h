@@ -145,6 +145,8 @@ public:
 		this->uuid_ = uuid;
 	}
 
+	bool handled = false;
+
 private:
 	MyItemType item_type = MyItemType::canframe_;
 	QString source_, uuid_;

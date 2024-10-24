@@ -17,7 +17,7 @@
 #include "my_spdlog.h"
 #include "multiThread.h"
 #include "columnfilter.h"
-#include "LineEditFilter.h"
+//#include "LineEditFilter.h"
 
 QSize getItemSize(QTreeWidgetItem* item, int column, const QFont& font) {
 	QFontMetrics fontMetrics(font);
@@ -126,6 +126,7 @@ void QtWidgetsApplication1::init()
 	resetLayout();
 	resetStatusBar();
 	setupTreeTrace();
+	updateContinuousProgress();
 	showMaximized();
 }
 
@@ -285,7 +286,7 @@ void QtWidgetsApplication1::updateContinuousProgress()
 
 void QtWidgetsApplication1::updateProgressTimer()
 {
-	QString strRight; //  = QString("Page Capacity: %1").arg(page_capacity);
+	QString strRight;
 	QDateTime end_time = QDateTime::currentDateTime();
 	qint64 secondsDifference = start_time.secsTo(end_time);
 	QTime time = QTime::fromMSecsSinceStartOfDay(secondsDifference * 1000);
@@ -356,8 +357,12 @@ void QtWidgetsApplication1::resetLayout()
 	updateToolbar();
 
 	// mysearch
-	LineEditFilter* lineeditfilter = new LineEditFilter();
-	ui.mysearch->installEventFilter(lineeditfilter);
+	ui.mysearch->installEventFilter(this);
+	QWidget::setTabOrder(ui.pushButton_search, ui.treetrace);
+	ui.pushButton_search->setFocusPolicy(Qt::TabFocus);
+	ui.pushButton_search->setFocus();
+	QWidget::setTabOrder(ui.pushButton_search, ui.treetrace);
+	QWidget::setTabOrder(ui.treetrace, ui.mysearch);
 }
 
 void QtWidgetsApplication1::resetStatusBar()
@@ -396,12 +401,10 @@ void QtWidgetsApplication1::prepareMenu(const QPoint& pos)
 
 void QtWidgetsApplication1::newDev()
 {
-	// no use so far
 }
 
 void QtWidgetsApplication1::onActionTriggered()
 {
-	qDebug() << tr("�˵����Ѵ�����");
 }
 
 
@@ -464,9 +467,6 @@ void QtWidgetsApplication1::resumeTrace()
 	//LOGGER_INFO(log_, "==== RESUME TRACE PROCESS ====");
 
 	uint32_t samples = 1000;
-	////LOGGER_INFO(log_, "==== mysub_can_frames IS NULL? {} ====", mysub_can_frames == nullptr);
-	////LOGGER_INFO(log_, "==== mysub_can_parser IS NULL? {} ====", mysub_can_parser == nullptr);
-
 	if (mysub_can_frames == nullptr) {
 		mysub_can_frames = new ZoneMasterCanMessageDataSubscriber(dds_domainid);
 		qRegisterMetaType <can_frame>("can_frame");
@@ -534,7 +534,6 @@ void QtWidgetsApplication1::stopTrace()
 
 void QtWidgetsApplication1::replayTrace()
 {
-	// 2024��10��11�� 17:46 �طŹ���
 	qDebug() << "REPLAY...";
 }
 
@@ -547,9 +546,7 @@ void QtWidgetsApplication1::resume_from_pause_trace()
 		frozen = false;
 		initial_trace = true;
 		state_manager.changeState(State::RESUMED);
-		//LOGGER_INFO(log_, "==== FROZEN STATUS {} ====", frozen);
 		//LOGGER_INFO(log_, "==== BEFORE RESUME TRACE ====");
-		//LOGGER_INFO(log_, "==== QUEUE SIZE BEFORE RESUMING {} ====", shown_queue.size() - padding);
 		resumeTrace();
 		//LOGGER_INFO(log_, "==== AFTER RESUME TRACE ====");
 		//LOGGER_INFO(log_, "\n");
@@ -564,8 +561,6 @@ void QtWidgetsApplication1::pauseTrace()
 	if (last_status == "STOPPED" || last_status == "READY") return;
 
 	updateProgressRunStatus();
-	//int backup_count = full_queue_stream.size();
-	//qDebug() << "FULL_QUEUE_BACKUP SIZE ->" << backup_count;
 	if (calc_thread->isPAUSED()) {
 		ui.treetrace->clear();
 		restore_full_queue();
@@ -576,7 +571,6 @@ void QtWidgetsApplication1::pauseTrace()
 	calc_thread->pauseThread();
 	timer->stop();
 	qDebug() << "INSTANT INDEX ->" << paused_instant_index;
-	//LOGGER_INFO(log_, "==== QUEUE SIZE WHEN PAUSE {} ====", shown_queue.size() - padding);
 	show_fullpage();
 	last_status = "PAUSED";
 	state_manager.changeState(State::PAUSE);
@@ -594,7 +588,6 @@ void QtWidgetsApplication1::setupTreeTrace()
 	t->setFocusPolicy(Qt::WheelFocus);
 	t->header()->setHighlightSections(true);
 	t->header()->setStretchLastSection(true);
-	//t->header()->setSortIndicator(0, Qt::AscendingOrder);
 	t->setWindowTitle(QObject::tr("CAN/LIN"));
 	t->setAttribute(Qt::WA_OpaquePaintEvent);
 	t->setAttribute(Qt::WA_NoSystemBackground);
@@ -744,6 +737,7 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 	timer_isRunning = true;
 	if (item != NULL) {
 		//m_mutex.lock();
+		item->handled = true;
 		TraceTreeWidgetItem* item_backup = (TraceTreeWidgetItem*)item->clone();
 		if (calc_thread->isPAUSED()) {
 			full_queue_stream.enqueue(item_backup);
@@ -751,11 +745,6 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 		}
 		else {
 			shown_queue.enqueue(item_backup->clone());
-			//if (shown_queue.size() > 3*count_per_page) {
-			//	TraceTreeWidgetItem* it_remove = shown_queue.dequeue();
-			//	delete it_remove;
-			//	it_remove = nullptr;
-			//}
 			//m_mutex.unlock();
 			full_queue_stream.enqueue(item_backup);
 		}
@@ -854,10 +843,6 @@ void QtWidgetsApplication1::dustbin()
 	updateProgressRunStatus();
 	updateProgressTimer();
 	calc_thread->clear_items_queue();
-	qDebug() << "SHOWN MEMORY ->" << sizeof(TraceTreeWidgetItem) * shown_queue.size();
-	qDebug() << "FULL MEMORY ->" << sizeof(TraceTreeWidgetItem) * full_queue_stream.size();
-	qDebug() << "FILTERED MEMORY ->" << sizeof(TraceTreeWidgetItem) * filtered_queue.size();
-
 }
 
 void QtWidgetsApplication1::updateToolbar()
@@ -1417,6 +1402,23 @@ void QtWidgetsApplication1::update_latest_index(uint64_t index)
 }
 
 bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
+	if (obj == findChild<QPlainTextEdit*>()) {
+		if (event->type() == QEvent::KeyPress) {
+			QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+			if (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter) {
+				emit buttonClicked();
+				return true;
+			}
+			//else if (keyEvent->key() == Qt::Key_Tab) {
+			//	QWidget* nextWidget = focusNextPrevChild(true);
+			//	if (nextWidget) {
+			//		nextWidget->setFocus();
+			//		return true;
+			//	}
+			//}
+		}
+	}
+	//return QWidget::eventFilter(obj, event);
 	if (obj == ui.treetrace && event->type() == QEvent::KeyPress) {
 		QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
 		if (keyEvent->key() == Qt::Key_Up) {

@@ -197,4 +197,15 @@ private slots:
 
 signals:
 	void record_latest_index(uint64_t index);
+	void buttonClicked();
+
+protected:
+	void showEvent(QShowEvent* event) override {
+		// 连接自定义信号到槽
+		connect(this, &QtWidgetsApplication1::buttonClicked, this, &QtWidgetsApplication1::ButtonSearchClicked);
+		QWidget::showEvent(event);
+	}	
+	bool focusNextPrevChild(bool next) override {
+		return QWidget::focusNextPrevChild(next);
+	}
 };

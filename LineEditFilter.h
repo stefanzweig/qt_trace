@@ -4,6 +4,8 @@
 #include <QKeyEvent>
 
 class LineEditFilter : public QObject {
+    Q_OBJECT
+
 protected:
     bool eventFilter(QObject* obj, QEvent* event) override {
         QPlainTextEdit* editor = qobject_cast<QPlainTextEdit*>(obj);
@@ -11,10 +13,14 @@ protected:
             if (event->type() == QEvent::KeyPress) {
                 QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
                 if (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter) {
-                    return true; // 拦截回车键事件
+                    emit buttonClicked();
+                    return true;
                 }
             }
         }
         return QObject::eventFilter(obj, event);
     }
+
+signals:
+    void buttonClicked();
 };

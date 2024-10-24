@@ -60,31 +60,34 @@ void multiThread::restartThread() {
 
 void multiThread::run() {
     // key function
-    if (monitor_modules.contains("can")) {
-	if (mysub_can_frames != nullptr) {
-	    if (mysub_can_frames->init()) {
-	    }
-	}
+    if (monitor_modules.contains("canpdu")) {
+        if (mysub_can_parser != nullptr) {
+            if (mysub_can_parser->init()) {
+            }
+        }
     }
 
-    if (monitor_modules.contains("canpdu")) {
-	if (mysub_can_parser != nullptr) {
-	    if (mysub_can_parser->init()) {
-	    }
-	}
+    if (monitor_modules.contains("can")) {
+        if (mysub_can_frames != nullptr) {
+            if (mysub_can_frames->init()) {
+            }
+        }
     }
-    if (monitor_modules.contains("lin")) {
-	if (mysub_lin_frames != nullptr) {
-	    if (mysub_lin_frames->init()) {
-	    }
-	}
-    }
+
     if (monitor_modules.contains("linpdu")) {
-	if (mysub_lin_parser != nullptr) {
-	    if (mysub_lin_parser->init()) {
-	    }
-	}
+        if (mysub_lin_parser != nullptr) {
+            if (mysub_lin_parser->init()) {
+            }
+        }
     }
+
+    if (monitor_modules.contains("lin")) {
+        if (mysub_lin_frames != nullptr) {
+            if (mysub_lin_frames->init()) {
+            }
+        }
+    }
+
     while (true) {
 	if (!is_stop) {
 	    msleep(100); // every 1 second
@@ -429,8 +432,13 @@ void multiThread::clear_items_queue()
 {
     for (TraceTreeWidgetItem* it : list_items_queue)
     {
+        QString myuuid = it->getUUID().toUpper();
+        if (it->handled){}
+        else {
+            qDebug() << "NOT Handled!" << myuuid;
+        }
         QString mysource = it->getSource().toUpper();
-        qDebug() << "ITEM SOURCE ->" << mysource;
+        //qDebug() << "ITEM SOURCE ->" << mysource;
         if (mysource == "CAN_PARSER") {
             int k = it->childCount();
             if (k > 0) {

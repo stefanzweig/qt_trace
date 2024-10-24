@@ -135,7 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="endianness.h" />
-    <ClInclude Include="LineEditFilter.h" />
+    <QtMoc Include="LineEditFilter.h" />
     <ClInclude Include="StateManager.h" />
     <QtMoc Include="topicData\ZoneMasterLinMessageDataListener.h" />
     <ClInclude Include="topicData\ZoneMasterLinMessageDataSubscriber.h" />
