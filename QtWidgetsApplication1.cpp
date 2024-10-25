@@ -372,6 +372,7 @@ void QtWidgetsApplication1::resetLayout()
 	QWidget::setTabOrder(ui.treetrace, ui.mysearch);
 	QWidget::setTabOrder(ui.mysearch, ui.pushButton_search);
 	QWidget::setTabOrder(ui.pushButton_search, ui.treetrace);
+	ui.treetrace->setFocus();
 }
 
 void QtWidgetsApplication1::resetStatusBar()
@@ -536,6 +537,10 @@ void QtWidgetsApplication1::stopTrace()
 	show_fullpage();
 	updateToolbar();
 	updateContinuousProgress();
+	int lastIndex = ui.treetrace->topLevelItemCount() - 1;
+	if (lastIndex >= 0) {
+		ui.treetrace->setCurrentItem(ui.treetrace->topLevelItem(lastIndex));
+	}
 	//LOGGER_INFO(log_, "==== END OF STOPPING TRACE ====");
 	//LOGGER_INFO(log_, "\n");
 
@@ -585,6 +590,10 @@ void QtWidgetsApplication1::pauseTrace()
 	state_manager.changeState(State::PAUSE);
 	updateToolbar();
 	updateContinuousProgress();
+	int lastIndex = ui.treetrace->topLevelItemCount() - 1;
+	if (lastIndex >= 0) {
+		ui.treetrace->setCurrentItem(ui.treetrace->topLevelItem(lastIndex));
+	}
 	//LOGGER_INFO(log_, "==== END OF PAUSE BUTTON CLICKED ====");
 	//LOGGER_INFO(log_, "\n");
 }
@@ -614,11 +623,15 @@ void QtWidgetsApplication1::setupTreeTrace()
 	t->setFont(font);
 	initialHeaders();
 	t->setStyleSheet(
-		"QTreeWidget:focus {"
-		"   padding: 2px solid #FF0000;"
-		"   background-color: silver;"
-		"}"
-	);
+		"QTreeWidget::item:hover{\n"
+		"	color: rgb(0, 0, 0);\n"
+		"	background-color: #f0f0f0;\n"
+		"}\n");
+	//t->setStyleSheet(
+	//	"QTreeWidget:focus {"
+	//	"   padding: 2px solid #FF0000;"
+	//	"   background-color: silver;"
+	//	"}");
 }
 
 void QtWidgetsApplication1::initialHeaders()
@@ -1476,6 +1489,31 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
 				ui.mysearch->setFocus();
 			}
 			return true;
+		}
+		State state = state_manager.current_state();
+		switch (keyEvent->key())
+		{
+		case Qt::Key_S:
+			if (state == State::COMPLETE || state == State::INIT || state == State::STOPPED)
+			{
+				this->startTrace();
+			}
+			break;
+		case Qt::Key_T:
+		case Qt::Key_D:
+			this->stopTrace();
+			break;
+		case Qt::Key_P:
+		case Qt::Key_A:
+			this->pauseTrace();
+			break;
+		case Qt::Key_R:
+			if (calc_thread->isPAUSED()) {
+				this->pauseTrace();
+			}
+			break;
+		default:
+			;
 		}
 	}
 	return QWidget::eventFilter(obj, event);
