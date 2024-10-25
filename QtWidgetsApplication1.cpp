@@ -359,7 +359,6 @@ void QtWidgetsApplication1::resetLayout()
 	// mysearch
 	ui.pushButton_search->setStyleSheet(
 		"QPushButton:focus {"
-		"   background-color: yellow;"
 		"   border: 2px solid blue;"
 		"}");
 	ui.mysearch->setStyleSheet(
@@ -614,12 +613,12 @@ void QtWidgetsApplication1::setupTreeTrace()
 	QFont font("SimSun", 8);
 	t->setFont(font);
 	initialHeaders();
-	//t->setStyleSheet(
-	//	"QTreeWidget:focus {"
-	//	"   border: 2px solid #FF0000;"
-	//	"   background-color: #FF0000;"
-	//	"}"
-	//);
+	t->setStyleSheet(
+		"QTreeWidget:focus {"
+		"   padding: 2px solid #FF0000;"
+		"   background-color: silver;"
+		"}"
+	);
 }
 
 void QtWidgetsApplication1::initialHeaders()
@@ -825,6 +824,7 @@ void QtWidgetsApplication1::ButtonSearchClicked()
 	show_fullpage_with_findings();
 	updateToolbar();
 	updateContinuousProgress();
+	ui.treetrace->setFocus();
 }
 
 void QtWidgetsApplication1::hide_filtered_items(int column_idx, QList<QList<QString>> items)
@@ -1452,7 +1452,7 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
 			}
 			return true;
 		}
-		else if (keyEvent->key() == Qt::Key_Down) {
+		if (keyEvent->key() == Qt::Key_Down) {
 			qDebug() << "DOWN KEY PRESSED";
 			QTreeWidgetItem* current = ui.treetrace->currentItem();
 			if (current) {
@@ -1460,13 +1460,17 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
 			}
 			return true;
 		}
-		else if (keyEvent->key() == Qt::Key_Tab) {
+		if (keyEvent->key() == Qt::Key_Tab) {
 			QTreeWidgetItem* current = ui.treetrace->currentItem();
 			if (current) {
-				if (current->isExpanded())
-					collapse_item(current);
-				else
-					extract_item(current);
+				int nchild = current->childCount();
+				if (nchild > 0) {
+					if (current->isExpanded())
+						collapse_item(current);
+					else
+						extract_item(current);
+				}
+				else { ui.mysearch->setFocus(); }
 			}
 			else {
 				ui.mysearch->setFocus();
