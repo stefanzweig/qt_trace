@@ -195,7 +195,7 @@ void multiThread::formatRow_canparser_thread(canframe frame)
     QString EventType = (isfd) ? "CANFD" : "CAN";
     str_parser.append(EventType);
     str_parser.append(QString::number(frame.dataLen()));
-    str_parser.append("CAN FRAME");
+    str_parser.append("CAN Frame");
 
     TraceTreeWidgetItem* Item = new TraceTreeWidgetItem(str_parser);
     Item->setSource("can_parser");

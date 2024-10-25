@@ -1464,8 +1464,13 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
 				emit buttonClicked();
 				return true;
 			}
-			else if (keyEvent->key() == Qt::Key_Tab) {
+			if (keyEvent->key() == Qt::Key_Tab) {
 				ui.pushButton_search->setFocus();
+				return true;
+			}
+			if (keyEvent->key() == Qt::Key_Escape)
+			{
+				ui.treetrace->setFocus();
 				return true;
 			}
 		}
@@ -1479,7 +1484,6 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
 			}
 		}
 	}
-	//return QWidget::eventFilter(obj, event);
 	if (obj == ui.treetrace && event->type() == QEvent::KeyPress) {
 		QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
 		if (keyEvent->key() == Qt::Key_Up) {
