@@ -348,6 +348,7 @@ void QtWidgetsApplication1::resetLayout()
 
 	connect(ui.treetrace->header(), &QHeaderView::sectionResized, this, &QtWidgetsApplication1::on_header_section_resized);
 	connect(ui.treetrace->horizontalScrollBar(), &QScrollBar::valueChanged, this, &QtWidgetsApplication1::on_horizontal_scroll);
+	//connect(ui.treetrace, &QTreeWidget::currentItemChanged, this, &QtWidgetsApplication1::updateHeaderStyle);
 
 	datachoice = ui.comboBox;
 	datachoice->setEnabled(false);
@@ -467,6 +468,7 @@ void QtWidgetsApplication1::startTrace()
 	//LOGGER_INFO(log_, "==== BEFORE RESUME TRACE ====");
 	resumeTrace();
 	last_status = "STARTED";
+	traceStyleQSS();
 	//LOGGER_INFO(log_, "==== AFTER RESUME TRACE ====");
 	//LOGGER_INFO(log_, "\n");
 }
@@ -541,6 +543,7 @@ void QtWidgetsApplication1::stopTrace()
 	if (lastIndex >= 0) {
 		ui.treetrace->setCurrentItem(ui.treetrace->topLevelItem(lastIndex));
 	}
+	traceStyleQSS();
 	//LOGGER_INFO(log_, "==== END OF STOPPING TRACE ====");
 	//LOGGER_INFO(log_, "\n");
 
@@ -579,6 +582,7 @@ void QtWidgetsApplication1::pauseTrace()
 		ui.treetrace->clear();
 		restore_full_queue();
 		resume_from_pause_trace();
+		traceStyleQSS();
 		return;
 	}
 	//LOGGER_INFO(log_, "==== PAUSE TRACE ====");
@@ -594,6 +598,7 @@ void QtWidgetsApplication1::pauseTrace()
 	if (lastIndex >= 0) {
 		ui.treetrace->setCurrentItem(ui.treetrace->topLevelItem(lastIndex));
 	}
+	traceStyleQSS();
 	//LOGGER_INFO(log_, "==== END OF PAUSE BUTTON CLICKED ====");
 	//LOGGER_INFO(log_, "\n");
 }
@@ -622,16 +627,36 @@ void QtWidgetsApplication1::setupTreeTrace()
 	QFont font("SimSun", 8);
 	t->setFont(font);
 	initialHeaders();
-	t->setStyleSheet(
-		"QTreeWidget::item:hover{\n"
-		"	color: rgb(0, 0, 0);\n"
-		"	background-color: #f0f0f0;\n"
-		"}\n");
+	traceStyleQSS();
+	//t->setStyleSheet(
+	//	"QTreeWidget::item:hover{\n"
+	//	"	color: rgb(0, 0, 0);\n"
+	//	"	background-color: rgb(255, 255, 255);\n"
+	//	"}\n");
 	//t->setStyleSheet(
 	//	"QTreeWidget:focus {"
 	//	"   padding: 2px solid #FF0000;"
 	//	"   background-color: silver;"
 	//	"}");
+}
+
+void QtWidgetsApplication1::traceStyleQSS()
+{
+	State state = state_manager.current_state();
+	switch (state)
+	{
+	case State::START:
+	case State::RESUMED:
+		ui.treetrace->setStyleSheet(treewidget_header_style + 
+			"QTreeWidget::item:hover{\n"
+			"	color: rgb(0, 0, 0);\n"
+			"	background-color: rgb(255, 255, 255);\n"
+			"}\n");
+		break;
+	default:
+		ui.treetrace->setStyleSheet(treewidget_header_style);
+		break;
+	}
 }
 
 void QtWidgetsApplication1::initialHeaders()
@@ -1733,4 +1758,8 @@ void QtWidgetsApplication1::collapse_item(QTreeWidgetItem* item)
 	for (int i = 0; i < item->childCount(); i++) {
 		collapse_item(item->child(i));
 	}
+}
+
+void QtWidgetsApplication1::updateHeaderStyle(QTreeWidgetItem* item) {
+	ui.treetrace->setStyleSheet(treewidget_header_style);
 }

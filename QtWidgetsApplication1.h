@@ -51,9 +51,22 @@ private:
 	void hide_filtered_items(int idx, QList<QList<QString>> items);
 	void get_default_configurations();
 	void compare_item();
+	void traceStyleQSS();
 	void init_mylogger();
 	TraceTreeWidgetItem* read_item_from_queue(int index);
 	TraceTreeWidgetItem* read_item_from_dumb(int index);
+	const QString treewidget_header_style = \
+		"QHeaderView::section {"
+		"   font-weight: bold;"
+		"   background-color: #FFFFFF;"
+		"   color: #464646;"
+		"   padding: 1px;"
+		"   border: none; "
+		"   border-bottom: 1px solid #000;"
+		"}";
+	//"   border: 1px solid #000;"
+	//"   border-top: 1px solid #000;"
+
 
 	QTimer* timer = nullptr;
 	QTimer* timer_dustbin = nullptr;
@@ -194,6 +207,7 @@ private slots:
 	QQueue<QTreeWidgetItem*> get_filtered_queue_front();
 	QQueue<QTreeWidgetItem*> get_filtered_queue_tail();
 	void construct_filtered_queue(int full_count);
+	void updateHeaderStyle(QTreeWidgetItem* item);
 
 signals:
 	void record_latest_index(uint64_t index);
