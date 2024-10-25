@@ -1541,6 +1541,9 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
 				this->pauseTrace();
 			}
 			break;
+		case Qt::Key_Slash:
+			ui.mysearch->setFocus();
+			break;
 		default:
 			;
 		}
