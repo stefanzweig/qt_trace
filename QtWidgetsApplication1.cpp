@@ -1647,6 +1647,7 @@ void QtWidgetsApplication1::form_conditions_outdate(QString findstr)
 					break;
 				}
 			}
+			// todo: signals 2024-10-28 17:54:11
 		}
 	}
 }
