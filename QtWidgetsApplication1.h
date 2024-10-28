@@ -18,6 +18,7 @@
 #include <QReadWriteLock>
 #include "TraceTreeWidgetItem.h"
 #include "StateManager.h"
+#include "lexer.h"
 
 #define TIMER_HEARTBEAT 100
 #define MAX_ITEM_COUNT 5000
@@ -57,6 +58,7 @@ private:
 	void init_mylogger();
 	TraceTreeWidgetItem* read_item_from_queue(int index);
 	TraceTreeWidgetItem* read_item_from_dumb(int index);
+	bool parser2condition(QList<Token> token_list);
 	const QString treewidget_header_style = \
 		"QHeaderView::section {"
 		"   font-weight: bold;"

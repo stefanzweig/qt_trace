@@ -1652,6 +1652,13 @@ void QtWidgetsApplication1::form_conditions_outdate(QString findstr)
 }
 
 #include "lexer.h"
+
+bool QtWidgetsApplication1::parser2condition(QList<Token> token_list)
+{
+	bool bok = false;
+	return bok;
+}
+
 void QtWidgetsApplication1::form_conditions_compiler(QString findstr)
 {
 	QByteArray byteArray = findstr.toUtf8();
@@ -1662,12 +1669,17 @@ void QtWidgetsApplication1::form_conditions_compiler(QString findstr)
 		!token.is_one_of(Token::Kind::End, Token::Kind::Unexpected);
 		token = lex.next())
 	{
+		token_list.append(token);
+	}
+	for (int i = 0; i < token_list.size(); i++)
+	{
 		QString s;
+		Token token = token_list.at(i);
 		s += QString::fromStdString(token.lexeme()) + "|";
 		s += QString::fromStdString(token.kind_name()) + "|\n";
 		qDebug() << "Lexer OUTPUT -> " << s;
-		token_list.append(token);
 	}
+	parser2condition(token_list);
 }
 
 void QtWidgetsApplication1::show_fullpage_with_findings()
