@@ -42,6 +42,8 @@ protected:
 		QMainWindow::resizeEvent(event);
 		this->adjust_filter_buttons();
 	}
+	void form_conditions_outdate(QString findstr);
+	void form_conditions_compiler(QString findstr);
 
 private:
 	Ui::QtWidgetsApplication1Class ui;
@@ -140,6 +142,7 @@ private:
 	int debuglog = 1; // not in use so far
 	int maximum_total = 400000;
 	QSet<QString> passed_uuid_set;
+	QMap<int, QStringList> list_map;
 
 private slots:
 	void startTrace();

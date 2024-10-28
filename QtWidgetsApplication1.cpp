@@ -647,7 +647,7 @@ void QtWidgetsApplication1::traceStyleQSS()
 	{
 	case State::START:
 	case State::RESUMED:
-		ui.treetrace->setStyleSheet(treewidget_header_style + 
+		ui.treetrace->setStyleSheet(treewidget_header_style +
 			"QTreeWidget::item:hover{\n"
 			"	color: rgb(0, 0, 0);\n"
 			"	background-color: rgb(255, 255, 255);\n"
@@ -1291,7 +1291,7 @@ bool QtWidgetsApplication1::filter_run_pass_item_without_children(QTreeWidgetIte
 	//	}
 	//}
 	//else 
-		return true;
+	return true;
 }
 
 bool QtWidgetsApplication1::showNewSession()
@@ -1627,16 +1627,17 @@ void QtWidgetsApplication1::ButtonGotoClicked()
 	ui.label_Current->setText(QString::number(target_page));
 }
 
-void QtWidgetsApplication1::show_fullpage_with_findings()
+void QtWidgetsApplication1::form_conditions_outdate(QString findstr)
 {
-	QString search_str = ui.mysearch->toPlainText().trimmed();
-	QStringList items = search_str.split(QRegExp("[,;|]"), QString::SkipEmptyParts);
-	QMap<int, QStringList> list_map;
+	QStringList items = findstr.split(QRegExp("[,;|]"), QString::SkipEmptyParts);
+	list_map.clear();
 	for (const QString& item : items) {
 		qDebug() << item.trimmed();
 		if (item.contains("=")) {
 			QStringList item_map = item.split("=", QString::SkipEmptyParts);
 			qDebug() << "ITEM MAP SIZE ->" << item_map.size();
+			if (item_map.size() != 2)
+				continue;
 			QString k = item_map[0].trimmed();
 			QString v = item_map[1].trimmed().toLower();
 			int nk = -1;
@@ -1648,6 +1649,32 @@ void QtWidgetsApplication1::show_fullpage_with_findings()
 			}
 		}
 	}
+}
+
+#include "lexer.h"
+void QtWidgetsApplication1::form_conditions_compiler(QString findstr)
+{
+	QByteArray byteArray = findstr.toUtf8();
+	const char* cStr = byteArray.constData();
+	Lexer lex(cStr);
+	QList<Token> token_list;
+	for (auto token = lex.next();
+		!token.is_one_of(Token::Kind::End, Token::Kind::Unexpected);
+		token = lex.next())
+	{
+		QString s;
+		s += QString::fromStdString(token.lexeme()) + "|";
+		s += QString::fromStdString(token.kind_name()) + "|\n";
+		qDebug() << "Lexer OUTPUT -> " << s;
+		token_list.append(token);
+	}
+}
+
+void QtWidgetsApplication1::show_fullpage_with_findings()
+{
+	QString search_str = ui.mysearch->toPlainText().trimmed();
+	form_conditions_compiler(search_str);
+	form_conditions_outdate(search_str);
 
 	for (int key : list_map.keys()) {
 		qDebug() << "Key:" << key;
