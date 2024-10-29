@@ -1830,9 +1830,14 @@ void QtWidgetsApplication1::highlight_previous_item(QTreeWidgetItem* item)
 	else {
 		QTreeWidget* treeWidget = item->treeWidget();
 		prevSibling = treeWidget->topLevelItem(treeWidget->indexOfTopLevelItem(item) - 1);
-	}
-	if (prevSibling) {
-		ui.treetrace->setCurrentItem(prevSibling);
+		if (prevSibling) {
+			while (prevSibling && prevSibling->isHidden()) {
+				prevSibling = treeWidget->topLevelItem(treeWidget->indexOfTopLevelItem(prevSibling) - 1);
+			}
+			if (prevSibling) {
+				ui.treetrace->setCurrentItem(prevSibling);
+			}
+		}
 	}
 }
 
@@ -1846,9 +1851,14 @@ void QtWidgetsApplication1::highlight_next_item(QTreeWidgetItem* item)
 	else {
 		QTreeWidget* treeWidget = item->treeWidget();
 		nextSibling = treeWidget->topLevelItem(treeWidget->indexOfTopLevelItem(item) + 1);
-	}
-	if (nextSibling) {
-		ui.treetrace->setCurrentItem(nextSibling);
+		if (nextSibling) {
+			while (nextSibling && nextSibling->isHidden()) {
+				nextSibling = treeWidget->topLevelItem(treeWidget->indexOfTopLevelItem(nextSibling) + 1);
+			}
+			if (nextSibling) {
+				ui.treetrace->setCurrentItem(nextSibling);
+			}
+		}
 	}
 }
 
