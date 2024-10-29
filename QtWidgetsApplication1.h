@@ -145,6 +145,7 @@ private:
 	int maximum_total = 400000;
 	QSet<QString> passed_uuid_set;
 	QMap<int, QStringList> list_map;
+	bool signal_condition = false;
 
 private slots:
 	void startTrace();

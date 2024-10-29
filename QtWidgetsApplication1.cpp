@@ -1631,8 +1631,11 @@ void QtWidgetsApplication1::form_conditions_outdate(QString findstr)
 {
 	QStringList items = findstr.split(QRegExp("[,;|]"), QString::SkipEmptyParts);
 	list_map.clear();
+	signal_condition = false;
 	for (const QString& item : items) {
 		qDebug() << item.trimmed();
+		QSet<QString> stringSet;
+		stringSet << "sig" << "signal";
 		if (item.contains("=")) {
 			QStringList item_map = item.split("=", QString::SkipEmptyParts);
 			qDebug() << "ITEM MAP SIZE ->" << item_map.size();
@@ -1647,7 +1650,31 @@ void QtWidgetsApplication1::form_conditions_outdate(QString findstr)
 					break;
 				}
 			}
-			// todo: signals 2024-10-28 17:54:11
+			// todo: signals with = sign. 2024-10-28 17:54:11
+			if (k.contains(":")) {
+				// signal - "sig:signal_name=value"
+				QStringList sig_list = k.split(":", QString::SkipEmptyParts);
+				if (sig_list.size() != 2)
+					continue;
+				QString s_flag = sig_list[0].trimmed().toLower(); // sig or signal
+				QString s_name = sig_list[1].trimmed().toLower(); // signal name
+				if (stringSet.contains(s_flag)) {
+					list_map[0] << s_name;
+					signal_condition = true;
+				}
+			}
+		}
+		else if (item.contains(":")) {
+			// signal again
+			QStringList sig_list = item.split(":", QString::SkipEmptyParts);
+			if (sig_list.size() != 2)
+				continue;
+			QString s_flag = sig_list[0].trimmed().toLower(); // sig or signal
+			QString s_name = sig_list[1].trimmed().toLower(); // signal name
+			if (stringSet.contains(s_flag)) {
+				list_map[0] << s_name;
+				signal_condition = true;
+			}
 		}
 	}
 }
@@ -1683,6 +1710,33 @@ void QtWidgetsApplication1::form_conditions_compiler(QString findstr)
 	parser2condition(token_list);
 }
 
+
+bool recursiveTreeItems(QTreeWidgetItem* item, QStringList target, bool& matched, int level = 0) {
+	// sig:IBatTem=0,sig:IEvtDiscardRate=0
+	if (!item) {
+		matched = false;
+		return matched;
+	}
+
+	// qDebug().noquote() << QString("  ").repeated(level) << item->text(0);
+	QString text0 = item->text(0).toLower();
+	bool single_matched = false;
+	for (QString t : target)
+	{
+		if (t == text0) single_matched = true;
+	}
+	matched = single_matched;
+	if (level) {
+		int childcount = item->childCount();
+		if (!childcount)
+			item->setHidden(!single_matched);
+	}
+
+	for (int i = 0; i < item->childCount(); ++i) {
+		recursiveTreeItems(item->child(i), target, matched, level + 1);
+	}
+}
+
 void QtWidgetsApplication1::show_fullpage_with_findings()
 {
 	QString search_str = ui.mysearch->toPlainText().trimmed();
@@ -1704,9 +1758,16 @@ void QtWidgetsApplication1::show_fullpage_with_findings()
 		bool hidden = false;
 		for (const int& key : list_map.keys()) {
 			QStringList values = list_map.value(key);
-			if (!values.contains(item->text(key).toLower())) {
-				hidden = true;
-				continue;
+			if (signal_condition) {
+				bool matched = false;
+				recursiveTreeItems(item, values, matched, 0);
+				hidden = !matched;
+			}
+			else {
+				if (!values.contains(item->text(key).toLower())) {
+					hidden = true;
+					continue;
+				}
 			}
 		}
 		item->setHidden(hidden);
