@@ -135,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="endianness.h" />
+    <ClInclude Include="zm_struct.h" />
     <QtMoc Include="LineEditFilter.h" />
     <ClInclude Include="lexer.h" />
     <ClInclude Include="parser.h" />
