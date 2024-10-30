@@ -1539,6 +1539,12 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
 		case Qt::Key_Slash:
 			ui.mysearch->setFocus();
 			break;
+		case Qt::Key_F:
+			if (keyEvent->modifiers() & Qt::ControlModifier)
+			{
+				ui.mysearch->setFocus();
+				break;
+			}
 		default:
 			;
 		}
