@@ -146,7 +146,8 @@ private:
 	QSet<QString> passed_uuid_set;
 	QMap<int, QStringList> list_map;
 	bool signal_condition = false;
-  int  condition_type = 0; // 0 - no, 1 - column, 2 - signal, 3 - mixed
+	int  condition_type = 0; // 0 - no, 1 - column, 2 - signal, 3 - mixed
+	QSet<QTreeWidgetItem*> invisibles;
 
 private slots:
 	void startTrace();
@@ -215,6 +216,7 @@ private slots:
 	QQueue<QTreeWidgetItem*> get_filtered_queue_tail();
 	void construct_filtered_queue(int full_count);
 	void updateHeaderStyle(QTreeWidgetItem* item);
+	void resetInvisibles();
 
 signals:
 	void record_latest_index(uint64_t index);

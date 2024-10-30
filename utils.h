@@ -55,6 +55,32 @@ void removeAllItems(QTreeWidgetItem* item)
     }
 }
 
+bool recursiveTreeItems(QTreeWidgetItem* item, QStringList target, bool& matched, int level = 0) {
+    // sig:IBatTem=0,sig:IEvtDiscardRate=0,sig:IEvtDiscardRate
+    if (!item) {
+        matched = false;
+        return matched;
+    }
+
+    // qDebug().noquote() << QString("  ").repeated(level) << item->text(0);
+    QString text0 = item->text(0).toLower();
+    bool single_matched = false;
+    for (QString t : target)
+    {
+        if (t == text0) single_matched = true;
+    }
+    matched = single_matched;
+    if (level) {
+        int childcount = item->childCount();
+        if (!childcount)
+            item->setHidden(!single_matched);
+    }
+
+    for (int i = 0; i < item->childCount(); ++i) {
+        recursiveTreeItems(item->child(i), target, matched, level + 1);
+    }
+}
+
 /*
 int main() {
     QQueue<QTreeWidgetItem*> queue2;

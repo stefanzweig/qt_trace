@@ -450,6 +450,7 @@ bool QtWidgetsApplication1::new_session()
 	if (!ncount) return true;
 
 	if (showNewSession()) {
+		invisibles.clear();
 		ui.treetrace->clear();
 		initialize_new_session();
 	}
@@ -479,6 +480,7 @@ void QtWidgetsApplication1::resumeTrace()
 	//LOGGER_INFO(log_, "==== RESUME TRACE PROCESS ====");
 
 	uint32_t samples = 1000;
+	invisibles.clear();
 	if (mysub_can_frames == nullptr) {
 		mysub_can_frames = new ZoneMasterCanMessageDataSubscriber(dds_domainid);
 		qRegisterMetaType <can_frame>("can_frame");
@@ -1007,7 +1009,7 @@ void QtWidgetsApplication1::draw_trace_window(int capacity)
 		//LOGGER_INFO(log_, "TREE COUNT -> {}", count);
 		for (int i = 0; i < changes; i++) {
 			int idx = queue_size - changes + i;
-			////LOGGER_INFO(log_, "DRAW ITEM -> {}", idx);
+			//LOGGER_INFO(log_, "DRAW ITEM -> {}", idx);
 			bool bchanged = false;
 			it = shown_queue.at(idx);
 			if (filter_pass_item(it)) {
@@ -1024,7 +1026,7 @@ void QtWidgetsApplication1::draw_trace_window(int capacity)
 					if (bchanged) {
 						QStringList original_data = lastItem->get_original_data();
 						int ref = lastItem->get_ref();
-						////LOGGER_INFO(log_, "REF COUNTER -> {}", ref);
+						//LOGGER_INFO(log_, "REF COUNTER -> {}", ref);
 						//qDebug() << "REF COUNTER" << ref;
 					}
 				}
@@ -1307,7 +1309,7 @@ TraceTreeWidgetItem* QtWidgetsApplication1::read_item_from_queue(int index)
 	auto log_ = GETLOG("WORKFLOW");
 	TraceTreeWidgetItem* item = nullptr;
 	item = this->shown_queue.at(index);
-	////LOGGER_INFO(log_, "ITEM CONTENT -> {}", item->text(0).toStdString());
+	//LOGGER_INFO(log_, "ITEM CONTENT -> {}", item->text(0).toStdString());
 	return item;
 }
 
@@ -1442,10 +1444,10 @@ void QtWidgetsApplication1::update_latest_index(uint64_t index)
 	current_page_index = paused_instant_index / count_per_page;
 	current_item_index = paused_instant_index % count_per_page;
 	if (paused_instant_index >= maximum_total) {
-		LOGGER_INFO(log_, "PAUSED INDEX -> {}", paused_instant_index);
-		LOGGER_INFO(log_, "SHOWN_QUEUE MEMORY -> {}", sizeof(TraceTreeWidgetItem) * shown_queue.size());
-		LOGGER_INFO(log_, "FULL_QUEUE_STREAM MEMORY -> {}", sizeof(TraceTreeWidgetItem) * full_queue_stream.size());
-		LOGGER_INFO(log_, "FILTERED_QUEUE MEMORY -> {}", sizeof(TraceTreeWidgetItem) * filtered_queue.size());
+		//LOGGER_INFO(log_, "PAUSED INDEX -> {}", paused_instant_index);
+		//LOGGER_INFO(log_, "SHOWN_QUEUE MEMORY -> {}", sizeof(TraceTreeWidgetItem) * shown_queue.size());
+		//LOGGER_INFO(log_, "FULL_QUEUE_STREAM MEMORY -> {}", sizeof(TraceTreeWidgetItem) * full_queue_stream.size());
+		//LOGGER_INFO(log_, "FILTERED_QUEUE MEMORY -> {}", sizeof(TraceTreeWidgetItem) * filtered_queue.size());
 	}
 }
 
@@ -1705,30 +1707,52 @@ void QtWidgetsApplication1::form_conditions_compiler(QString findstr)
 	parser2condition(token_list);
 }
 
-bool recursiveTreeItems(QTreeWidgetItem* item, QStringList target, bool& matched, int level = 0) {
-	// sig:IBatTem=0,sig:IEvtDiscardRate=0,sig:IEvtDiscardRate
-	if (!item) {
-		matched = false;
-		return matched;
-	}
-
-	// qDebug().noquote() << QString("  ").repeated(level) << item->text(0);
-	QString text0 = item->text(0).toLower();
-	bool single_matched = false;
-	for (QString t : target)
+bool findItem(QTreeWidgetItem* item, const QStringList& target, QSet<QTreeWidgetItem*>& hiddens, int level=0) {
+	int child = item->childCount();
+	QString s = item->text(0).toLower();
+	if (!child && level)
 	{
-		if (t == text0) single_matched = true;
+		qDebug() << "Hidden ->" << s;
+		hiddens.insert(item);
+		QList<QTreeWidgetItem*> siblings;
+		QTreeWidgetItem* parentItem = item->parent();
+		if (parentItem) {
+			for (int i = 0; i < parentItem->childCount(); ++i) {
+				QTreeWidgetItem* sibling = parentItem->child(i);
+				if (sibling != item) {
+					siblings.append(sibling);
+					hiddens.insert(sibling);
+				}
+			}
+		}
+		if (!siblings.isEmpty()) {
+			for (QTreeWidgetItem* sib : siblings) {
+				for (QString targetText : target) {
+					if (sib->text(0).toLower() == targetText)
+					{
+						if (hiddens.contains(sib))
+							hiddens.remove(sib);
+					}
+				}
+			}
+		}
 	}
-	matched = single_matched;
-	if (level) {
-		int childcount = item->childCount();
-		if (!childcount)
-			item->setHidden(!single_matched);
+	for (QString targetText : target) {
+		if (item->text(0).toLower() == targetText) 
+		{
+			if (hiddens.contains(item))
+				hiddens.remove(item);
+			return true;
+		}
 	}
 
-	for (int i = 0; i < item->childCount(); ++i) {
-		recursiveTreeItems(item->child(i), target, matched, level + 1);
+	for (int i = 0; i < child; ++i) {
+		if (findItem(item->child(i), target, hiddens, level+1)) {
+			return true;
+		}
 	}
+
+	return false;
 }
 
 void QtWidgetsApplication1::show_fullpage_with_findings()
@@ -1736,7 +1760,7 @@ void QtWidgetsApplication1::show_fullpage_with_findings()
 	QString search_str = ui.mysearch->toPlainText().trimmed();
 	form_conditions_compiler(search_str);
 	form_conditions_outdate(search_str);
-
+	resetInvisibles();
 	for (int key : list_map.keys()) {
 		qDebug() << "Key:" << key;
 		const QStringList& list = list_map[key];
@@ -1752,31 +1776,10 @@ void QtWidgetsApplication1::show_fullpage_with_findings()
 		bool hidden = false;
 		for (const int& key : list_map.keys()) {
 			QStringList values = list_map.value(key);
-			//switch (this->condition_type)
-			//{
-			//case 1:
-			//case 3:
-			//{
-			//	if (!values.contains(item->text(key).toLower())) {
-			//		hidden = true;
-			//		continue;
-			//	}
-			//}
-			//	break;
-			//case 2:
-			//{
-			//	bool matched = false;
-			//	recursiveTreeItems(item, values, matched, 0);
-			//	hidden = !matched;
-			//}
-			//	break;
-			//default:
-			//	;
-			//}
 
 			if (signal_condition) {
 				bool matched = false;
-				recursiveTreeItems(item, values, matched, 0);
+				matched = findItem(item, values, invisibles);
 				hidden = !matched;
 			}
 			else {
@@ -1788,9 +1791,20 @@ void QtWidgetsApplication1::show_fullpage_with_findings()
 		}
 		item->setHidden(hidden);
 	}
+	for (QTreeWidgetItem* h : invisibles) {
+		h->setHidden(true);
+	}
+
 	updateContinuousProgress();
 }
 
+void QtWidgetsApplication1::resetInvisibles()
+{
+	for (QTreeWidgetItem* h : invisibles) {
+		h->setHidden(false);
+	}
+	invisibles.clear();
+}
 void QtWidgetsApplication1::show_fullpage_with_index(int index)
 {
 	// index is the page index  starting from 1
