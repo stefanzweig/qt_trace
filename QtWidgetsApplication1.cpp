@@ -624,7 +624,7 @@ void QtWidgetsApplication1::setupTreeTrace()
 	t->setToolTipDuration(0);
 	header->setDefaultSectionSize(150);
 	header->setSectionResizeMode(QHeaderView::Interactive);
-	
+
 	// no more font setting...2024-10-30 10:37:16
 	//QFont font("SimSun", 8);
 	//font.setBold(true);
@@ -1283,7 +1283,7 @@ bool QtWidgetsApplication1::filter_run_pass_item_without_children(QTreeWidgetIte
 	//	{
 	//	}
 	//}
-	//else 
+	//else
 	return true;
 }
 
@@ -1640,6 +1640,7 @@ void QtWidgetsApplication1::form_conditions_outdate(QString findstr)
 			for (int i = 0; i < CurrentHeader.size(); ++i) {
 				if (CurrentHeader[i].toLower() == k.toLower()) {
 					list_map[i] << v;
+					condition_type = condition_type>1? 3:1;
 					break;
 				}
 			}
@@ -1654,6 +1655,7 @@ void QtWidgetsApplication1::form_conditions_outdate(QString findstr)
 				if (stringSet.contains(s_flag)) {
 					list_map[0] << s_name;
 					signal_condition = true;
+					condition_type = (condition_type %2)?3:2;
 				}
 			}
 		}
@@ -1703,9 +1705,8 @@ void QtWidgetsApplication1::form_conditions_compiler(QString findstr)
 	parser2condition(token_list);
 }
 
-
 bool recursiveTreeItems(QTreeWidgetItem* item, QStringList target, bool& matched, int level = 0) {
-	// sig:IBatTem=0,sig:IEvtDiscardRate=0
+	// sig:IBatTem=0,sig:IEvtDiscardRate=0,sig:IEvtDiscardRate
 	if (!item) {
 		matched = false;
 		return matched;
@@ -1751,6 +1752,28 @@ void QtWidgetsApplication1::show_fullpage_with_findings()
 		bool hidden = false;
 		for (const int& key : list_map.keys()) {
 			QStringList values = list_map.value(key);
+			//switch (this->condition_type)
+			//{
+			//case 1:
+			//case 3:
+			//{
+			//	if (!values.contains(item->text(key).toLower())) {
+			//		hidden = true;
+			//		continue;
+			//	}
+			//}
+			//	break;
+			//case 2:
+			//{
+			//	bool matched = false;
+			//	recursiveTreeItems(item, values, matched, 0);
+			//	hidden = !matched;
+			//}
+			//	break;
+			//default:
+			//	;
+			//}
+
 			if (signal_condition) {
 				bool matched = false;
 				recursiveTreeItems(item, values, matched, 0);

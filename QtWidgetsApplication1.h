@@ -96,7 +96,7 @@ private:
 	uint64_t count_per_page = 4000; // the full length of data in the window when it is paused.
 	int page_capacity = 300; // the trace windows maximal rows of data
 	bool isHex = true; // repr in hex
-	int max_page_count = 0; // (full_count_canframes / count_per_page) 
+	int max_page_count = 0; // (full_count_canframes / count_per_page)
 	int current_page_index = 0; // the current page index of all items
 	int current_item_index = 0; // the index of the item inside a page
 
@@ -146,6 +146,7 @@ private:
 	QSet<QString> passed_uuid_set;
 	QMap<int, QStringList> list_map;
 	bool signal_condition = false;
+  int  condition_type = 0; // 0 - no, 1 - column, 2 - signal, 3 - mixed
 
 private slots:
 	void startTrace();
@@ -224,7 +225,7 @@ protected:
 		// 连接自定义信号到槽
 		connect(this, &QtWidgetsApplication1::buttonClicked, this, &QtWidgetsApplication1::ButtonSearchClicked);
 		QWidget::showEvent(event);
-	}	
+	}
 	bool focusNextPrevChild(bool next) override {
 		return QWidget::focusNextPrevChild(next);
 	}
