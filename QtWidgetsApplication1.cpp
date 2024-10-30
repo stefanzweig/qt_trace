@@ -10,6 +10,7 @@
 #include <QSplashScreen>
 #include <QPixmap>
 #include <QLineEdit>
+#include <QShortcut>
 
 #include "TraceTreeWidgetItem.h"
 #include "spdlog/spdlog.h"
@@ -30,6 +31,8 @@ QtWidgetsApplication1::QtWidgetsApplication1(QWidget* parent)
 	: QMainWindow(parent)
 {
 	init();
+	QShortcut* shortcut_help = new QShortcut(QKeySequence("Ctrl+H"), this);
+	connect(shortcut_help, &QShortcut::activated, this, &QtWidgetsApplication1::help_usage);
 }
 
 QtWidgetsApplication1::~QtWidgetsApplication1()
@@ -1543,13 +1546,23 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
 			if (keyEvent->modifiers() & Qt::ControlModifier)
 			{
 				ui.mysearch->setFocus();
-				break;
 			}
+			break;
 		default:
 			;
 		}
 	}
 	return QWidget::eventFilter(obj, event);
+}
+
+
+void QtWidgetsApplication1::construct_searching_string() 
+{
+}
+
+void QtWidgetsApplication1::help_usage()
+{
+	qDebug() << "help help help";
 }
 
 void QtWidgetsApplication1::updateComoboPage()

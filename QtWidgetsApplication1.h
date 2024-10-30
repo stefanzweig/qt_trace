@@ -217,6 +217,8 @@ private slots:
 	void construct_filtered_queue(int full_count);
 	void updateHeaderStyle(QTreeWidgetItem* item);
 	void resetInvisibles();
+	void construct_searching_string();
+	void help_usage();
 
 signals:
 	void record_latest_index(uint64_t index);
