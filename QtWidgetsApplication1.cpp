@@ -624,20 +624,13 @@ void QtWidgetsApplication1::setupTreeTrace()
 	t->setToolTipDuration(0);
 	header->setDefaultSectionSize(150);
 	header->setSectionResizeMode(QHeaderView::Interactive);
-	QFont font("SimSun", 8);
-	t->setFont(font);
+	
+	// no more font setting...2024-10-30 10:37:16
+	//QFont font("SimSun", 8);
+	//font.setBold(true);
+	//t->setFont(font);
 	initialHeaders();
 	traceStyleQSS();
-	//t->setStyleSheet(
-	//	"QTreeWidget::item:hover{\n"
-	//	"	color: rgb(0, 0, 0);\n"
-	//	"	background-color: rgb(255, 255, 255);\n"
-	//	"}\n");
-	//t->setStyleSheet(
-	//	"QTreeWidget:focus {"
-	//	"   padding: 2px solid #FF0000;"
-	//	"   background-color: silver;"
-	//	"}");
 }
 
 void QtWidgetsApplication1::traceStyleQSS()
@@ -1879,5 +1872,5 @@ void QtWidgetsApplication1::collapse_item(QTreeWidgetItem* item)
 }
 
 void QtWidgetsApplication1::updateHeaderStyle(QTreeWidgetItem* item) {
-	ui.treetrace->setStyleSheet(treewidget_header_style);
+	//ui.treetrace->setStyleSheet(treewidget_header_style);
 }
