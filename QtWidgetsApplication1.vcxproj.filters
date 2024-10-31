@@ -73,6 +73,9 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="usagedialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gui_global.h">
@@ -451,6 +454,9 @@
     <ClInclude Include="zm_struct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ui_usagedialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="treemodel.h">
@@ -477,9 +483,15 @@
     <QtMoc Include="LineEditFilter.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="usagedialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="columnfilterdialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="usagedialog.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

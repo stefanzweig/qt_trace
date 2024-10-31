@@ -19,6 +19,7 @@
 #include "TraceTreeWidgetItem.h"
 #include "StateManager.h"
 #include "lexer.h"
+#include "usagedialog.h"
 
 #define TIMER_HEARTBEAT 100
 #define MAX_ITEM_COUNT 5000
@@ -49,6 +50,7 @@ protected:
 private:
 	Ui::QtWidgetsApplication1Class ui;
 	void init();
+	void shortcuts();
 	void setupTreeTrace();
 	void initialHeaders();
 	void hide_filtered_items(int idx, QList<QList<QString>> items);
@@ -109,6 +111,7 @@ private:
 
 	QList<QPushButton*> headerButtonList;
 	columnFilterDialog* filter = nullptr;  // filter dialog
+	UsageDialog* usagedialog = nullptr;
 	QHash<QString, QString> filterConfig;
 	QVector<QVector<bool>> selectedStates;
 

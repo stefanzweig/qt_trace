@@ -127,14 +127,18 @@
     <ClCompile Include="treeitem.cpp" />
     <ClCompile Include="treemodel.cpp" />
     <ClCompile Include="topicData\ZoneMasterCanMessageDataSubscriber.cpp" />
+    <ClCompile Include="usagedialog.cpp" />
     <QtRcc Include="QtWidgetsApplication1.qrc" />
     <QtUic Include="columnfilterdialog.ui" />
     <QtUic Include="QtWidgetsApplication1.ui" />
     <QtMoc Include="QtWidgetsApplication1.h" />
     <ClCompile Include="QtWidgetsApplication1.cpp" />
+    <QtUic Include="usagedialog.ui" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="endianness.h" />
+    <ClInclude Include="ui_usagedialog.h" />
+    <QtMoc Include="usagedialog.h" />
     <ClInclude Include="zm_struct.h" />
     <QtMoc Include="LineEditFilter.h" />
     <ClInclude Include="lexer.h" />

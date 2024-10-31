@@ -77,6 +77,7 @@
        <property name="title">
         <string>Help</string>
        </property>
+       <addaction name="actionHelp"/>
        <addaction name="actionAbout"/>
       </widget>
       <addaction name="menu"/>
@@ -388,7 +389,7 @@
      <x>0</x>
      <y>0</y>
      <width>869</width>
-     <height>26</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>
@@ -451,6 +452,11 @@
   <action name="actionreplay">
    <property name="text">
     <string>replay</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>Help</string>
    </property>
   </action>
  </widget>

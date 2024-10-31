@@ -31,8 +31,7 @@ QtWidgetsApplication1::QtWidgetsApplication1(QWidget* parent)
 	: QMainWindow(parent)
 {
 	init();
-	QShortcut* shortcut_help = new QShortcut(QKeySequence("Ctrl+H"), this);
-	connect(shortcut_help, &QShortcut::activated, this, &QtWidgetsApplication1::help_usage);
+	shortcuts();
 }
 
 QtWidgetsApplication1::~QtWidgetsApplication1()
@@ -98,6 +97,12 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
 	print_item_queue(full_queue_stream);
 
 	spdlog::drop_all();
+}
+
+void QtWidgetsApplication1::shortcuts()
+{
+	QShortcut* shortcut_help = new QShortcut(QKeySequence("Ctrl+H"), this);
+	connect(shortcut_help, &QShortcut::activated, this, &QtWidgetsApplication1::help_usage);
 }
 
 void QtWidgetsApplication1::init()
@@ -316,12 +321,14 @@ void QtWidgetsApplication1::createActions()
 	connect(ui.actionmode, &QAction::triggered, this, &QtWidgetsApplication1::display_mode_switch);
 	connect(ui.pushButton_search, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonSearchClicked);
 	connect(ui.actionAbout, &QAction::triggered, this, &QtWidgetsApplication1::about);
+	connect(ui.actionAbout, &QAction::triggered, this, &QtWidgetsApplication1::about);
 	connect(ui.actionreset, &QAction::triggered, this, &QtWidgetsApplication1::reset_all_filters);
 	connect(ui.pb_First, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonFirstClicked);
 	connect(ui.pb_Prev, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonPreviousClicked);
 	connect(ui.pb_Next, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonNextClicked);
 	connect(ui.pb_Last, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonLastClicked);
 	connect(ui.pb_Goto, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonGotoClicked);
+	connect(ui.actionHelp, &QAction::triggered, this, &QtWidgetsApplication1::help_usage);
 }
 
 void QtWidgetsApplication1::resetLayout()
@@ -1563,6 +1570,12 @@ void QtWidgetsApplication1::construct_searching_string()
 void QtWidgetsApplication1::help_usage()
 {
 	qDebug() << "help help help";
+	if (usagedialog == nullptr)
+	{
+		usagedialog = new UsageDialog();
+		usagedialog->setModal(false);
+	}
+	usagedialog->show();
 }
 
 void QtWidgetsApplication1::updateComoboPage()
