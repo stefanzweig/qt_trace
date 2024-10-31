@@ -13,6 +13,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
@@ -25,6 +26,7 @@ class Ui_UsageDialog
 public:
     QWidget *layoutWidget;
     QHBoxLayout *hboxLayout;
+    QVBoxLayout *vboxLayout;
     QSpacerItem *spacerItem;
     QPushButton *okButton;
     QPlainTextEdit *plainTextEdit;
@@ -33,10 +35,16 @@ public:
     {
         if (UsageDialog->objectName().isEmpty())
             UsageDialog->setObjectName(QString::fromUtf8("UsageDialog"));
-        UsageDialog->resize(400, 297);
+        UsageDialog->setFixedSize(500, 400);
         layoutWidget = new QWidget(UsageDialog);
         layoutWidget->setObjectName(QString::fromUtf8("layoutWidget"));
-        layoutWidget->setGeometry(QRect(10, 250, 381, 33));
+        layoutWidget->setGeometry(QRect(10, 350, 481, 33));
+
+        //vboxLayout = new QVBoxLayout(layoutWidget);
+        //vboxLayout->setSpacing(6);
+        //vboxLayout->setObjectName(QString::fromUtf8("vboxLayout"));
+        //vboxLayout->setContentsMargins(0, 0, 0, 0);
+
         hboxLayout = new QHBoxLayout(layoutWidget);
         hboxLayout->setSpacing(6);
         hboxLayout->setObjectName(QString::fromUtf8("hboxLayout"));
@@ -52,7 +60,9 @@ public:
 
         plainTextEdit = new QPlainTextEdit(UsageDialog);
         plainTextEdit->setObjectName(QString::fromUtf8("plainTextEdit"));
-        plainTextEdit->setGeometry(QRect(10, 20, 381, 221));
+        plainTextEdit->setGeometry(QRect(10, 20, 481, 321));
+        
+        //vboxLayout->addWidget(plainTextEdit);
 
         retranslateUi(UsageDialog);
         QObject::connect(okButton, SIGNAL(clicked()), UsageDialog, SLOT(accept()));

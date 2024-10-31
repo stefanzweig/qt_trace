@@ -151,6 +151,7 @@ private:
 	bool signal_condition = false;
 	int  condition_type = 0; // 0 - no, 1 - column, 2 - signal, 3 - mixed
 	QSet<QTreeWidgetItem*> invisibles;
+	QStringList USAGE;
 
 private slots:
 	void startTrace();
@@ -222,6 +223,7 @@ private slots:
 	void resetInvisibles();
 	void construct_searching_string();
 	void help_usage();
+	void construct_usage();
 
 signals:
 	void record_latest_index(uint64_t index);

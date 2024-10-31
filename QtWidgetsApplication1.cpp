@@ -83,6 +83,9 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
 	delete filter;
 	filter = nullptr;
 
+	delete usagedialog;
+	usagedialog = nullptr;
+
 	state_manager.changeState(State::COMPLETE);
 	state_manager.printHistory();
 
@@ -1570,12 +1573,40 @@ void QtWidgetsApplication1::construct_searching_string()
 void QtWidgetsApplication1::help_usage()
 {
 	qDebug() << "help help help";
+	construct_usage();
 	if (usagedialog == nullptr)
 	{
 		usagedialog = new UsageDialog();
 		usagedialog->setModal(false);
+		usagedialog->setUsage(USAGE);
 	}
 	usagedialog->show();
+}
+
+void QtWidgetsApplication1::construct_usage()
+{
+	USAGE.clear();
+	USAGE << "GLOBAL:";
+	USAGE << "    CTRL-H\tShow this usage.";
+	USAGE << "    TAB\tSwitch cursor among trace and search.";
+	USAGE << "TRACE:";
+	USAGE << "    S\tStart trace.";
+	USAGE << "    A\tToggle pause trace.";
+	USAGE << "    D\tStop trace.";
+	USAGE << "    TAB\texpand/collapse item if it has children.";
+	USAGE << "    CTRL-F\tSwitch cursor to search edit.";
+	USAGE << "    Up\tPrevious item.";
+	USAGE << "    Down\tNext item.";
+	USAGE << "";
+	USAGE << "SEARCH EDIT:";
+	USAGE << "    Enter\tFind the items accordingly.";
+	USAGE << "SEARCH Syntax:";
+	USAGE << "    Signal:\t sig:\<signal_name\>";
+	USAGE << "    Column:\t \<column_name\>=\<value\>";
+	USAGE << "    All conditions connected with ;";
+	USAGE << "Examples:";
+	USAGE << "    sig:IEvtDiscardRate;sig:IBatTem";
+	USAGE << "    ID=504;Dir=tx";
 }
 
 void QtWidgetsApplication1::updateComoboPage()

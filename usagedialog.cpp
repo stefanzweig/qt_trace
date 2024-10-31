@@ -14,4 +14,10 @@ UsageDialog::~UsageDialog()
 
 void UsageDialog::init() {
     ui->setupUi(this);
+    ui->plainTextEdit->setReadOnly(true);
+}
+
+void UsageDialog::setUsage(QStringList str_list) {
+    QString s = str_list.join("\n");
+    ui->plainTextEdit->setPlainText(s);
 }
