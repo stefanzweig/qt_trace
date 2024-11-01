@@ -1102,9 +1102,11 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 			//LOGGER_INFO(log_, "PARTIAL INDEX -> {}", idx);
 			if (idx >= 0) {
 				TraceTreeWidgetItem* it0 = read_item_from_queue(idx);
-				int it0colcount = it0->columnCount();
+				if (ui.treetrace->indexOfTopLevelItem(it0) != -1) { continue; }
 				if (filter_pass_item(it0)) {
 					ui.treetrace->addTopLevelItem(it0);
+					tree_count = tree->topLevelItemCount();
+					qDebug() << "TREE COUNT AFTER PARTIAL INSERT ->" << tree_count;
 				}
 			}
 		}
