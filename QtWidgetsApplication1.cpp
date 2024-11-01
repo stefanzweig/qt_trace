@@ -137,6 +137,10 @@ void QtWidgetsApplication1::init()
 	resetLayout();
 	resetStatusBar();
 	setupTreeTrace();
+
+	//
+	reset_find_status();
+
 	updateContinuousProgress();
 	showMaximized();
 }
@@ -332,6 +336,8 @@ void QtWidgetsApplication1::createActions()
 	connect(ui.pb_Last, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonLastClicked);
 	connect(ui.pb_Goto, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonGotoClicked);
 	connect(ui.actionHelp, &QAction::triggered, this, &QtWidgetsApplication1::help_usage);
+	connect(ui.pb_prev_result, &QPushButton::clicked, [this]() {find_direction = 1; ButtonSearchClicked(); });
+	connect(ui.pb_next_result, &QPushButton::clicked, [this]() {find_direction = 0; ButtonSearchClicked(); });
 }
 
 void QtWidgetsApplication1::resetLayout()
@@ -494,6 +500,7 @@ void QtWidgetsApplication1::resumeTrace()
 
 	uint32_t samples = 1000;
 	invisibles.clear();
+	reset_find_status();
 	if (mysub_can_frames == nullptr) {
 		mysub_can_frames = new ZoneMasterCanMessageDataSubscriber(dds_domainid);
 		qRegisterMetaType <can_frame>("can_frame");
@@ -873,33 +880,6 @@ void QtWidgetsApplication1::ButtonSearchClicked()
 	ui.treetrace->setFocus();
 }
 
-void QtWidgetsApplication1::hide_filtered_items(int column_idx, QList<QList<QString>> items)
-{
-	QStringList filtered_value = {};
-	if (items.size() > 0) {
-		for (int k = 0; k < items.size(); k++) {
-			for (int i = 0; i < 1; i++) {
-				filtered_value.append(items[k][i]);
-			}
-		}
-	}
-	QTreeWidgetItem* invisible_root_item = ui.treetrace->invisibleRootItem();
-	int child_count = invisible_root_item->childCount();
-	for (int i = 0; i < child_count; ++i) {
-		QTreeWidgetItem* item = invisible_root_item->child(i);
-		QString txt = item->text(column_idx);
-		if (filtered_value.size() > 0) {
-			if (filtered_value.contains(txt)) {
-				item->setHidden(false);
-			}
-			else {
-				item->setHidden(true);
-			}
-		}
-		else
-			item->setHidden(false);
-	}
-}
 
 void QtWidgetsApplication1::dustbin()
 {
@@ -1568,7 +1548,7 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
 }
 
 
-void QtWidgetsApplication1::construct_searching_string() 
+void QtWidgetsApplication1::construct_searching_string()
 {
 }
 
@@ -1614,6 +1594,7 @@ void QtWidgetsApplication1::construct_usage()
 void QtWidgetsApplication1::updateComoboPage()
 {
 	ui.comboBox_Page->clear();
+	if (paused_instant_index < 0) return;
 	max_page_count = paused_instant_index / count_per_page + 1;
 	int fs = filtered_size();
 	if (fs) max_page_count = fs / count_per_page + 1;
@@ -1689,6 +1670,7 @@ void QtWidgetsApplication1::ButtonGotoClicked()
 
 void QtWidgetsApplication1::form_conditions_outdate(QString findstr)
 {
+	last_findstring = findstr;
 	QStringList items = findstr.split(QRegExp("[,;|]"), QString::SkipEmptyParts);
 	list_map.clear();
 	signal_condition = false;
@@ -1772,7 +1754,12 @@ void QtWidgetsApplication1::form_conditions_compiler(QString findstr)
 	parser2condition(token_list);
 }
 
-bool findItem(QTreeWidgetItem* item, const QStringList& target, QSet<QTreeWidgetItem*>& hiddens, int level=0) {
+bool findItem(QTreeWidgetItem* item,
+	      const QStringList& target,
+	      QSet<QTreeWidgetItem*>& hiddens,
+	      QQueue<QTreeWidgetItem*>& founds,
+	      int level=0)
+{
 	int child = item->childCount();
 	QString s = item->text(0).toLower();
 	if (!child && level)
@@ -1795,6 +1782,9 @@ bool findItem(QTreeWidgetItem* item, const QStringList& target, QSet<QTreeWidget
 				for (QString targetText : target) {
 					if (sib->text(0).toLower() == targetText)
 					{
+					  if (!founds.contains(sib)) {
+					    founds.enqueue(sib);
+					  }
 						if (hiddens.contains(sib))
 							hiddens.remove(sib);
 					}
@@ -1803,16 +1793,19 @@ bool findItem(QTreeWidgetItem* item, const QStringList& target, QSet<QTreeWidget
 		}
 	}
 	for (QString targetText : target) {
-		if (item->text(0).toLower() == targetText) 
+		if (item->text(0).toLower() == targetText)
 		{
-			if (hiddens.contains(item))
-				hiddens.remove(item);
-			return true;
+		  //if (!founds.contains(item)) {
+		  //  founds.enqueue(item);
+		  //}
+		  if (hiddens.contains(item))
+		    hiddens.remove(item);
+		  return true;
 		}
 	}
 
 	for (int i = 0; i < child; ++i) {
-		if (findItem(item->child(i), target, hiddens, level+1)) {
+		if (findItem(item->child(i), target, hiddens, founds, level+1)) {
 			return true;
 		}
 	}
@@ -1823,7 +1816,43 @@ bool findItem(QTreeWidgetItem* item, const QStringList& target, QSet<QTreeWidget
 void QtWidgetsApplication1::show_fullpage_with_findings()
 {
 	QString search_str = ui.mysearch->toPlainText().trimmed();
-	form_conditions_compiler(search_str);
+
+	// todo: refactoring the simple algorithm to compiler constrction.
+	// 2024-11-01 15:41:19
+	// form_conditions_compiler(search_str);
+	if (search_str.length() <= 0)
+	{
+		reset_find_status();
+	}
+	if (current_find_status() && foundcount() && search_str == last_findstring) {
+		// todo: if the current find status is "in find" already. 
+		// find the current_find and hilight it.
+		if (current_find == nullptr && !found_queue.isEmpty())
+		{
+			int i = 0;
+			current_find = found_queue.at(i);
+		}
+		else if (current_find != nullptr && !found_queue.isEmpty())
+		{
+			int i = found_queue.indexOf(current_find);
+			if (find_direction) // up
+			{
+				i = (i<=0) ? found_queue.size() - 1: i - 1;
+			}
+			else // down
+			{
+				i = (i >= found_queue.size() - 1) ? 0: i + 1;
+			}
+			current_find = found_queue.at(i);
+		}
+		if (current_find) {
+			ui.treetrace->setCurrentItem(current_find);
+		}
+		return;
+	}
+	if (found_queue.isEmpty())
+		reset_find_status();
+	enter_find_status();
 	form_conditions_outdate(search_str);
 	resetInvisibles();
 	for (int key : list_map.keys()) {
@@ -1844,22 +1873,32 @@ void QtWidgetsApplication1::show_fullpage_with_findings()
 
 			if (signal_condition) {
 				bool matched = false;
-				matched = findItem(item, values, invisibles);
+				matched = findItem(item, values, invisibles, found_queue);
 				hidden = !matched;
 			}
 			else {
 				if (!values.contains(item->text(key).toLower())) {
 					hidden = true;
 					continue;
+				} else {
+				  if (!found_queue.contains(item)) {
+				    found_queue.enqueue(item);
+				  }
 				}
 			}
 		}
-		item->setHidden(hidden);
+		//item->setHidden(hidden);
 	}
-	for (QTreeWidgetItem* h : invisibles) {
-		h->setHidden(true);
+	//for (QTreeWidgetItem* h : invisibles) {
+	//	h->setHidden(true);
+	//}
+	for (QTreeWidgetItem* x : found_queue) {
+		qDebug() << "Found Item ->" << x->text(0);
 	}
-
+	if (!found_queue.isEmpty()) {
+		current_find = found_queue.at(0);
+		ui.treetrace->setCurrentItem(current_find);
+	}
 	updateContinuousProgress();
 }
 
@@ -1870,6 +1909,7 @@ void QtWidgetsApplication1::resetInvisibles()
 	}
 	invisibles.clear();
 }
+
 void QtWidgetsApplication1::show_fullpage_with_index(int index)
 {
 	// index is the page index  starting from 1

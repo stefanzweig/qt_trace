@@ -26,8 +26,8 @@
 
 enum DISPLAY_MODE
 {
-	APPEND=0,
-	UPDATE=1,
+	APPEND = 0,
+	UPDATE = 1,
 };
 class QtWidgetsApplication1 : public QMainWindow
 {
@@ -53,7 +53,6 @@ private:
 	void shortcuts();
 	void setupTreeTrace();
 	void initialHeaders();
-	void hide_filtered_items(int idx, QList<QList<QString>> items);
 	void get_default_configurations();
 	void compare_item();
 	void traceStyleQSS();
@@ -230,6 +229,32 @@ signals:
 	void buttonClicked();
 
 protected:
+	// 2024-11-01 14:15:40
+	// todo: something about finding function
+	// prev result, current result, next result
+	bool application_in_find = false;
+	int find_direction = 0; // 0 -> down, 1 -> up.
+	QString findstring;
+	QString last_findstring;
+	void reset_find_status() {
+		application_in_find = false;
+		found_queue.clear();
+		current_find = nullptr;
+		prev_find = nullptr;
+		next_find = nullptr;
+	}
+	void enter_find_status() { application_in_find = true; }
+	bool current_find_status() { return application_in_find; }
+	int foundcount() { return found_queue.size(); }
+
+	QQueue<QTreeWidgetItem*> found_queue;
+	QTreeWidgetItem* current_find = nullptr;
+	QTreeWidgetItem* prev_find = nullptr;
+	QTreeWidgetItem* next_find = nullptr;
+	// the above are the ones related to find.
+
+	// the following functions should be moved to other section.
+	// todo. 2024-11-01 14:28:53
 	void showEvent(QShowEvent* event) override {
 		// 连接自定义信号到槽
 		connect(this, &QtWidgetsApplication1::buttonClicked, this, &QtWidgetsApplication1::ButtonSearchClicked);
