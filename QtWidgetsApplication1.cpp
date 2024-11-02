@@ -85,6 +85,7 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
 
 	delete usagedialog;
 	usagedialog = nullptr;
+	reset_find_status();
 
 	state_manager.changeState(State::COMPLETE);
 	state_manager.printHistory();
@@ -1689,7 +1690,7 @@ void QtWidgetsApplication1::form_conditions_outdate(QString findstr)
 			for (int i = 0; i < CurrentHeader.size(); ++i) {
 				if (CurrentHeader[i].toLower() == k.toLower()) {
 					list_map[i] << v;
-					condition_type = condition_type>1? 3:1;
+					condition_type = condition_type > 1 ? 3 : 1;
 					break;
 				}
 			}
@@ -1704,7 +1705,7 @@ void QtWidgetsApplication1::form_conditions_outdate(QString findstr)
 				if (stringSet.contains(s_flag)) {
 					list_map[0] << s_name;
 					signal_condition = true;
-					condition_type = (condition_type %2)?3:2;
+					condition_type = (condition_type % 2) ? 3 : 2;
 				}
 			}
 		}
@@ -1755,11 +1756,12 @@ void QtWidgetsApplication1::form_conditions_compiler(QString findstr)
 }
 
 bool findItem(QTreeWidgetItem* item,
-	      const QStringList& target,
-	      QSet<QTreeWidgetItem*>& hiddens,
-	      QQueue<QTreeWidgetItem*>& founds,
-	      int level=0)
+	const QStringList& target,
+	QSet<QTreeWidgetItem*>& hiddens,
+	QQueue<Found_Item*>& founds,
+	int level = 0)
 {
+	// signal's column index is 0, so the text(0) is used.
 	int child = item->childCount();
 	QString s = item->text(0).toLower();
 	if (!child && level)
@@ -1782,9 +1784,16 @@ bool findItem(QTreeWidgetItem* item,
 				for (QString targetText : target) {
 					if (sib->text(0).toLower() == targetText)
 					{
-					  if (!founds.contains(sib)) {
-					    founds.enqueue(sib);
-					  }
+						bool contained = false;
+						for (Found_Item* it : founds) {
+							if (it->item == sib) { contained = true; break; }
+						}
+						if (!contained) {
+							Found_Item* found = new Found_Item();
+							found->item = sib;
+							found->col = 0;
+							founds.enqueue(found);
+						}
 						if (hiddens.contains(sib))
 							hiddens.remove(sib);
 					}
@@ -1795,17 +1804,17 @@ bool findItem(QTreeWidgetItem* item,
 	for (QString targetText : target) {
 		if (item->text(0).toLower() == targetText)
 		{
-		  //if (!founds.contains(item)) {
-		  //  founds.enqueue(item);
-		  //}
-		  if (hiddens.contains(item))
-		    hiddens.remove(item);
-		  return true;
+			//if (!founds.contains(item)) {
+			//  founds.enqueue(item);
+			//}
+			if (hiddens.contains(item))
+				hiddens.remove(item);
+			return true;
 		}
 	}
 
 	for (int i = 0; i < child; ++i) {
-		if (findItem(item->child(i), target, hiddens, founds, level+1)) {
+		if (findItem(item->child(i), target, hiddens, founds, level + 1)) {
 			return true;
 		}
 	}
@@ -1837,20 +1846,20 @@ void QtWidgetsApplication1::show_fullpage_with_findings()
 			int i = found_queue.indexOf(current_find);
 			if (find_direction) // up
 			{
-				i = (i<=0) ? found_queue.size() - 1: i - 1;
+				i = (i <= 0) ? found_queue.size() - 1 : i - 1;
 			}
 			else // down
 			{
-				i = (i >= found_queue.size() - 1) ? 0: i + 1;
+				i = (i >= found_queue.size() - 1) ? 0 : i + 1;
 			}
 			current_find = found_queue.at(i);
 		}
 		if (current_find) {
-			ui.treetrace->setCurrentItem(current_find);
+			current_find->highlight(ui.treetrace);
 		}
 		return;
 	}
-	if (found_queue.isEmpty())
+	if (found_queue.isEmpty() || search_str != last_findstring)
 		reset_find_status();
 	enter_find_status();
 	form_conditions_outdate(search_str);
@@ -1880,10 +1889,19 @@ void QtWidgetsApplication1::show_fullpage_with_findings()
 				if (!values.contains(item->text(key).toLower())) {
 					hidden = true;
 					continue;
-				} else {
-				  if (!found_queue.contains(item)) {
-				    found_queue.enqueue(item);
-				  }
+				}
+				else {
+					bool contained = false;
+					for (Found_Item* it : found_queue)
+					{
+						if (it->item == item) { contained = true; break; }
+					}
+					if (!contained) {
+						Found_Item* found = new Found_Item();
+						found->item = item;
+						found->col = key;
+						found_queue.enqueue(found);
+					}
 				}
 			}
 		}
@@ -1892,12 +1910,13 @@ void QtWidgetsApplication1::show_fullpage_with_findings()
 	//for (QTreeWidgetItem* h : invisibles) {
 	//	h->setHidden(true);
 	//}
-	for (QTreeWidgetItem* x : found_queue) {
-		qDebug() << "Found Item ->" << x->text(0);
-	}
+	//for (QTreeWidgetItem* x : found_queue) {
+	//	qDebug() << "Found Item ->" << x->text(0);
+	//}
 	if (!found_queue.isEmpty()) {
 		current_find = found_queue.at(0);
-		ui.treetrace->setCurrentItem(current_find);
+		//ui.treetrace->setCurrentItem(current_find->item);
+		current_find->highlight(ui.treetrace);
 	}
 	updateContinuousProgress();
 }

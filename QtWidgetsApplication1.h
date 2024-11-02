@@ -29,6 +29,20 @@ enum DISPLAY_MODE
 	APPEND = 0,
 	UPDATE = 1,
 };
+
+// for the found items highlight 2024-11-02 20:48:04
+class Found_Item
+{
+public:
+	QTreeWidgetItem* item;
+	int col = -1;
+	void highlight(QTreeWidget* widget) 
+	{ 
+		widget->setCurrentItem(item); 
+		item->setBackground(col, QColor(255, 255, 0));
+	};
+};
+
 class QtWidgetsApplication1 : public QMainWindow
 {
 	Q_OBJECT
@@ -69,9 +83,6 @@ private:
 		"   border: none; "
 		"   border-bottom: 1px solid #000;"
 		"}";
-	//"   border: 1px solid #000;"
-	//"   border-top: 1px solid #000;"
-
 
 	QTimer* timer = nullptr;
 	QTimer* timer_dustbin = nullptr;
@@ -234,21 +245,26 @@ protected:
 	// prev result, current result, next result
 	bool application_in_find = false;
 	int find_direction = 0; // 0 -> down, 1 -> up.
-	QString findstring;
 	QString last_findstring;
 	void reset_find_status() {
 		application_in_find = false;
+		for (Found_Item* t : found_queue) {
+			delete t;
+			t = nullptr;
+		};
 		found_queue.clear();
 		current_find = nullptr;
 		prev_find = nullptr;
 		next_find = nullptr;
+		traceStyleQSS();
 	}
 	void enter_find_status() { application_in_find = true; }
 	bool current_find_status() { return application_in_find; }
 	int foundcount() { return found_queue.size(); }
 
-	QQueue<QTreeWidgetItem*> found_queue;
-	QTreeWidgetItem* current_find = nullptr;
+	QQueue<Found_Item*> found_queue;
+	//QTreeWidgetItem* current_find = nullptr;
+	Found_Item* current_find = nullptr;
 	QTreeWidgetItem* prev_find = nullptr;
 	QTreeWidgetItem* next_find = nullptr;
 	// the above are the ones related to find.
