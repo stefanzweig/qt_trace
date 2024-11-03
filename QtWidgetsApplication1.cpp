@@ -1669,16 +1669,17 @@ void QtWidgetsApplication1::ButtonGotoClicked()
 	ui.label_Current->setText(QString::number(target_page));
 }
 
-void QtWidgetsApplication1::form_conditions_outdate(QString findstr)
+void QtWidgetsApplication1::form_conditions_simple(QString findstr)
 {
 	last_findstring = findstr;
-	QStringList items = findstr.split(QRegExp("[,;|]"), QString::SkipEmptyParts);
+	QStringList full_items = findstr.split(QRegExp("[,;|]"), QString::SkipEmptyParts);
 	list_map.clear();
-	signal_condition = false;
-	for (const QString& item : items) {
+	full_search = false;
+	for (const QString& item : full_items) {
 		qDebug() << item.trimmed();
 		QSet<QString> stringSet;
 		stringSet << "sig" << "signal";
+		// column mode
 		if (item.contains("=")) {
 			QStringList item_map = item.split("=", QString::SkipEmptyParts);
 			qDebug() << "ITEM MAP SIZE ->" << item_map.size();
@@ -1694,7 +1695,6 @@ void QtWidgetsApplication1::form_conditions_outdate(QString findstr)
 					break;
 				}
 			}
-			// todo: signals with = sign. 2024-10-28 17:54:11
 			if (k.contains(":")) {
 				// signal - "sig:signal_name=value"
 				QStringList sig_list = k.split(":", QString::SkipEmptyParts);
@@ -1704,13 +1704,13 @@ void QtWidgetsApplication1::form_conditions_outdate(QString findstr)
 				QString s_name = sig_list[1].trimmed().toLower(); // signal name
 				if (stringSet.contains(s_flag)) {
 					list_map[0] << s_name;
-					signal_condition = true;
+					full_search = true;
 					condition_type = (condition_type % 2) ? 3 : 2;
 				}
 			}
 		}
 		else if (item.contains(":")) {
-			// signal again
+			// signal mode
 			QStringList sig_list = item.split(":", QString::SkipEmptyParts);
 			if (sig_list.size() != 2)
 				continue;
@@ -1718,7 +1718,14 @@ void QtWidgetsApplication1::form_conditions_outdate(QString findstr)
 			QString s_name = sig_list[1].trimmed().toLower(); // signal name
 			if (stringSet.contains(s_flag)) {
 				list_map[0] << s_name;
-				signal_condition = true;
+				full_search = true;
+			}
+		}
+		else { 
+			// no equal signs or no signals
+			for (int i = 0; i < CurrentHeader.size(); ++i) {
+				list_map[i] << item.trimmed().toLower();
+				condition_type = 99; // magic code full search.
 			}
 		}
 	}
@@ -1756,6 +1763,7 @@ void QtWidgetsApplication1::form_conditions_compiler(QString findstr)
 }
 
 bool findItem(QTreeWidgetItem* item,
+	int col,
 	const QStringList& target,
 	QSet<QTreeWidgetItem*>& hiddens,
 	QQueue<Found_Item*>& founds,
@@ -1763,7 +1771,7 @@ bool findItem(QTreeWidgetItem* item,
 {
 	// signal's column index is 0, so the text(0) is used.
 	int child = item->childCount();
-	QString s = item->text(0).toLower();
+	QString s = item->text(col).toLower();
 	if (!child && level)
 	{
 		qDebug() << "Hidden ->" << s;
@@ -1782,7 +1790,7 @@ bool findItem(QTreeWidgetItem* item,
 		if (!siblings.isEmpty()) {
 			for (QTreeWidgetItem* sib : siblings) {
 				for (QString targetText : target) {
-					if (sib->text(0).toLower() == targetText)
+					if (sib->text(col).toLower() == targetText)
 					{
 						bool contained = false;
 						for (Found_Item* it : founds) {
@@ -1791,7 +1799,7 @@ bool findItem(QTreeWidgetItem* item,
 						if (!contained) {
 							Found_Item* found = new Found_Item();
 							found->item = sib;
-							found->col = 0;
+							found->col = col;
 							founds.enqueue(found);
 						}
 						if (hiddens.contains(sib))
@@ -1802,23 +1810,29 @@ bool findItem(QTreeWidgetItem* item,
 		}
 	}
 	for (QString targetText : target) {
-		if (item->text(0).toLower() == targetText)
+		if (item->text(col).toLower() == targetText)
 		{
 			//if (!founds.contains(item)) {
 			//  founds.enqueue(item);
 			//}
+			for (Found_Item* t : founds)
+			{
+				if (t->item->text(col).toLower() == targetText) {}
+			}
+			Found_Item* x = new Found_Item();
+			x->item = item;
+			x->col = col;
+			founds.enqueue(x);
 			if (hiddens.contains(item))
 				hiddens.remove(item);
 			return true;
 		}
 	}
-
 	for (int i = 0; i < child; ++i) {
-		if (findItem(item->child(i), target, hiddens, founds, level + 1)) {
+		if (findItem(item->child(i), col, target, hiddens, founds, level + 1)) {
 			return true;
 		}
 	}
-
 	return false;
 }
 
@@ -1866,27 +1880,21 @@ void QtWidgetsApplication1::show_fullpage_with_findings()
 	if (found_queue.isEmpty() || search_str != last_findstring)
 		reset_find_status();
 	enter_find_status();
-	form_conditions_outdate(search_str);
+	form_conditions_simple(search_str);
 	resetInvisibles();
-	for (int key : list_map.keys()) {
-		qDebug() << "Key:" << key;
-		const QStringList& list = list_map[key];
-		for (const QString& item : list) {
-			qDebug() << "  Value:" << item;
-		}
-	}
 
 	QTreeWidgetItem* invisible_root_item = ui.treetrace->invisibleRootItem();
 	int child_count = invisible_root_item->childCount();
+	full_search = 1; // the global switch, always full_search
 	for (int i = 0; i < child_count; ++i) {
 		QTreeWidgetItem* item = invisible_root_item->child(i);
 		bool hidden = false;
 		for (const int& key : list_map.keys()) {
 			QStringList values = list_map.value(key);
-
-			if (signal_condition) {
+			if (full_search) { 
+				// findItem is the very key function, should be refactored.
 				bool matched = false;
-				matched = findItem(item, values, invisibles, found_queue);
+				matched = findItem(item, key, values, invisibles, found_queue);
 				hidden = !matched;
 			}
 			else {

@@ -62,7 +62,7 @@ protected:
 		QMainWindow::resizeEvent(event);
 		this->adjust_filter_buttons();
 	}
-	void form_conditions_outdate(QString findstr);
+	void form_conditions_simple(QString findstr);
 	void form_conditions_compiler(QString findstr);
 
 private:
@@ -162,7 +162,7 @@ private:
 	int maximum_total = 400000;
 	QSet<QString> passed_uuid_set;
 	QMap<int, QStringList> list_map;
-	bool signal_condition = false;
+	bool full_search = false;
 	int  condition_type = 0; // 0 - no, 1 - column, 2 - signal, 3 - mixed
 	QSet<QTreeWidgetItem*> invisibles;
 	QStringList USAGE;
