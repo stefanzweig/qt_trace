@@ -1524,6 +1524,17 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
 			this->stopTrace();
 			break;
 		case Qt::Key_P:
+		{
+			find_direction = 1; 
+			ButtonSearchClicked(); 
+		}
+			break;
+		case Qt::Key_N:
+		{
+			find_direction = 0;
+			ButtonSearchClicked();
+		}
+		break;
 		case Qt::Key_A:
 			this->pauseTrace();
 			break;
