@@ -1839,6 +1839,7 @@ void QtWidgetsApplication1::show_fullpage_with_findings()
 		if (current_find == nullptr && !found_queue.isEmpty())
 		{
 			int i = 0;
+			prev_find = current_find;
 			current_find = found_queue.at(i);
 		}
 		else if (current_find != nullptr && !found_queue.isEmpty())
@@ -1852,11 +1853,14 @@ void QtWidgetsApplication1::show_fullpage_with_findings()
 			{
 				i = (i >= found_queue.size() - 1) ? 0 : i + 1;
 			}
+			prev_find = current_find;
 			current_find = found_queue.at(i);
 		}
 		if (current_find) {
 			current_find->highlight(ui.treetrace);
 		}
+		if (prev_find)
+			prev_find->dehighlight();
 		return;
 	}
 	if (found_queue.isEmpty() || search_str != last_findstring)
@@ -1914,9 +1918,12 @@ void QtWidgetsApplication1::show_fullpage_with_findings()
 	//	qDebug() << "Found Item ->" << x->text(0);
 	//}
 	if (!found_queue.isEmpty()) {
+		prev_find = current_find;
 		current_find = found_queue.at(0);
 		//ui.treetrace->setCurrentItem(current_find->item);
 		current_find->highlight(ui.treetrace);
+		if (prev_find)
+			prev_find->dehighlight();
 	}
 	updateContinuousProgress();
 }

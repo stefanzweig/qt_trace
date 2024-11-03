@@ -41,6 +41,10 @@ public:
 		widget->setCurrentItem(item); 
 		item->setBackground(col, QColor(255, 255, 0));
 	};
+	void dehighlight()
+	{
+		item->setBackground(col, QColor(255, 255, 255));
+	};
 };
 
 class QtWidgetsApplication1 : public QMainWindow
@@ -249,6 +253,8 @@ protected:
 	void reset_find_status() {
 		application_in_find = false;
 		for (Found_Item* t : found_queue) {
+			if (current_find == t)
+				current_find->dehighlight();
 			delete t;
 			t = nullptr;
 		};
@@ -256,7 +262,6 @@ protected:
 		current_find = nullptr;
 		prev_find = nullptr;
 		next_find = nullptr;
-		traceStyleQSS();
 	}
 	void enter_find_status() { application_in_find = true; }
 	bool current_find_status() { return application_in_find; }
@@ -265,7 +270,7 @@ protected:
 	QQueue<Found_Item*> found_queue;
 	//QTreeWidgetItem* current_find = nullptr;
 	Found_Item* current_find = nullptr;
-	QTreeWidgetItem* prev_find = nullptr;
+	Found_Item* prev_find = nullptr;
 	QTreeWidgetItem* next_find = nullptr;
 	// the above are the ones related to find.
 
