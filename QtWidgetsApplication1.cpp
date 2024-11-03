@@ -354,6 +354,8 @@ void QtWidgetsApplication1::resetLayout()
 	ui.actionstop->setIcon(QIcon(":/QtWidgetsApplication1/res/maximize.svg"));
 	ui.actionreset->setIcon(QIcon(":/QtWidgetsApplication1/res/tick.svg"));
 	ui.actionreplay->setIcon(QIcon(":/QtWidgetsApplication1/res/replay.svg"));
+	ui.pb_next_result->setIcon(QIcon(":/QtWidgetsApplication1/res/arrow-down.png"));
+	ui.pb_prev_result->setIcon(QIcon(":/QtWidgetsApplication1/res/arrow-up.png"));
 
 	// toolbar actions
 	ui.toolbar->addAction(ui.actionstart);
