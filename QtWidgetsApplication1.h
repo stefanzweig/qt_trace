@@ -266,6 +266,10 @@ protected:
 	void enter_find_status() { application_in_find = true; }
 	bool current_find_status() { return application_in_find; }
 	int foundcount() { return found_queue.size(); }
+	QQueue<Found_Item*> remove_duplicates(QQueue<Found_Item*> queue);
+	bool findItem(QTreeWidgetItem* item, int col, const QStringList& target,
+		QSet<QTreeWidgetItem*>& hiddens, QQueue<Found_Item*>& founds, int level = 0);
+
 
 	QQueue<Found_Item*> found_queue;
 	//QTreeWidgetItem* current_find = nullptr;

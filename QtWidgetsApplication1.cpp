@@ -1777,14 +1777,10 @@ void QtWidgetsApplication1::form_conditions_compiler(QString findstr)
 	parser2condition(token_list);
 }
 
-bool findItem(QTreeWidgetItem* item,
-	int col,
-	const QStringList& target,
-	QSet<QTreeWidgetItem*>& hiddens,
-	QQueue<Found_Item*>& founds,
-	int level = 0)
+bool QtWidgetsApplication1::findItem(QTreeWidgetItem* item, int col,
+	const QStringList& target, QSet<QTreeWidgetItem*>& hiddens,
+	QQueue<Found_Item*>& founds, int level)
 {
-	// signal's column index is 0, so the text(0) is used.
 	int child = item->childCount();
 	QString s = item->text(col).toLower();
 	if (!child && level)
@@ -1852,7 +1848,7 @@ bool findItem(QTreeWidgetItem* item,
 }
 
 
-QQueue<Found_Item*> removeDuplicates(QQueue<Found_Item*> queue) {
+QQueue<Found_Item*> QtWidgetsApplication1::remove_duplicates(QQueue<Found_Item*> queue) {
 	QQueue<Found_Item*> result;
 
 	while (!queue.isEmpty()) {
@@ -1960,7 +1956,7 @@ void QtWidgetsApplication1::show_fullpage_with_findings()
 	//	qDebug() << "Found Item ->" << x->text(0);
 	//}
 	if (!found_queue.isEmpty()) {
-		found_queue = removeDuplicates(found_queue);
+		found_queue = remove_duplicates(found_queue);
 		prev_find = current_find;
 		current_find = found_queue.at(0);
 		//ui.treetrace->setCurrentItem(current_find->item);
