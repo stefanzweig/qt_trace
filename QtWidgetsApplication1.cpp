@@ -329,7 +329,6 @@ void QtWidgetsApplication1::createActions()
 	connect(ui.actionmode, &QAction::triggered, this, &QtWidgetsApplication1::display_mode_switch);
 	connect(ui.pushButton_search, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonSearchClicked);
 	connect(ui.actionAbout, &QAction::triggered, this, &QtWidgetsApplication1::about);
-	connect(ui.actionAbout, &QAction::triggered, this, &QtWidgetsApplication1::about);
 	connect(ui.actionreset, &QAction::triggered, this, &QtWidgetsApplication1::reset_all_filters);
 	connect(ui.pb_First, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonFirstClicked);
 	connect(ui.pb_Prev, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonPreviousClicked);
