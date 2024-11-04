@@ -932,13 +932,10 @@ void QtWidgetsApplication1::display_mode_switch()
 void QtWidgetsApplication1::update_tracewindow()
 {
     auto log_ = GETLOG("WORKFLOW");
-    //LOGGER_INFO(log_, "======= UPDATE_TRACEWINDOW =======");
-    //LOGGER_INFO(log_, "LAST STATUS -> {}", last_status.toStdString());
     //m_mutex.lock();
     int queue_size = shown_queue.size() - padding;
     int queue_backup_size = full_queue_stream.size() - padding;
     qDebug() << "FULL -> " << queue_size << "BACKUP -> " << queue_backup_size;
-    //LOGGER_INFO(log_, "FULLSIZE -> {}, BACKUP_SIZE -> {}", queue_size, queue_backup_size);
 
     QTreeWidget* tree = ui.treetrace;
     QTreeWidgetItem* invisible_root_item = tree->invisibleRootItem();
@@ -951,60 +948,41 @@ void QtWidgetsApplication1::update_tracewindow()
     visible_height = v_height;
     item_height = itemSize.height();
     item_width = itemSize.width();
-    //LOGGER_INFO(log_, "UPDATE_TRACEWINDOW CAPACITY -> {}", window_capacity);
-    //LOGGER_INFO(log_, "PAGE CAPACITY -> {}", page_capacity);
 
     int tree_count = ui.treetrace->topLevelItemCount();
-    //LOGGER_INFO(log_, "TREE COUNT -> {}", tree_count);
 
     if (tree_count == 0) {
-        //LOGGER_INFO(log_, "==== EMPTY TREE ====");
         fill_empty_tree(window_capacity);
     }
     else if (tree_count > 0 && tree_count < page_capacity) {
-        //LOGGER_INFO(log_, "==== HALF TREE ====");
         fill_partial_tree(page_capacity);
     }
     else {
-        //LOGGER_INFO(log_, "==== REDRAW TREE ====");
         refresh_full_tree(window_capacity);
     }
     //m_mutex.unlock();
     ui.treetrace->scrollToBottom();
-    //ui.treetrace->header()->setSortIndicator(0, Qt::AscendingOrder);
-    //LOGGER_INFO(log_, "======= END of update_tracewindow =======");
-    //LOGGER_INFO(log_, "\n");
 }
 
 void QtWidgetsApplication1::refresh_full_tree(int capacity)
 {
     auto log_ = GETLOG("WORKFLOW");
-    //LOGGER_INFO(log_, "==== REFRESH_FULL_TREE ====");
     draw_trace_window(capacity);
-    //LOGGER_INFO(log_, "==== END OF REFRESH_FULL_TREE ====");
 }
 
 void QtWidgetsApplication1::draw_trace_window(int capacity)
 {
     auto log_ = GETLOG("WORKFLOW");
-    //LOGGER_INFO(log_, "DRAW TRACE WINDOW -> {}", capacity);
-
     int queue_size = shown_queue.size() - padding;
-    //LOGGER_INFO(log_, "DRAW QUEUE SIZE -> {}", queue_size);
-    //LOGGER_INFO(log_, "PADDING -> {}", padding);
-
     if (queue_size <= 0) return;
 
     QTreeWidget* tree = ui.treetrace;
     TraceTreeWidgetItem* it = nullptr;
     int changes = std::min(queue_size, capacity);
-    //LOGGER_INFO(log_, "DRAW CHANGES -> {}", changes);
     if (changes) {
         int count = tree->topLevelItemCount();
-        //LOGGER_INFO(log_, "TREE COUNT -> {}", count);
         for (int i = 0; i < changes; i++) {
             int idx = queue_size - changes + i;
-            //LOGGER_INFO(log_, "DRAW ITEM -> {}", idx);
             bool bchanged = false;
             it = shown_queue.at(idx);
             if (filter_pass_item(it)) {
@@ -1021,8 +999,6 @@ void QtWidgetsApplication1::draw_trace_window(int capacity)
                     if (bchanged) {
                         QStringList original_data = lastItem->get_original_data();
                         int ref = lastItem->get_ref();
-                        //LOGGER_INFO(log_, "REF COUNTER -> {}", ref);
-                        //qDebug() << "REF COUNTER" << ref;
                     }
                 }
             }
@@ -1067,13 +1043,11 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
     int tree_count = tree->topLevelItemCount();
     int gap = capacity - tree_count;
     qDebug() << "FILL PARTIAL UP TO -> " << capacity;
-    //LOGGER_INFO(log_, "GAP -> {}", gap);
     if (gap <= 0) {
         //m_mutex.unlock();
         return;
     }
     int changes = std::min(queue_size, gap);
-    //LOGGER_INFO(log_, "PARTIAL CHANGES -> {}", changes);
 
     if (changes > 0) {
         int queue_original_size = shown_queue.size();
@@ -1081,7 +1055,6 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
         QList<QTreeWidgetItem*> item_list;
         for (int i = 0; i < changes; i++) {
             int idx = queue_size - changes + i;
-            //LOGGER_INFO(log_, "PARTIAL INDEX -> {}", idx);
             if (idx >= 0) {
                 TraceTreeWidgetItem* it0 = read_item_from_queue(idx);
                 if (ui.treetrace->indexOfTopLevelItem(it0) != -1) { continue; }
@@ -1094,8 +1067,6 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
         }
     }
     //m_mutex.unlock();
-    //LOGGER_INFO(log_, "END OF PARTIAL FILLING");
-    //LOGGER_INFO(log_, "====================");
 }
 
 void QtWidgetsApplication1::fill_empty_tree(int capacity)
@@ -1103,27 +1074,22 @@ void QtWidgetsApplication1::fill_empty_tree(int capacity)
     auto log_ = GETLOG("WORKFLOW");
 
     int queue_size = shown_queue.size() - padding;
-    //LOGGER_INFO(log_, "FULL QUEUE SIZE IN EMPTY FUNC -> {}", queue_size);
     if (queue_size <= 0) return;
 
     int changes = std::min(queue_size, capacity);
     if (changes > 0) {
         changes = 1;
-        //LOGGER_INFO(log_, "EMPTY CHANGES -> {}", changes);
         for (int i = 0; i < changes; i++) {
             TraceTreeWidgetItem* it = nullptr;
             int idx = queue_size - changes + i;
             it = this->read_item_from_queue(idx);
-            //LOGGER_INFO(log_, "READY INDEX -> {}", idx);
             if (it != nullptr) {
-                //LOGGER_INFO(log_, "ITEM INDEX -> {}", idx);
                 if (filter_pass_item(it)) {
                     ui.treetrace->addTopLevelItem(it);
                 }
             }
         }
     }
-    //LOGGER_INFO(log_, "EXITING EMPTY TREE.");
 }
 
 void QtWidgetsApplication1::trace_scroll_changed(int value)
