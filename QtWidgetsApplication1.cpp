@@ -1505,10 +1505,11 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
 					else
 						extract_item(current);
 				}
-				else { ui.mysearch->setFocus(); }
+				else { ui.mysearch->setFocus(); ui.mysearch->selectAll();}
 			}
 			else {
 				ui.mysearch->setFocus();
+				ui.mysearch->selectAll();
 			}
 			return true;
 		}
@@ -1547,11 +1548,13 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
 			break;
 		case Qt::Key_Slash:
 			ui.mysearch->setFocus();
+			ui.mysearch->selectAll();
 			break;
 		case Qt::Key_F:
 			if (keyEvent->modifiers() & Qt::ControlModifier)
 			{
 				ui.mysearch->setFocus();
+				ui.mysearch->selectAll();
 			}
 			break;
 		default:
@@ -1849,6 +1852,25 @@ bool findItem(QTreeWidgetItem* item,
 	return false;
 }
 
+
+QQueue<Found_Item*> removeDuplicates(QQueue<Found_Item*> queue) {
+	QQueue<Found_Item*> result;
+
+	while (!queue.isEmpty()) {
+		Found_Item* value = queue.dequeue();
+		bool omit = false;
+		for (Found_Item* t : result) {
+			if (t->item == value->item) {
+				omit = true;
+				break;
+			}
+		}
+		if (!omit && !result.contains(value)) {
+			result.enqueue(value);
+		}
+	}
+	return result;
+}
 void QtWidgetsApplication1::show_fullpage_with_findings()
 {
 	QString search_str = ui.mysearch->toPlainText().trimmed();
@@ -1939,6 +1961,7 @@ void QtWidgetsApplication1::show_fullpage_with_findings()
 	//	qDebug() << "Found Item ->" << x->text(0);
 	//}
 	if (!found_queue.isEmpty()) {
+		found_queue = removeDuplicates(found_queue);
 		prev_find = current_find;
 		current_find = found_queue.at(0);
 		//ui.treetrace->setCurrentItem(current_find->item);
