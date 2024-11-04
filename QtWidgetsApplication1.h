@@ -238,6 +238,8 @@ private slots:
     void construct_searching_string();
     void help_usage();
     void construct_usage();
+    void current2center();
+
 
 signals:
     void record_latest_index(uint64_t index);

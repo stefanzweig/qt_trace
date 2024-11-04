@@ -1522,6 +1522,9 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
                 ui.mysearch->selectAll();
             }
             break;
+        case Qt::Key_L:
+            current2center();
+            break;
         default:
             ;
         }
@@ -1529,6 +1532,54 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
     return QWidget::eventFilter(obj, event);
 }
 
+int getVisibleIndex(QTreeWidget* treeWidget, QTreeWidgetItem* item) {
+    if (!item || !treeWidget) {
+        return -1; // 返回 -1 表示无效项
+    }
+
+    int visibleIndex = 0;
+    for (int i = 0; i < treeWidget->topLevelItemCount(); ++i) {
+        QTreeWidgetItem* topLevelItem = treeWidget->topLevelItem(i);
+        if (topLevelItem->isHidden()) continue;
+
+        if (topLevelItem == item) {
+            return visibleIndex; // 返回当前项的可见索引
+        }
+        visibleIndex++;
+
+        for (int j = 0; j < topLevelItem->childCount(); ++j) {
+            QTreeWidgetItem* childItem = topLevelItem->child(j);
+            if (childItem->isHidden()) continue;
+
+            if (childItem == item) {
+                return visibleIndex; // 返回当前项的可见索引
+            }
+            visibleIndex++;
+        }
+    }
+    return -1; // 如果未找到，返回 -1
+}
+
+void QtWidgetsApplication1::current2center()
+{
+    QTreeWidgetItem* itemToScrollTo = ui.treetrace->currentItem();
+
+    if (itemToScrollTo) {
+        ui.treetrace->scrollToItem(itemToScrollTo);
+        int indexToScrollTo = ui.treetrace->indexOfTopLevelItem(itemToScrollTo);
+        int value = ui.treetrace->verticalScrollBar()->value();
+        int visibleIndex = getVisibleIndex(ui.treetrace, itemToScrollTo);
+        qDebug() << "Scroll to ->" << indexToScrollTo;
+        qDebug() << "VScroll ->" << value;
+        qDebug() << "VisibileIndex ->" << visibleIndex;
+
+        QSize itemSize;
+        itemSize = getItemSize(itemToScrollTo, 0, ui.treetrace->font());
+        int v_height = ui.treetrace->viewport()->height();
+        int window_capacity = (v_height / itemSize.height() - 1)/2;
+        ui.treetrace->verticalScrollBar()->setValue(indexToScrollTo-window_capacity);        
+    }
+}
 
 void QtWidgetsApplication1::construct_searching_string()
 {
