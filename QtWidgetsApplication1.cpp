@@ -1557,6 +1557,8 @@ void QtWidgetsApplication1::construct_usage()
     USAGE << "    S\tStart trace.";
     USAGE << "    A\tToggle pause trace.";
     USAGE << "    D\tStop trace.";
+    USAGE << "    P\tPrevious result.";
+    USAGE << "    N\tNext result.";
     USAGE << "    TAB\texpand/collapse item if it has children.";
     USAGE << "    CTRL-F\tSwitch cursor to search edit.";
     USAGE << "    Up\tPrevious item.";
