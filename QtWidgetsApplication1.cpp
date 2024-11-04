@@ -1569,15 +1569,18 @@ void QtWidgetsApplication1::current2center()
         int indexToScrollTo = ui.treetrace->indexOfTopLevelItem(itemToScrollTo);
         int value = ui.treetrace->verticalScrollBar()->value();
         int visibleIndex = getVisibleIndex(ui.treetrace, itemToScrollTo);
-        qDebug() << "Scroll to ->" << indexToScrollTo;
+        qDebug() << "Item to ->" << indexToScrollTo;
         qDebug() << "VScroll ->" << value;
         qDebug() << "VisibileIndex ->" << visibleIndex;
 
         QSize itemSize;
         itemSize = getItemSize(itemToScrollTo, 0, ui.treetrace->font());
         int v_height = ui.treetrace->viewport()->height();
-        int window_capacity = (v_height / itemSize.height() - 1)/2;
-        ui.treetrace->verticalScrollBar()->setValue(indexToScrollTo-window_capacity);        
+        int window_capacity = (v_height / itemSize.height()) / 2;
+        int offset = indexToScrollTo - 3*window_capacity/4;
+        ui.treetrace->verticalScrollBar()->setValue(offset);
+        qDebug() << "Capacity ->" << window_capacity;
+        qDebug() << "Destination ->" << offset;
     }
 }
 
