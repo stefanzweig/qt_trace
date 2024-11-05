@@ -11,8 +11,9 @@ using namespace eprosima::fastdds::dds;
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
     QtWidgetsApplication1 w;
+    app.setWindowIcon(QIcon(":/QtWidgetsApplication1/res/spreadsheet.png"));
     w.show();
-    return a.exec();
+    return app.exec();
 }
