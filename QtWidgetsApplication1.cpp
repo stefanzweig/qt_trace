@@ -1563,16 +1563,22 @@ void QtWidgetsApplication1::current2center()
     QTreeWidgetItem* itemToScrollTo = ui.treetrace->currentItem();
 
     if (itemToScrollTo) {
+        QTreeWidgetItem* currentItem = itemToScrollTo;
+        while (currentItem->parent() != nullptr) {
+            currentItem = currentItem->parent();
+        }
+        if (!currentItem)
+            return;
         ui.treetrace->scrollToItem(itemToScrollTo);
-        int indexToScrollTo = ui.treetrace->indexOfTopLevelItem(itemToScrollTo);
+        int indexToScrollTo = ui.treetrace->indexOfTopLevelItem(currentItem);
         int value = ui.treetrace->verticalScrollBar()->value();
-        int visibleIndex = getVisibleIndex(ui.treetrace, itemToScrollTo);
+        int visibleIndex = getVisibleIndex(ui.treetrace, currentItem);
         qDebug() << "Item to ->" << indexToScrollTo;
         qDebug() << "VScroll ->" << value;
         qDebug() << "VisibileIndex ->" << visibleIndex;
 
         QSize itemSize;
-        itemSize = getItemSize(itemToScrollTo, 0, ui.treetrace->font());
+        itemSize = getItemSize(currentItem, 0, ui.treetrace->font());
         int v_height = ui.treetrace->viewport()->height();
         int window_capacity = (v_height / itemSize.height()) / 2;
         int offset = indexToScrollTo - 3 * window_capacity / 4;
@@ -1806,7 +1812,7 @@ void QtWidgetsApplication1::searchTree_bfs(QTreeWidgetItem* root, const QStringL
 
     for (const QString& target : targets) {
         for (int column = 0; column < root->columnCount(); ++column) {
-            if (root->text(column).toLower() == target.toLower()) {
+            if (root->text(column).toLower().contains(target.toLower())) {
                 bool item_visited = false;
                 for (Found_Item* v : visited)
                 {
@@ -2104,7 +2110,7 @@ void QtWidgetsApplication1::highlight_next_item(QTreeWidgetItem* item)
             else {
                 QTreeWidgetItem* currentItem = item;
                 while (currentItem->parent() != nullptr) {
-                    currentItem = currentItem->parent(); // 向上移动至父项
+                    currentItem = currentItem->parent();
                 }
                 if (currentItem) {
                     QTreeWidget* treeWidget = item->treeWidget();
