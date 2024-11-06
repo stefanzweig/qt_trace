@@ -1558,9 +1558,24 @@ int getVisibleIndex(QTreeWidget* treeWidget, QTreeWidgetItem* item) {
     return -1; // 如果未找到，返回 -1
 }
 
+void scrollToCenter(QTreeWidget* treeWidget, QTreeWidgetItem* item) {
+    treeWidget->scrollToItem(item);
+    QRect itemRect = treeWidget->visualItemRect(item);
+    QRect viewportRect = treeWidget->viewport()->rect();
+    int offset = (viewportRect.height() / 2) - (itemRect.height() / 2) - itemRect.top();
+    QScrollBar* verticalScrollBar = treeWidget->verticalScrollBar();
+    verticalScrollBar->setValue(verticalScrollBar->value() + offset);
+}
+
 void QtWidgetsApplication1::current2center()
 {
+    //return;
     QTreeWidgetItem* itemToScrollTo = ui.treetrace->currentItem();
+    //if (itemToScrollTo) {
+    //    scrollToCenter(ui.treetrace, itemToScrollTo);
+    //}
+
+//  my own solution 2024-11-06 08:18:14
 
     if (itemToScrollTo) {
         QTreeWidgetItem* currentItem = itemToScrollTo;
@@ -1572,20 +1587,32 @@ void QtWidgetsApplication1::current2center()
         ui.treetrace->scrollToItem(itemToScrollTo);
         int indexToScrollTo = ui.treetrace->indexOfTopLevelItem(currentItem);
         int value = ui.treetrace->verticalScrollBar()->value();
-        int visibleIndex = getVisibleIndex(ui.treetrace, currentItem);
-        qDebug() << "Item to ->" << indexToScrollTo;
-        qDebug() << "VScroll ->" << value;
-        qDebug() << "VisibileIndex ->" << visibleIndex;
+        //int visibleIndex = getVisibleIndex(ui.treetrace, currentItem);
+        qDebug() << "Current Item Top Index  ->" << indexToScrollTo;
+        qDebug() << "verticalScrollBar value ->" << value;
+        //qDebug() << "VisibileIndex ->" << visibleIndex;
 
         QSize itemSize;
         itemSize = getItemSize(currentItem, 0, ui.treetrace->font());
-        int v_height = ui.treetrace->viewport()->height();
+        QRect itemRect = ui.treetrace->visualItemRect(itemToScrollTo);
+        QRect viewportRect = ui.treetrace->viewport()->rect();
+        qDebug() << "ITEM RECT-> x:" << itemRect.x() <<"y:" << itemRect.y() 
+            <<"top:" << itemRect.top() << "bottom:" << itemRect.bottom()
+            <<"height:" << itemRect.height() << "width:" << itemRect.width();
+
+        qDebug() << "CTRL RECT-> x:" << viewportRect.x() << "y:" << viewportRect.y()
+            << "top:" << viewportRect.top() << "bottom:" << viewportRect.bottom()
+            << "height:" << viewportRect.height() << "width:" << viewportRect.width();
+        return;
+
+        int v_height = viewportRect.height();
         int window_capacity = (v_height / itemSize.height()) / 2;
         int offset = indexToScrollTo - 3 * window_capacity / 4;
         ui.treetrace->verticalScrollBar()->setValue(offset);
         qDebug() << "Capacity ->" << window_capacity;
         qDebug() << "Destination ->" << offset;
     }
+
 }
 
 void QtWidgetsApplication1::construct_searching_string()
