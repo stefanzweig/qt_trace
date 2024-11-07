@@ -239,6 +239,7 @@ private slots:
     void help_usage();
     void construct_usage();
     void current2center();
+    void collapse_all();
 
 
 signals:

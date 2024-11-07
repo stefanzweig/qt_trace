@@ -364,8 +364,8 @@ void QtWidgetsApplication1::resetLayout()
     ui.toolbar->addAction(ui.actionmode);
     ui.toolbar->addAction(ui.actionreset);
 
-    //ui.treetrace->setContextMenuPolicy(Qt::CustomContextMenu);
-    // connect(ui.treetrace, &QTreeWidget::customContextMenuRequested, this, &QtWidgetsApplication1::prepareMenu);
+    ui.treetrace->setContextMenuPolicy(Qt::CustomContextMenu);
+     connect(ui.treetrace, &QTreeWidget::customContextMenuRequested, this, &QtWidgetsApplication1::prepareMenu);
 
     connect(ui.treetrace->header(), &QHeaderView::sectionResized, this, &QtWidgetsApplication1::on_header_section_resized);
     connect(ui.treetrace->horizontalScrollBar(), &QScrollBar::valueChanged, this, &QtWidgetsApplication1::on_horizontal_scroll);
@@ -422,9 +422,9 @@ void QtWidgetsApplication1::prepareMenu(const QPoint& pos)
 {
     QTreeWidget* tree = ui.treetrace;
     QTreeWidgetItem* nd = tree->itemAt(pos);
-    QAction* newAct = new QAction(QIcon(":/QtWidgetsApplication1/res/funnel-icon.ico"), tr("&Clean All"), this);
-    newAct->setStatusTip(tr("Clean All"));
-    connect(newAct, SIGNAL(triggered()), this, SLOT(newDev()));
+    QAction* newAct = new QAction(QIcon(":/QtWidgetsApplication1/res/funnel-icon.ico"), tr("&Collapse All"), this);
+    newAct->setStatusTip(tr("Collapse All"));
+    connect(newAct, SIGNAL(triggered()), this, SLOT(collapse_all()));
     QMenu menu(this);
     menu.addAction(newAct);
     QPoint pt(pos);
@@ -1521,6 +1521,12 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
         case Qt::Key_L:
             current2center();
             break;
+        case Qt::Key_X:
+            if (keyEvent->modifiers() & Qt::AltModifier)
+            {
+                collapse_all();
+            }
+            break;
         default:
             ;
         }
@@ -1563,6 +1569,17 @@ void scrollToCenter(QTreeWidget* treeWidget, QTreeWidgetItem* item) {
     int offset = (viewportRect.height() / 2) - (itemRect.height() / 2) - itemRect.top();
     QScrollBar* verticalScrollBar = treeWidget->verticalScrollBar();
     verticalScrollBar->setValue(verticalScrollBar->value() + offset);
+}
+
+void QtWidgetsApplication1::collapse_all()
+{
+    QTreeWidgetItem* invisible_root_item = ui.treetrace->invisibleRootItem();
+    int child_count = invisible_root_item->childCount();
+    for (int i = 0; i < child_count; ++i) {
+        QTreeWidgetItem* item = invisible_root_item->child(i);
+        if (item->isExpanded())
+            item->setExpanded(false);
+    }
 }
 
 void QtWidgetsApplication1::current2center()
@@ -1640,29 +1657,30 @@ void QtWidgetsApplication1::construct_usage()
 {
     USAGE.clear();
     USAGE << "GLOBAL:";
-    USAGE << "    CTRL-H\tShow this usage.";
-    USAGE << "    TAB\tSwitch cursor among trace and search.";
+    USAGE << "  CTRL-H\tShow this usage.";
+    USAGE << "  TAB\tSwitch cursor among trace and search.";
     USAGE << "TRACE:";
-    USAGE << "    S\tStart trace.";
-    USAGE << "    A\tToggle pause trace.";
-    USAGE << "    D\tStop trace.";
-    USAGE << "    P\tPrevious result.";
-    USAGE << "    N\tNext result.";
-    USAGE << "    L\tMake current to center.";
-    USAGE << "    TAB\texpand/collapse item if it has children.";
-    USAGE << "    CTRL-F\tSwitch cursor to search edit.";
-    USAGE << "    Up\tPrevious item.";
-    USAGE << "    Down\tNext item.";
+    USAGE << "  S\tStart trace.";
+    USAGE << "  A\tToggle pause trace.";
+    USAGE << "  D\tStop trace.";
+    USAGE << "  P\tPrevious result.";
+    USAGE << "  N\tNext result.";
+    USAGE << "  L\tMake current to center.";
+    USAGE << "  TAB\texpand/collapse item if it has children.";
+    USAGE << "  CTRL-F\tSwitch cursor to search edit.";
+    USAGE << "  Up\tPrevious item.";
+    USAGE << "  Down\tNext item.";
+    USAGE << "  ALT-X\tCollapse all.";
     USAGE << "";
     USAGE << "SEARCH EDIT:";
-    USAGE << "    Enter\tFind the items accordingly.";
-    USAGE << "SEARCH Syntax:";
-    USAGE << "    Signal:\t sig:\<signal_name\>";
-    USAGE << "    Column:\t \<column_name\>=\<value\>";
-    USAGE << "    All conditions connected with ;";
-    USAGE << "Examples:";
-    USAGE << "    sig:IEvtDiscardRate;sig:IBatTem";
-    USAGE << "    ID=504;Dir=tx";
+    USAGE << "  Enter\tFind the items accordingly.";
+    //USAGE << "SEARCH Syntax:";
+    //USAGE << "    Signal:\t sig:\<signal_name\>";
+    //USAGE << "    Column:\t \<column_name\>=\<value\>";
+    //USAGE << "    All conditions connected with ;";
+    //USAGE << "Examples:";
+    //USAGE << "    sig:IEvtDiscardRate;sig:IBatTem";
+    //USAGE << "    ID=504;Dir=tx";
 }
 
 void QtWidgetsApplication1::updateComoboPage()
