@@ -66,6 +66,11 @@ public:
 			original_data.append(s);
 		}
 	}
+	~TraceTreeWidgetItem() override {
+		qDebug() << "Derived destructor called";
+		original_data.clear();
+		bool deleted = true;
+	}
 
 	TraceTreeWidgetItem* clone() const {
 		TraceTreeWidgetItem* newItem = new TraceTreeWidgetItem(*this);
@@ -97,10 +102,10 @@ public:
 	
 	bool operator==(const TraceTreeWidgetItem& other) const {
 		bool equal = false;
-		equal = (source_ == other.source_);
-		equal = (item_type == other.item_type);
-		equal = (ref_counter == other.ref_counter);
-		equal = (uuid_ == other.uuid_);
+		equal = (source_ == other.source_) ? true : false;
+		equal = (item_type == other.item_type) ? true : false;
+		equal = (ref_counter == other.ref_counter) ? true : false;
+		equal = (uuid_ == other.uuid_) ? true : false;
 		return equal;
 	}
 
@@ -146,6 +151,7 @@ public:
 	}
 
 	bool handled = false;
+	bool deleted = false;
 
 private:
 	MyItemType item_type = MyItemType::canframe_;
