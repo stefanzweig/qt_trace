@@ -69,7 +69,7 @@ public:
 	~TraceTreeWidgetItem() override {
 		qDebug() << "Derived destructor called";
 		original_data.clear();
-		bool deleted = true;
+		deleted = true;
 	}
 
 	TraceTreeWidgetItem* clone() const {
@@ -79,18 +79,6 @@ public:
 		newItem->changed = changed;
 		newItem->ref_counter = 0;
 		newItem->uuid_ = uuid_;
-		//newItem->original_data.append(original_data);
-
-		//if (newItem->source_ == "can_pdu") {
-		//	int k = childCount();
-		//	if (k > 0) {
-		//		for (int i = 0; i < k; ++i) {
-		//			TraceTreeWidgetItem* ch = static_cast<TraceTreeWidgetItem*>(child(i));
-		//			qDebug() << "CHILD ->" << ch->uuid_;
-		//		}
-		//	}
-		//}
-
 		for (int i = 0; i < childCount(); ++i) {
 			newItem->addChild(static_cast<TraceTreeWidgetItem*>(child(i))->clone());
 		}
