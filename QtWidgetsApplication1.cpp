@@ -1519,6 +1519,8 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
 			current2center();
 		}
 		break;
+		case Qt::Key_Enter:
+		case Qt::Key_Return:
 		case Qt::Key_N:
 		{
 			find_direction = 0;
