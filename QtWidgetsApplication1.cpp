@@ -447,7 +447,10 @@ void QtWidgetsApplication1::clearance()
 	calc_thread->full_count_linframes = 0;
 	calc_thread->full_count_linparser = 0;
 	passed_uuid_set.clear();
-	safe_clear_trace();
+	clear_queue(shown_queue);
+	clear_queue(full_queue_stream);
+	clear_queue(filtered_queue);
+	calc_thread->clear_items_queue();
 }
 
 void QtWidgetsApplication1::initialize_new_session()
@@ -1525,6 +1528,16 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
 			if (keyEvent->modifiers() & Qt::AltModifier)
 			{
 				collapse_all();
+			}
+			break;
+		case Qt::Key_G:
+			if (keyEvent->modifiers() & Qt::ControlModifier)
+			{
+				QMessageBox::StandardButton reply;
+				reply = QMessageBox::warning(this, "Warning", tr("Clear All?"), QMessageBox::Yes | QMessageBox::No);
+				if (reply == QMessageBox::Yes) {
+					clearance();
+				}
 			}
 			break;
 		default:
