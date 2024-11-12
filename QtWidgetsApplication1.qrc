@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/QtWidgetsApplication1">
+    <file>res/clearlog.svg</file>
     <file>res/arrow-down.png</file>
     <file>res/arrow-up.png</file>
     <file>res/replay.svg</file>

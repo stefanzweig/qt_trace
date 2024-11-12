@@ -240,6 +240,7 @@ private slots:
     void construct_usage();
     void current2center();
     void collapse_all();
+    void clearlog();
 
 
 signals:
@@ -256,8 +257,8 @@ protected:
     void reset_find_status() {
         application_in_find = false;
         for (Found_Item* t : found_queue) {
-            if (current_find == t)
-                current_find->dehighlight();
+            //if (current_find == t)
+            //    current_find->dehighlight();
             delete t;
             t = nullptr;
         };

@@ -336,6 +336,7 @@ void QtWidgetsApplication1::createActions()
 	connect(ui.pb_Last, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonLastClicked);
 	connect(ui.pb_Goto, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonGotoClicked);
 	connect(ui.actionHelp, &QAction::triggered, this, &QtWidgetsApplication1::help_usage);
+	connect(ui.actionclear, &QAction::triggered, this, &QtWidgetsApplication1::clearlog);
 	connect(ui.pb_prev_result, &QPushButton::clicked, [this]() {find_direction = 1; ButtonSearchClicked(); });
 	connect(ui.pb_next_result, &QPushButton::clicked, [this]() {find_direction = 0; ButtonSearchClicked(); });
 }
@@ -353,6 +354,7 @@ void QtWidgetsApplication1::resetLayout()
 	ui.actionstop->setIcon(QIcon(":/QtWidgetsApplication1/res/maximize.svg"));
 	ui.actionreset->setIcon(QIcon(":/QtWidgetsApplication1/res/tick.svg"));
 	ui.actionreplay->setIcon(QIcon(":/QtWidgetsApplication1/res/replay.svg"));
+	ui.actionclear->setIcon(QIcon(":/QtWidgetsApplication1/res/clearlog.svg"));
 	ui.pb_next_result->setIcon(QIcon(":/QtWidgetsApplication1/res/arrow-down.png"));
 	ui.pb_prev_result->setIcon(QIcon(":/QtWidgetsApplication1/res/arrow-up.png"));
 
@@ -363,6 +365,7 @@ void QtWidgetsApplication1::resetLayout()
 	ui.toolbar->addAction(ui.actionreplay);
 	ui.toolbar->addAction(ui.actionmode);
 	ui.toolbar->addAction(ui.actionreset);
+	ui.toolbar->addAction(ui.actionclear);
 
 	ui.treetrace->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(ui.treetrace, &QTreeWidget::customContextMenuRequested, this, &QtWidgetsApplication1::prepareMenu);
@@ -442,15 +445,36 @@ void QtWidgetsApplication1::onActionTriggered()
 
 void QtWidgetsApplication1::clearance()
 {
+	if (state_manager.current_state() == State::INIT)
+		return;
+	state_manager.changeState(State::STOPPED);
+	calc_thread->stopThread();
+	timer->stop();
+	timer_dustbin->stop();
+
+	mysub_can_frames = nullptr;
+	mysub_can_parser = nullptr;
+	mysub_lin_frames = nullptr;
+	mysub_lin_parser = nullptr;
+
+	initial_trace = true;
+	last_status = "STOPPED";
 	calc_thread->full_count_canframes = 0;
 	calc_thread->full_count_canparser = 0;
 	calc_thread->full_count_linframes = 0;
 	calc_thread->full_count_linparser = 0;
+
 	passed_uuid_set.clear();
 	clear_queue(shown_queue);
 	clear_queue(full_queue_stream);
 	clear_queue(filtered_queue);
 	calc_thread->clear_items_queue();
+	paused_instant_index = 0;
+
+	frozen = true;
+	show_fullpage();
+	updateToolbar();
+	updateContinuousProgress();
 }
 
 void QtWidgetsApplication1::initialize_new_session()
@@ -1176,8 +1200,8 @@ void QtWidgetsApplication1::on_horizontal_scroll()
 void QtWidgetsApplication1::about()
 {
 	QMessageBox::about(this, tr("ZoneTracer"),
-		tr("<center><b>ZoneTracer</b> \n"
-			"v0.1a</center>"));
+		tr("<center><b>ZoneTracer</b> <br/>"
+			"v0.1b<br/>2024/11/12</center>"));
 }
 
 void QtWidgetsApplication1::reset_all_filters()
@@ -1651,6 +1675,16 @@ void QtWidgetsApplication1::current2center()
 
 void QtWidgetsApplication1::construct_searching_string()
 {
+}
+
+
+void QtWidgetsApplication1::clearlog()
+{
+	QMessageBox::StandardButton reply;
+	reply = QMessageBox::warning(this, "Warning", tr("Clear All?"), QMessageBox::Yes | QMessageBox::No);
+	if (reply == QMessageBox::Yes) {
+		clearance();
+	}
 }
 
 void QtWidgetsApplication1::help_usage()
