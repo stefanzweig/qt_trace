@@ -372,7 +372,7 @@ void multiThread::formatRow_linframe_thread(linMessage frame)
     if (frame.rxtx() == 1) sDir = "Tx";
     str_lm.append(sDir);				// Dir
     str_lm.append(QString::number(frame.dlc()));	// DLC
-    str_lm.append("LIN Frame");	// EventType
+    str_lm.append("LIN Message");	// EventType
     str_lm.append(QString::number(frame.dlc())); // Datalength
     str_lm.append("LIN"); // bustype
     QByteArray output;
@@ -385,7 +385,7 @@ void multiThread::formatRow_linframe_thread(linMessage frame)
     QString uuid_str = QString::fromStdString(s);
 
     TraceTreeWidgetItem* Item = new TraceTreeWidgetItem(str_lm);
-    Item->setSource("linframe");
+    Item->setSource("linmessage");
     Item->setUUID(uuid_str);
     Item->setData(0, Qt::UserRole, uuid_str);
     Item->setToolTip(0, "This is the second item.<br>Details: This item is less important.<br>Usage: Special cases.");
@@ -399,27 +399,121 @@ void multiThread::formatRow_linframe_thread(linMessage frame)
     }
 }
 
-void multiThread::formatRow_linparser_thread(linFrame frame)
+void multiThread::formatRow_linparser_thread(linFrames frames)
 {
-    last_timestamp_canparser = frame.timeStamp();
-    full_count_linparser++;
+    /*  linFrame Definition
+        |-------------------------+-----------------|
+        | uint32_t                | channel()       |
+        | uint32_t                | id()            |
+        | uint8_t                 | dlc()           |
+        | std::vector<uint8_t>&   | data()          |
+        | uint16_t                | flags()         |
+        | uint64_t                | timeStamp()     |
+        | int64_t                 | timeStamp_d()   |
+        | uint8_t                 | rxtx()          |
+        | uint8_t                 | errorCode()     |
+        | uint8_t                 | NMstate()       |
+        | uint8_t                 | isMasterFrame() |
+        | std::vector<linSignal>& | zone_signals()  |
+        | std::string&            | name()          |
+        |-------------------------+-----------------|
+    */
+    int frames_length = frames.len();
+    qDebug() << "linFrames length ->" << frames_length;
+ /*
     QStringList str_parser = {};
-    QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(frame.timeStamp() / 1000000);
+    linFrame first_frame = frames.linframes().at(0);
+    QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(first_frame.timeStamp() / 1000000);
     str_parser.append(timestamp.toString("hh:mm:ss.zzz"));
-    str_parser.append("");
-    str_parser.append("");
-    str_parser.append(QString::fromStdString("LIN PDU"));
-    TraceTreeWidgetItem* Item = new TraceTreeWidgetItem(str_parser);
-    Item->setSource("lin_parser");
-    if (Item != nullptr) {
+    str_parser.append(""); // placeholder
+    str_parser.append(""); // placeholder
+    str_parser.append(""); // placeholder
+    str_parser.append(""); // placeholder
+    str_parser.append(""); // placeholder
+    str_parser.append("LIN Frames");
+    str_parser.append(""); // placeholder
+    str_parser.append("LIN");
+
+    UUIDv4::UUID uuid = uuidGenerator.getUUID();
+    std::string s = uuid.str();
+    QString uuid_str = QString::fromStdString(s);
+
+    TraceTreeWidgetItem* Item = new TraceTreeWidgetItem(str_parser); // Frames level
+    Item->setSource("linframes");
+    Item->setUUID(uuid_str);
+    Item->setData(0, Qt::UserRole, uuid_str);
+    Item->setToolTip(0, "Lin Frames");
+*/
+    for (linFrame lf : frames.linframes()) // Frame level
+    {
+        full_count_linparser++;
+        QStringList str_frame = {};
+        QDateTime timestamp_frame = QDateTime::fromMSecsSinceEpoch(lf.timeStamp() / 1000000);
+        str_frame.append(timestamp_frame.toString("hh:mm:ss.zzz"));
+        str_frame.append("LIN " + QString::number(lf.channel()));
+        str_frame.append(QString::number(lf.id(), 16).toUpper());
+        str_frame.append(QString::fromStdString(lf.name()));
+        QString sDir = "Rx";
+        if (lf.rxtx() == 1) sDir = "Tx";
+        str_frame.append(sDir);
+
+        str_frame.append(QString::number(lf.dlc()));
+        str_frame.append("LIN Frame");
+        str_frame.append(QString::number(lf.dlc()));
+        str_frame.append("LIN");
+
+        QByteArray output;
+        std::copy(lf.data().begin(), lf.data().end(), std::back_inserter(output));
+        QString myData = output.toHex(' ');
+        str_frame.append(myData);
+
+        //str_frame.append(QString::number(lf.flags()));
+        //str_frame.append(QString::number(lf.errorCode()));
+        //str_frame.append(QString::number(lf.NMstate()));
+        //str_frame.append(QString::number(lf.isMasterFrame()));
+        //str_frame.append(QString::number(lf.zone_signals()));
+        //str_frame.append(QString::number(lf.data()));
+
         UUIDv4::UUID uuid = uuidGenerator.getUUID();
         std::string s = uuid.str();
         QString uuid_str = QString::fromStdString(s);
-        Item->setUUID(uuid_str);
-        Item->setData(0, Qt::UserRole, uuid_str);
-        emit(popToRoot(Item));
-        list_items_queue.enqueue(Item);
+
+        TraceTreeWidgetItem* Item_Frame = new TraceTreeWidgetItem(str_frame);
+        Item_Frame->setSource("linframe");
+        Item_Frame->setUUID(uuid_str);
+        Item_Frame->setData(0, Qt::UserRole, uuid_str);
+        Item_Frame->setToolTip(0, "Lin Frame");
+
+        // since there is only one frame, frame should be at very top level. 2024-11-14 17:04:07
+        //Item->addChild(Item_Frame);
+        // signal level: 2024-11-14 16:14:31
+        //str_frame.append(QString::number(lf.zone_signals()));
+
+        for (linSignal signal : lf.zone_signals())
+        {
+            qDebug() << "Lin Frame Signal -> " << QString::fromStdString(signal.name());
+            QStringList str_signal = {};
+            str_signal.append(QString::fromStdString(signal.name()));
+            str_signal.append(QString::number(signal.raw_value()));
+            str_signal.append(QString::fromStdString(signal.phy_value()));
+            str_signal.append(QString::fromStdString(signal.logical_value()));
+            TraceTreeWidgetItem* Item_Signal = new TraceTreeWidgetItem(str_signal);
+            Item_Signal->setSource("linsignal");
+            Item_Signal->setUUID(uuid_str);
+            Item_Signal->setData(0, Qt::UserRole, uuid_str);
+            Item_Signal->setToolTip(0, "Lin Signal");
+            Item_Frame->addChild(Item_Signal);
+        }
+        emit(popToRoot(Item_Frame));
+        list_items_queue.enqueue(Item_Frame);
     }
+    //if (Item == nullptr)
+    //    return;
+    //else
+    //{
+    //    emit(popToRoot(Item));
+    //    list_items_queue.enqueue(Item);
+    //}
 }
 
 void multiThread::setFilterOption(QString colName, QList<QList<QString>> items)
@@ -478,8 +572,20 @@ void multiThread::clear_items_queue()
                 }
             }
         }
-        if (mysource == "LIN_PARSER")    {
+        if (mysource == "LINFRAME") {
             // todo: 2024-10-28 17:55:14
+            qDebug() << "SOMETHING DELETED IN LINFRAME...";
+            int k = it->childCount();
+            if (k > 0) {
+                for (int i = 0; i < k; i++) {
+                    TraceTreeWidgetItem* p = static_cast<TraceTreeWidgetItem*>(it->child(i));
+                    if (p && p->getSource() == "linsignal") {
+                        delete p;
+                        p = nullptr;
+                        continue;
+                    }
+                }
+            }
         }
         delete it;
         it = nullptr;

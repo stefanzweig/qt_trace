@@ -64,7 +64,7 @@ public:
             {
                 samples_++;
                 qDebug() << "Data from Lin Frame";
-                //emit traceItemUpdate_internal_linparser(linframe_);
+                emit traceItemUpdate_internal_linparser(linframes_);
             }
         }
         else if (retcode == ReturnCode_t::RETCODE_NO_DATA) {
@@ -90,5 +90,5 @@ public:
     QTreeView* tree_;
 
 signals:
-    void traceItemUpdate_internal_linparser(linFrame lin_frame);
+    void traceItemUpdate_internal_linparser(linFrames lin_frame);
 };

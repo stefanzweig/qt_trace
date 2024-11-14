@@ -222,13 +222,18 @@ void QtWidgetsApplication1::updateProgressRunStatus()
 	int lin_messages_count = calc_thread->full_count_linframes - padding;
 	if (lin_messages_count <= 0)
 		lin_messages_count = 0;
+	int lin_frames_count = calc_thread->full_count_linparser - padding;
+	if (lin_frames_count <= 0)
+		lin_frames_count = 0;
 
 	QString status_string = runStatus
 		+ "CAN Messages: " + QString::number(can_messages_count)
 		+ ". CAN PDUs: " + QString::number(canpdu_count)
 		+ ". LIN Messages: " + QString::number(lin_messages_count)
+		+ ". LIN Frames: " + QString::number(lin_frames_count)
 		+ ". Total: " + QString::number(can_messages_count
 			+ canpdu_count
+			+ lin_frames_count
 			+ lin_messages_count);
 	ui.statusBar->showMessage(status_string);
 }
