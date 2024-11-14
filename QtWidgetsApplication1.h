@@ -248,9 +248,6 @@ signals:
     void buttonClicked();
 
 protected:
-    // 2024-11-01 14:15:40
-    // todo: something about finding function
-    // prev result, current result, next result
     bool application_in_find = false;
     int find_direction = 0; // 0 -> down, 1 -> up.
     QString last_findstring;
