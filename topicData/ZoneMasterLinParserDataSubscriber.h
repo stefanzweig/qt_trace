@@ -35,7 +35,7 @@ public:
         , reader_(nullptr)
         , type_(nullptr) // this should be matched.
     {
-        linFramePubSubType* lin_frame_pubsubtype = new linFramePubSubType();
+        linFramesPubSubType* lin_frame_pubsubtype = new linFramesPubSubType();
         lin_frame_pubsubtype->setName("linParserData");
         type_ = TypeSupport(lin_frame_pubsubtype);
         this->domainid = domainid;

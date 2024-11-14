@@ -63,6 +63,7 @@ public:
             if (info.valid_data)
             {
                 samples_++;
+                qDebug() << "Data from Lin Frame";
                 //emit traceItemUpdate_internal_linparser(linframe_);
             }
         }
