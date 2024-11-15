@@ -452,18 +452,18 @@ void QtWidgetsApplication1::clearance()
 {
 	if (state_manager.current_state() == State::INIT)
 		return;
-	state_manager.changeState(State::STOPPED);
-	calc_thread->stopThread();
-	timer->stop();
-	timer_dustbin->stop();
+	//state_manager.changeState(State::STOPPED);
+	//calc_thread->stopThread();
+	//timer->stop();
+	//timer_dustbin->stop();
 
-	mysub_can_frames = nullptr;
-	mysub_can_parser = nullptr;
-	mysub_lin_frames = nullptr;
-	mysub_lin_parser = nullptr;
+	//mysub_can_frames = nullptr;
+	//mysub_can_parser = nullptr;
+	//mysub_lin_frames = nullptr;
+	//mysub_lin_parser = nullptr;
 
-	initial_trace = true;
-	last_status = "STOPPED";
+	//initial_trace = true;
+	//last_status = "STOPPED";
 	calc_thread->full_count_canframes = 0;
 	calc_thread->full_count_canparser = 0;
 	calc_thread->full_count_linframes = 0;
