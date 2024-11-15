@@ -69,6 +69,7 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
 		calc_thread->stopFlag();
 		calc_thread->quit();
 		calc_thread->wait();
+		calc_thread->clear_items_queue();
 		delete calc_thread;
 		calc_thread = nullptr;
 	}
@@ -88,17 +89,14 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
 	reset_find_status();
 
 	state_manager.changeState(State::COMPLETE);
-	state_manager.printHistory();
+	//state_manager.printHistory();
 
-	print_item_queue(shown_queue);
-	print_item_queue(full_queue_stream);
+	//print_item_queue(shown_queue);
+	//print_item_queue(full_queue_stream);
 
 	clear_queue(shown_queue);
 	clear_queue(full_queue_stream);
 	clear_queue(filtered_queue);
-
-	print_item_queue(shown_queue);
-	print_item_queue(full_queue_stream);
 
 	spdlog::drop_all();
 }
@@ -464,18 +462,7 @@ void QtWidgetsApplication1::clearance()
 
 	//initial_trace = true;
 	//last_status = "STOPPED";
-	calc_thread->full_count_canframes = 0;
-	calc_thread->full_count_canparser = 0;
-	calc_thread->full_count_linframes = 0;
-	calc_thread->full_count_linparser = 0;
-
-	passed_uuid_set.clear();
-	clear_queue(shown_queue);
-	clear_queue(full_queue_stream);
-	clear_queue(filtered_queue);
-	calc_thread->clear_items_queue();
-	paused_instant_index = 0;
-
+	initialize_new_session();
 	frozen = true;
 	show_fullpage();
 	updateToolbar();
@@ -488,13 +475,13 @@ void QtWidgetsApplication1::initialize_new_session()
 	calc_thread->full_count_canparser = 0;
 	calc_thread->full_count_linframes = 0;
 	calc_thread->full_count_linparser = 0;
-
 	paused_instant_index = -1;
 	passed_uuid_set.clear();
 
 	clear_queue(shown_queue);
 	clear_queue(full_queue_stream);
 	clear_queue(filtered_queue);
+	calc_thread->clear_items_queue();
 }
 
 bool QtWidgetsApplication1::new_session()
@@ -1403,7 +1390,7 @@ void QtWidgetsApplication1::restore_full_queue()
 void QtWidgetsApplication1::safe_clear_trace()
 {
 	passed_uuid_set.clear();
-	clear_queue(shown_queue);
+	 clear_queue(shown_queue);
 }
 
 QString QtWidgetsApplication1::previous_state()
@@ -2132,10 +2119,10 @@ void QtWidgetsApplication1::resetInvisibles()
 
 void QtWidgetsApplication1::show_fullpage_with_index(int index)
 {
-	// index is the page index  starting from 1
 	if (timer_isRunning) return;
 	timer_isRunning = true;
-	qDebug() << "SHOW_FULLPAGE_WITH_INDEX";
+
+	// note: index is the page index  starting from 1
 	int page_index = index - 1;
 	ui.treetrace->clear();
 	passed_uuid_set.clear();
