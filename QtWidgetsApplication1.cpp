@@ -557,10 +557,12 @@ void QtWidgetsApplication1::resumeTrace()
 
 	calc_thread->restartThread();
 	//LOGGER_INFO(log_, "==== CAN SUB SET ====");
+	// note: the order here matters. it decides the order in the treewidget.
+	// note: 2024-11-15 08:45:32
 	calc_thread->setCanSubscriber(mysub_can_frames, samples, ui.treetrace);
 	calc_thread->setCanParserSubscriber(mysub_can_parser, samples, ui.treetrace);
-	calc_thread->setLinSubscriber(mysub_lin_frames, samples, ui.treetrace);
 	calc_thread->setLinParserSubscriber(mysub_lin_parser, samples, ui.treetrace);
+	calc_thread->setLinSubscriber(mysub_lin_frames, samples, ui.treetrace);
 	//LOGGER_INFO(log_, "==== THREAD RESTARTED ====");
 	calc_thread->start();
 	timer->start(TIMER_HEARTBEAT);
