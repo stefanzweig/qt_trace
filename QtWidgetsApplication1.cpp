@@ -86,6 +86,9 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
 
 	delete usagedialog;
 	usagedialog = nullptr;
+
+	delete configdialog;
+	configdialog = nullptr;
 	reset_find_status();
 
 	state_manager.changeState(State::COMPLETE);
@@ -105,6 +108,8 @@ void QtWidgetsApplication1::shortcuts()
 {
 	QShortcut* shortcut_help = new QShortcut(QKeySequence("Ctrl+H"), this);
 	connect(shortcut_help, &QShortcut::activated, this, &QtWidgetsApplication1::help_usage);
+	QShortcut* shortcut_config = new QShortcut(QKeySequence("Ctrl+B"), this);
+	connect(shortcut_config, &QShortcut::activated, this, &QtWidgetsApplication1::trace_config);
 }
 
 void QtWidgetsApplication1::init()
@@ -1734,6 +1739,16 @@ void QtWidgetsApplication1::construct_usage()
 	//USAGE << "Examples:";
 	//USAGE << "    sig:IEvtDiscardRate;sig:IBatTem";
 	//USAGE << "    ID=504;Dir=tx";
+}
+
+void QtWidgetsApplication1::trace_config()
+{
+	qDebug() << "trace config";
+	if (configdialog == nullptr)
+	{
+		configdialog = new ConfigDialog();
+	}
+	configdialog->show();
 }
 
 void QtWidgetsApplication1::updateComoboPage()

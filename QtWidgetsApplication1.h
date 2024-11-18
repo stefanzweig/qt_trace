@@ -20,6 +20,7 @@
 #include "StateManager.h"
 #include "lexer.h"
 #include "usagedialog.h"
+#include "dialog/configdialog.h"
 
 #define TIMER_HEARTBEAT 100
 #define MAX_ITEM_COUNT 5000
@@ -126,6 +127,7 @@ private:
     QList<QPushButton*> headerButtonList;
     columnFilterDialog* filter = nullptr;  // filter dialog
     UsageDialog* usagedialog = nullptr;
+    ConfigDialog* configdialog = nullptr;
     QHash<QString, QString> filterConfig;
     QVector<QVector<bool>> selectedStates;
 
@@ -237,6 +239,7 @@ private slots:
     void resetInvisibles();
     void construct_searching_string();
     void help_usage();
+    void trace_config();
     void construct_usage();
     void current2center();
     void collapse_all();

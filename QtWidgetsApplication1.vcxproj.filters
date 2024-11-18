@@ -76,6 +76,9 @@
     <ClCompile Include="usagedialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="dialog\configdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gui_global.h">
@@ -457,6 +460,9 @@
     <ClInclude Include="ui_usagedialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="dialog\ui_configdialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="treemodel.h">
@@ -486,12 +492,18 @@
     <QtMoc Include="usagedialog.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="dialog\configdialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="columnfilterdialog.ui">
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="usagedialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="dialog\configdialog.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

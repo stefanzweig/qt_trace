@@ -116,6 +116,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="columnfilter.cpp" />
+    <ClCompile Include="dialog\configdialog.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="multiThread.cpp" />
     <ClCompile Include="topicData\ZoneMasterCanParserSubscriber.cpp" />
@@ -130,12 +131,15 @@
     <ClCompile Include="usagedialog.cpp" />
     <QtRcc Include="QtWidgetsApplication1.qrc" />
     <QtUic Include="columnfilterdialog.ui" />
+    <QtUic Include="dialog\configdialog.ui" />
     <QtUic Include="QtWidgetsApplication1.ui" />
     <QtMoc Include="QtWidgetsApplication1.h" />
     <ClCompile Include="QtWidgetsApplication1.cpp" />
     <QtUic Include="usagedialog.ui" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="dialog\configdialog.h" />
+    <ClInclude Include="dialog\ui_configdialog.h" />
     <ClInclude Include="endianness.h" />
     <ClInclude Include="ui_usagedialog.h" />
     <QtMoc Include="usagedialog.h" />

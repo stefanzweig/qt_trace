@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ConfigDialog</class>
+ <widget class="QDialog" name="ConfigDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>866</width>
+    <height>580</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Configuration</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_5">
+   <item row="0" column="0">
+    <widget class="QWidget" name="mainWidget" native="true">
+     <property name="contextMenuPolicy">
+      <enum>Qt::PreventContextMenu</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_5">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QSplitter" name="splitter">
+	<property name="orientation">
+	 <enum>Qt::Horizontal</enum>
+	</property>
+	<widget class="QWidget" name="categoriesWidget" native="true">
+	 <property name="sizePolicy">
+	  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+	   <horstretch>1</horstretch>
+	   <verstretch>0</verstretch>
+	  </sizepolicy>
+	 </property>
+	 <layout class="QVBoxLayout" name="verticalLayout">
+	  <property name="leftMargin">
+	   <number>0</number>
+	  </property>
+	  <property name="topMargin">
+	   <number>0</number>
+	  </property>
+	  <property name="rightMargin">
+	   <number>0</number>
+	  </property>
+	  <property name="bottomMargin">
+	   <number>0</number>
+	  </property>
+	  <item>
+	   <widget class="QLineEdit" name="categoriesFilter">
+	    <property name="placeholderText">
+	     <string>Search</string>
+	    </property>
+	   </widget>
+	  </item>
+	  <item>
+	   <widget class="QTreeWidget" name="categoriesTree">
+	    <property name="sizePolicy">
+	     <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+	      <horstretch>0</horstretch>
+	      <verstretch>0</verstretch>
+	     </sizepolicy>
+	    </property>
+	    <property name="minimumSize">
+	     <size>
+	      <width>150</width>
+	      <height>0</height>
+	     </size>
+	    </property>
+	    <property name="verticalScrollMode">
+	     <enum>QAbstractItemView::ScrollPerPixel</enum>
+	    </property>
+	    <attribute name="headerVisible">
+	     <bool>false</bool>
+	    </attribute>
+	    <column>
+	     <property name="text">
+	      <string notr="true">1</string>
+	     </property>
+	    </column>
+	    <item>
+	     <property name="text">
+	      <string>General</string>
+	     </property>
+	     <property name="statusTip">
+	      <string notr="true">generalPage</string>
+	     </property>
+	     <property name="icon">
+	      <iconset>
+	       <normaloff>:/icons/img/config_general.png</normaloff>:/icons/img/config_general.png</iconset>
+	     </property>
+	    </item>
+	   </widget>
+	  </item>
+	 </layout>
+	</widget>
+	<widget class="QStackedWidget" name="stackedWidget">
+	 <property name="sizePolicy">
+	  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+	   <horstretch>5</horstretch>
+	   <verstretch>0</verstretch>
+	  </sizepolicy>
+	 </property>
+	 <property name="currentIndex">
+	  <number>0</number>
+	 </property>
+	 <widget class="QWidget" name="generalPage">
+	  <layout class="QVBoxLayout" name="verticalLayout_3">
+	   <property name="leftMargin">
+	    <number>0</number>
+	   </property>
+	   <property name="topMargin">
+	    <number>0</number>
+	   </property>
+	   <property name="rightMargin">
+	    <number>0</number>
+	   </property>
+	   <property name="bottomMargin">
+	    <number>0</number>
+	   </property>
+	   <item>
+	    <widget class="QGroupBox" name="schemaEditingGroup">
+	     <property name="title">
+	      <string>Schema editing</string>
+	     </property>
+	     <layout class="QGridLayout" name="gridLayout_12">
+	      <item row="1" column="1">
+	       <widget class="QSpinBox" name="ddlHistorySizeSpin">
+		<property name="maximumSize">
+		 <size>
+		  <width>150</width>
+		  <height>16777215</height>
+		 </size>
+		</property>
+		<property name="toolTip">
+		 <string>Number of DDL changes kept in history.</string>
+		</property>
+		<property name="maximum">
+		 <number>9999999</number>
+		</property>
+		<property name="cfg" stdset="0">
+		 <string notr="true">General.DdlHistorySize</string>
+		</property>
+	       </widget>
+	      </item>
+	      <item row="1" column="0">
+	       <widget class="QLabel" name="ddlHistorySizeLabel">
+		<property name="text">
+		 <string>DDL history size:</string>
+		</property>
+	       </widget>
+	      </item>
+	      <item row="0" column="0" colspan="2">
+	       <widget class="QCheckBox" name="dontShowDdlPreview">
+		<property name="text">
+		 <string>Don't show DDL preview dialog when committing schema changes</string>
+		</property>
+		<property name="cfg" stdset="0">
+		 <string notr="true">General.DontShowDdlPreview</string>
+		</property>
+	       </widget>
+	      </item>
+	     </layout>
+	    </widget>
+	   </item>
+	   <item>
+	    <widget class="QGroupBox" name="sqlQueriesGroup">
+	     <property name="title">
+	      <string>SQL queries</string>
+	     </property>
+	     <layout class="QGridLayout" name="gridLayout_4">
+	      <item row="1" column="1">
+	       <widget class="QSpinBox" name="queryHistorySizeSpin">
+		<property name="maximumSize">
+		 <size>
+		  <width>150</width>
+		  <height>16777215</height>
+		 </size>
+		</property>
+		<property name="toolTip">
+		 <string>Number of queries kept in the history.</string>
+		</property>
+		<property name="maximum">
+		 <number>999999</number>
+		</property>
+		<property name="cfg" stdset="0">
+		 <string notr="true">General.SqlHistorySize</string>
+		</property>
+	       </widget>
+	      </item>
+	      <item row="2" column="0">
+	       <widget class="QLabel" name="bindParamLimitLabel">
+		<property name="toolTip">
+		 <string>&lt;p&gt;Maximum number of query parameters (:param, @param, $param, ?) stored in history. When you re-use parameter with the same name/position, SQLiteStudio will pre-initialize it with most recent memorized value (you will still be able to change it). Value of 1000 should be sufficient.&lt;/p&gt;</string>
+		</property>
+		<property name="text">
+		 <string>Number of memorized query parameters</string>
+		</property>
+	       </widget>
+	      </item>
+	      <item row="2" column="1">
+	       <widget class="QSpinBox" name="bindParamLimitSpin">
+		<property name="toolTip">
+		 <string>&lt;p&gt;Maximum number of query parameters (:param, @param, $param, ?) stored in history. When you re-use parameter with the same name/position, SQLiteStudio will pre-initialize it with most recent memorized value (you will still be able to change it). Value of 1000 should be sufficient.&lt;/p&gt;</string>
+		</property>
+		<property name="maximum">
+		 <number>999999</number>
+		</property>
+		<property name="cfg" stdset="0">
+		 <string notr="true">General.BindParamsCacheSize</string>
+		</property>
+	       </widget>
+	      </item>
+	      <item row="3" column="0">
+	       <widget class="QCheckBox" name="execQueryUnderCursorCheck">
+		<property name="toolTip">
+		 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If there is more than one query in the SQL editor window, then (if this option is enabled) only a single query will be executed - the one under the keyboard insertion cursor. Otherwise all queries will be executed. You can always limit queries to be executed by selecting those queries before calling to execute. You can also use dedicated shortcuts for executing in one mode or the other (currently configured to %1 for single query execution and %2 for all queries execution).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+		</property>
+		<property name="text">
+		 <string>Execute only the query under the cursor</string>
+		</property>
+		<property name="cfg" stdset="0">
+		 <string notr="true">General.ExecuteCurrentQueryOnly</string>
+		</property>
+	       </widget>
+	      </item>
+	      <item row="1" column="0">
+	       <widget class="QLabel" name="queryHistorySizeLabel">
+		<property name="toolTip">
+		 <string>Number of queries kept in the history.</string>
+		</property>
+		<property name="text">
+		 <string>History size:</string>
+		</property>
+	       </widget>
+	      </item>
+	      <item row="5" column="0">
+	       <widget class="QCheckBox" name="wrapLinesInSqlEditorCheck">
+		<property name="toolTip">
+		 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, lines longer than the editor width will be wrapped, so horizontal scrolling will not be needed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+		</property>
+		<property name="text">
+		 <string>Wrap lines in SQL editor</string>
+		</property>
+		<property name="cfg" stdset="0">
+		 <string notr="true">General.SqlEditorWrapWords</string>
+		</property>
+	       </widget>
+	      </item>
+	      <item row="4" column="0">
+	       <widget class="QCheckBox" name="highlightCurrentQueryCheck">
+		<property name="toolTip">
+		 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Highlights entire query that is currently under the insertion cursor. It's the same query that will be executed when you hit &amp;quot;Execute query&amp;quot; hotkey or button (unless configured otherwise).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+		</property>
+		<property name="text">
+		 <string>Highlight current query</string>
+		</property>
+		<property name="cfg" stdset="0">
+		 <string notr="true">General.SqlEditorCurrQueryHighlight</string>
+		</property>
+	       </widget>
+	      </item>
+	     </layout>
+	    </widget>
+	   </item>
+	   <item>
+	    <widget class="QGroupBox" name="updatesGroup">
+	     <property name="title">
+	      <string>Updates</string>
+	     </property>
+	     <layout class="QVBoxLayout" name="verticalLayout_29">
+	      <item>
+	       <widget class="QCheckBox" name="checkForUpdatesCheck">
+		<property name="text">
+		 <string>Automatically check for updates at startup</string>
+		</property>
+		<property name="cfg" stdset="0">
+		 <string notr="true">General.CheckUpdatesOnStartup</string>
+		</property>
+	       </widget>
+	      </item>
+	     </layout>
+	    </widget>
+	   </item>
+	   <item>
+	    <widget class="QGroupBox" name="sessionGroup">
+	     <property name="title">
+	      <string>Session</string>
+	     </property>
+	     <layout class="QGridLayout" name="gridLayout_11">
+	      <item row="0" column="0">
+	       <widget class="QCheckBox" name="sessionCheck">
+		<property name="text">
+		 <string>Restore last session (active MDI windows) after startup</string>
+		</property>
+		<property name="cfg" stdset="0">
+		 <string notr="true">General.RestoreSession</string>
+		</property>
+	       </widget>
+	      </item>
+	      <item row="1" column="0">
+	       <widget class="QCheckBox" name="multipleSessionsCheck">
+		<property name="text">
+		 <string>Allow multiple instances of the application at the same time</string>
+		</property>
+		<property name="cfg" stdset="0">
+		 <string notr="true">General.AllowMultipleSessions</string>
+		</property>
+	       </widget>
+	      </item>
+	     </layout>
+	    </widget>
+	   </item>
+	   <item>
+	    <widget class="QGroupBox" name="statusFieldGroup_2">
+	     <property name="title">
+	      <string>Status Field</string>
+	     </property>
+	     <layout class="QVBoxLayout" name="verticalLayout_35">
+	      <item>
+	       <widget class="QCheckBox" name="checkBox_2">
+		<property name="toolTip">
+		 <string>&lt;p&gt;When user manually closes the Status panel, this option makes sure that if any new message is printed in the Status panel it will be reopened. If it's disabled, then Status panel can only be open manually by the user from the &quot;View&quot; menu.&lt;/p&gt;</string>
+		</property>
+		<property name="text">
+		 <string>Always open Status panel when new message is printed</string>
+		</property>
+		<property name="cfg" stdset="0">
+		 <string notr="true">General.AutoOpenStatusField</string>
+		</property>
+	       </widget>
+	      </item>
+	     </layout>
+	    </widget>
+	   </item>
+	   <item>
+	    <spacer name="verticalSpacer">
+	     <property name="orientation">
+	      <enum>Qt::Vertical</enum>
+	     </property>
+	     <property name="sizeHint" stdset="0">
+	      <size>
+	       <width>20</width>
+	       <height>40</height>
+	      </size>
+	     </property>
+	    </spacer>
+	   </item>
+	  </layout>
+	 </widget>
+	</widget>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ConfigRadioButton</class>
+   <extends>QRadioButton</extends>
+   <header>common/configradiobutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>FontEdit</class>
+   <extends>QWidget</extends>
+   <header>common/fontedit.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ColorButton</class>
+   <extends>QPushButton</extends>
+   <header>common/colorbutton.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>categoriesFilter</tabstop>
+  <tabstop>categoriesTree</tabstop>
+  <tabstop>pluginsList</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>expandViewsCheck</tabstop>
+  <tabstop>sortObjects</tabstop>
+  <tabstop>sortColumns</tabstop>
+  <tabstop>ddlHistorySizeSpin</tabstop>
+  <tabstop>dontShowDdlPreview</tabstop>
+  <tabstop>queryHistorySizeSpin</tabstop>
+  <tabstop>execQueryUnderCursorCheck</tabstop>
+  <tabstop>expandTablesCheck</tabstop>
+  <tabstop>activeStyleCombo</tabstop>
+  <tabstop>previewTabs</tabstop>
+  <tabstop>previewCheckBox</tabstop>
+  <tabstop>previewVerticalSlider</tabstop>
+  <tabstop>previewPushButton</tabstop>
+  <tabstop>previewSpinBox</tabstop>
+  <tabstop>previewTreeWidget</tabstop>
+  <tabstop>previewToolButton</tabstop>
+  <tabstop>previewLineEdit</tabstop>
+  <tabstop>previewRadioButton</tabstop>
+  <tabstop>previewComboBox</tabstop>
+  <tabstop>previewTextEdit</tabstop>
+  <tabstop>fontsScrollArea</tabstop>
+ </tabstops>
+ <resources>
+  <include location="../icons.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>ConfigDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>ConfigDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
