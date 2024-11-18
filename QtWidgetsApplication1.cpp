@@ -140,6 +140,9 @@ void QtWidgetsApplication1::init()
 	//
 	reset_find_status();
 
+	// invisible temporarily. todo: unmark it. 2024-11-18 10:32:32
+	ui.left_statistic_widget->setVisible(false);
+
 	updateContinuousProgress();
 	showMaximized();
 }
