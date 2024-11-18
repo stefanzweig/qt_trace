@@ -89,6 +89,7 @@ QtWidgetsApplication1::~QtWidgetsApplication1()
 
 	delete configdialog;
 	configdialog = nullptr;
+
 	reset_find_status();
 
 	state_manager.changeState(State::COMPLETE);
@@ -1405,7 +1406,7 @@ void QtWidgetsApplication1::restore_full_queue()
 void QtWidgetsApplication1::safe_clear_trace()
 {
 	passed_uuid_set.clear();
-	 clear_queue(shown_queue);
+	clear_queue(shown_queue);
 }
 
 QString QtWidgetsApplication1::previous_state()
@@ -1747,6 +1748,8 @@ void QtWidgetsApplication1::trace_config()
 	if (configdialog == nullptr)
 	{
 		configdialog = new ConfigDialog();
+		// single page. 2024-11-18 18:05:12
+		configdialog->ui->categoriesWidget->setVisible(false);
 	}
 	configdialog->show();
 }
