@@ -137,7 +137,6 @@ void QtWidgetsApplication1::init()
 	resetStatusBar();
 	setupTreeTrace();
 
-	//
 	reset_find_status();
 
 	// invisible temporarily. todo: unmark it. 2024-11-18 10:32:32
@@ -849,11 +848,19 @@ void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 			TraceTreeWidgetItem* it_rem1 = full_queue_stream.dequeue();
 			delete it_rem1;
 			it_rem1 = nullptr;
+
+			// todo: calc_thread's item list should be decreased. 2024-11-18 10:45:06
+			TraceTreeWidgetItem* it_thread = calc_thread->list_items_queue.dequeue();
+			delete it_thread;
+			it_thread = nullptr;
+
+			// shown_queue
 			if (shown_queue.size() > 3 * count_per_page) {
 				TraceTreeWidgetItem* it_rem2 = shown_queue.dequeue();
 				delete it_rem2;
 				it_rem2 = nullptr;
 			}
+			// filtered_queue
 			if (filtered_queue.size() > maximum_total) {
 				TraceTreeWidgetItem* it_rem3 = filtered_queue.dequeue();
 				delete it_rem3;
