@@ -28,7 +28,7 @@
 enum DISPLAY_MODE
 {
     APPEND = 0,
-    UPDATE = 1,
+    AGGREGATION = 1,
 };
 
 // for the found items highlight 2024-11-02 20:48:04
@@ -175,7 +175,8 @@ private slots:
     void pauseTrace();
     void replayTrace();
     void resetLayout();
-    void display_mode_switch();
+    void toggle_display_mode();
+    void switch_display_mode(DISPLAY_MODE display_mode);
     void resetStatusBar();
     void resumeTrace();
     void updateState();

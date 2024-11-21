@@ -337,7 +337,7 @@ void QtWidgetsApplication1::createActions()
 	connect(ui.actionstop, &QAction::triggered, this, &QtWidgetsApplication1::stopTrace);
 	connect(ui.actionpause, &QAction::triggered, this, &QtWidgetsApplication1::pauseTrace);
 	connect(ui.actionreplay, &QAction::triggered, this, &QtWidgetsApplication1::replayTrace);
-	connect(ui.actionmode, &QAction::triggered, this, &QtWidgetsApplication1::display_mode_switch);
+	connect(ui.actionmode, &QAction::triggered, this, &QtWidgetsApplication1::toggle_display_mode);
 	connect(ui.pushButton_search, &QPushButton::clicked, this, &QtWidgetsApplication1::ButtonSearchClicked);
 	connect(ui.actionAbout, &QAction::triggered, this, &QtWidgetsApplication1::about);
 	connect(ui.actionreset, &QAction::triggered, this, &QtWidgetsApplication1::reset_all_filters);
@@ -374,9 +374,9 @@ void QtWidgetsApplication1::resetLayout()
 	ui.toolbar->addAction(ui.actionstop);
 	ui.toolbar->addAction(ui.actionpause);
 	ui.toolbar->addAction(ui.actionreplay);
-	ui.toolbar->addAction(ui.actionmode);
 	ui.toolbar->addAction(ui.actionreset);
 	ui.toolbar->addAction(ui.actionclear);
+	ui.toolbar->addAction(ui.actionmode);
 
 	ui.treetrace->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(ui.treetrace, &QTreeWidget::customContextMenuRequested, this, &QtWidgetsApplication1::prepareMenu);
@@ -708,7 +708,9 @@ void QtWidgetsApplication1::traceStyleQSS()
 void QtWidgetsApplication1::initialHeaders()
 {
 	QHeaderView* header = ui.treetrace->header();
-	int button_count = std::max(header->count(), 5);
+	int button_count = std::max(header->count() + 64, 5);
+	//if (display_mode == DISPLAY_MODE::AGGREGATION)
+	//	button_count = std::max(header->count(), 5);
 	for (int i = 0; i < button_count; i++) {
 		QPushButton* button;
 		button = new QPushButton(header);
@@ -929,10 +931,10 @@ void QtWidgetsApplication1::dustbin()
 
 void QtWidgetsApplication1::updateToolbar()
 {
-	ui.actionmode->setVisible(false);
+	ui.actionmode->setVisible(true);
 	if (display_mode) {
 		ui.actionmode->setIcon(QIcon(":/QtWidgetsApplication1/res/process.svg"));
-		ui.actionmode->setToolTip("Updating...");
+		ui.actionmode->setToolTip("Aggregating ...");
 	}
 	else
 	{
@@ -956,12 +958,38 @@ void QtWidgetsApplication1::updateToolbar()
 	}
 }
 
-void QtWidgetsApplication1::display_mode_switch()
+void QtWidgetsApplication1::switch_display_mode(DISPLAY_MODE display_mode)
 {
-	if (display_mode == DISPLAY_MODE::UPDATE)
+	qDebug() << "Header Length ->" << CurrentHeader.size();
+	if (display_mode == DISPLAY_MODE::APPEND)
+	{
+		CurrentHeader = initialHeader;
+	}
+	else if (display_mode == DISPLAY_MODE::AGGREGATION)
+	{
+		if (CurrentHeader.last().toLower() == "data")
+		{
+			CurrentHeader.last() = "00";
+			QStringList headers_append;
+			for (int i = 1; i <= 63; ++i) {
+				QString d = QString("%1").arg(i, 2, 10, QChar('0'));
+				qDebug() << "DATA? -> " << d;
+				headers_append.append(d);
+			}
+			CurrentHeader.append(headers_append);
+		}
+	}
+	ui.treetrace->setHeaderLabels(CurrentHeader);
+	ui.treetrace->setColumnCount(CurrentHeader.count());
+}
+
+void QtWidgetsApplication1::toggle_display_mode()
+{
+	if (display_mode == DISPLAY_MODE::AGGREGATION)
 		display_mode = DISPLAY_MODE::APPEND;
 	else
-		display_mode = DISPLAY_MODE::UPDATE;
+		display_mode = DISPLAY_MODE::AGGREGATION;
+	switch_display_mode(display_mode);
 	updateToolbar();
 	update_tracewindow();
 }
