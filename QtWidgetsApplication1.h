@@ -101,8 +101,12 @@ private:
     multiThread* calc_thread = nullptr;
     QQueue<TraceTreeWidgetItem*> shown_queue;
     QQueue<TraceTreeWidgetItem*> full_queue_stream;
+    
     QQueue<TraceTreeWidgetItem*> filtered_queue;
     int filtered_size() { return filtered_queue.size(); }
+
+    QQueue<TraceTreeWidgetItem*> aggregation_queue;   // the queue for the aggregation data. 2024-11-22 16:07:38
+
     uint64_t last_timestamp = 0;
     uint64_t last_timestamp_canparser = 0;
 
@@ -123,6 +127,8 @@ private:
     QStringList headers = { "Time[ms]", "Chn", "ID", "Name", "Dir", "DLC", "EventType", "DataLength", "BusType", "Data" };
     QStringList linHeader = { "Time[ms]", "Chn", "ID", "Name", "Dir", "DataLength", "EventType", "BusType", "Data" };
     QStringList ethHeader = { "Time[ms]","Chn","Dir","Source MAC","Destination MAC","Source IP","Destination IP","Protocol","Payload Data","VLAN ID","Transport Layer","Service","Service Instance","Method","Message Type","Port(s)","VLAN Priority" };
+    QStringList someIpHeader = { "Time[ms]","Chn","Dir","Source MAC","Destination MAC","Source IP","Destination IP","Protocol","Payload Data","VLAN ID","Transport Layer","Service","Service Instance","Method","Message Type","Port(s)","VLAN Priority" };
+
     QComboBox* datachoice = nullptr;
 
     QList<QPushButton*> headerButtonList;
@@ -139,7 +145,6 @@ private:
     QWidget* rightWidget = nullptr;
     QHBoxLayout* rightLayout = nullptr;
 
-    // further configurations
     DISPLAY_MODE display_mode = DISPLAY_MODE::APPEND;
     int visible_height = 700;
     int item_height = 20;  /* default item height in the trace widget. */
