@@ -15,60 +15,72 @@
 
 class ZComboBox : public QComboBox
 {
-    ~ZComboBox() {};
+public:
+	~ZComboBox() {};
 };
 
 class ZDockWidget : public QDockWidget
 {
-    ~ZDockWidget() {};
+public:
+	~ZDockWidget() {};
 };
 
 class ZLabel : public QLabel
 {
-    ~ZLabel() {};
+public:
+	~ZLabel() {};
 };
 
 class ZMenu : public QMenu
 {
-    ~ZMenu() {};
+public:
+	~ZMenu() {};
 };
 
 class ZMenuBar : public QMenuBar
 {
-    ~ZMenuBar() {};
+public:
+	~ZMenuBar() {};
 };
 
 class ZPlainTextEdit : public QPlainTextEdit
 {
-    ~ZPlainTextEdit() {};
+public:
+	~ZPlainTextEdit() {};
 };
 
 class ZPushButton : public QPushButton
 {
-    ~ZPushButton() {};
+public:
+	~ZPushButton() {};
 };
 
 class ZSplitter : public QSplitter
 {
-    ~ZSplitter() {};
+public:
+	~ZSplitter() {};
 };
 
 class ZStatusBar : public QStatusBar
 {
-    ~ZStatusBar() {};
+public:
+	~ZStatusBar() {};
 };
 
 class ZToolBar : public QToolBar
 {
-    ~ZToolBar() {};
+public:
+	~ZToolBar() {};
 };
 
 class ZTreeWidget : public QTreeWidget
 {
-    ~ZTreeWidget() {};
+public:
+	~ZTreeWidget() {};
 };
 
 class ZWidget : public QWidget
 {
-    ~ZWidget() {};
+public:
+	~ZWidget() {};
 };
