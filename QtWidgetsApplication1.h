@@ -21,6 +21,7 @@
 #include "lexer.h"
 #include "usagedialog.h"
 #include "dialog/configdialog.h"
+#include "uizone/zcomponents.h"
 
 #define TIMER_HEARTBEAT 100
 #define MAX_ITEM_COUNT 5000
