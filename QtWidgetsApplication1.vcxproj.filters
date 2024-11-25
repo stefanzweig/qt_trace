@@ -79,6 +79,9 @@
     <ClCompile Include="dialog\configdialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="topicData\ZoneMasterSomeipDataSubscriber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gui_global.h">
@@ -463,6 +466,9 @@
     <ClInclude Include="dialog\ui_configdialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="topicData\ZoneMasterSomeipDataSubscriber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="treemodel.h">
@@ -493,6 +499,15 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="dialog\configdialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="topicData\ZoneMasterSomeipDataPackageListener.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="topicData\ZoneMasterSomeipDataCallingListener.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="topicData\ZoneMasterSomeipDataStateListener.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

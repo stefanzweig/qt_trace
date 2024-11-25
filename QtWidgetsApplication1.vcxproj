@@ -124,6 +124,7 @@
     <ClCompile Include="topicData\ZoneMasterDataPubSubTypes.cxx" />
     <ClCompile Include="topicData\ZoneMasterLinMessageDataSubscriber.cpp" />
     <ClCompile Include="topicData\ZoneMasterLinParserDataSubscriber.cpp" />
+    <ClCompile Include="topicData\ZoneMasterSomeipDataSubscriber.cpp" />
     <ClCompile Include="TraceTreeWidgetItem.cpp" />
     <ClCompile Include="treeitem.cpp" />
     <ClCompile Include="treemodel.cpp" />
@@ -141,6 +142,10 @@
     <QtMoc Include="dialog\configdialog.h" />
     <ClInclude Include="dialog\ui_configdialog.h" />
     <ClInclude Include="endianness.h" />
+    <QtMoc Include="topicData\ZoneMasterSomeipDataPackageListener.h" />
+    <QtMoc Include="topicData\ZoneMasterSomeipDataCallingListener.h" />
+    <QtMoc Include="topicData\ZoneMasterSomeipDataStateListener.h" />
+    <ClInclude Include="topicData\ZoneMasterSomeipDataSubscriber.h" />
     <ClInclude Include="ui_usagedialog.h" />
     <QtMoc Include="usagedialog.h" />
     <ClInclude Include="zm_struct.h" />
