@@ -10,6 +10,7 @@
 #include "topicData/ZoneMasterCanParserSubscriber.h"
 #include "topicData/ZoneMasterLinMessageDataSubscriber.h"
 #include "topicData/ZoneMasterLinParserDataSubscriber.h"
+#include "topicData/ZoneMasterSomeipDataSubscriber.h"
 
 #include "multiThread.h"
 #include "zm_struct.h"
@@ -97,11 +98,12 @@ private:
 
     ZoneMasterLinMessageDataSubscriber* mysub_lin_frames = nullptr;
     ZoneMasterLinParserSubscriber* mysub_lin_parser = nullptr;
+    ZoneMasterSomeipSubscriber* mysub_someip = nullptr;
 
     multiThread* calc_thread = nullptr;
     QQueue<TraceTreeWidgetItem*> shown_queue;
     QQueue<TraceTreeWidgetItem*> full_queue_stream;
-    
+
     QQueue<TraceTreeWidgetItem*> filtered_queue;
     int filtered_size() { return filtered_queue.size(); }
 
@@ -281,7 +283,7 @@ protected:
     bool findItem(QTreeWidgetItem* item, int col, const QStringList& target,
         QSet<QTreeWidgetItem*>& hiddens, QQueue<Found_Item*>& founds, int level = 0);
 
-    void searchTree_bfs(QTreeWidgetItem* root, 
+    void searchTree_bfs(QTreeWidgetItem* root,
         const QStringList& targets,
         QQueue<Found_Item*>& queue,
         QSet<Found_Item*>& visited);

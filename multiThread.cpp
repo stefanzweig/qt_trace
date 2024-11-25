@@ -39,6 +39,12 @@ void multiThread::stopThread() {
         mysub_lin_parser = nullptr;
         bconnected_lp = false;
     }
+    if (mysub_someip != nullptr) {
+        delete mysub_someip;
+        mysub_someip = nullptr;
+        bconnected_someip = false;
+    }
+
 }
 
 void multiThread::stopFlag()
@@ -49,7 +55,7 @@ void multiThread::stopFlag()
 
 void multiThread::pauseThread() {
     if (!is_stop) {
-	is_paused = true;
+    is_paused = true;
     }
 }
 
@@ -88,21 +94,28 @@ void multiThread::run() {
         }
     }
 
+    if (monitor_modules.contains("someip")) {
+        if (mysub_someip != nullptr) {
+            if (mysub_someip->init()) {
+            }
+        }
+    }
+
     while (true) {
-	if (!is_stop) {
-	    msleep(100); // every 1 second
-	}
-	else {
-	    break;
-	}
+        if (!is_stop) {
+            msleep(100); // every 1 second
+        }
+        else {
+            break;
+        }
     }
 }
 
 std::time_t multiThread::get_timestamp()
 {
     std::chrono::time_point<std::chrono::system_clock,
-	std::chrono::microseconds> tp =
-	std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
+    std::chrono::microseconds> tp =
+    std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
     std::time_t timestamp = tp.time_since_epoch().count() * 1000;
     return timestamp;
 }
@@ -111,19 +124,19 @@ void multiThread::bindDataToTraceTree()
 {
 
     try {
-	m_from_id = to_id;
+    m_from_id = to_id;
     }
     catch (...) {
-	//qDebug() << "mongodb problem from " << from_t << " to " << to_t;
+    //qDebug() << "mongodb problem from " << from_t << " to " << to_t;
     }
 
     try {
-	    m_from_id = to_id;
-	    m_lock.unlock();
-	    msleep(20);
+        m_from_id = to_id;
+        m_lock.unlock();
+        msleep(20);
     }
     catch (...) {
-	//qDebug() << "handling result problem.";
+    //qDebug() << "handling result problem.";
     }
 }
 
@@ -176,7 +189,20 @@ void multiThread::setLinParserSubscriber(ZoneMasterLinParserSubscriber* subscrib
         bconnected_lp = true;
     }
 }
-
+void multiThread::setSomeipSubscriber(ZoneMasterSomeipSubscriber* subscriber, int samples, QTreeView* treeview)
+{
+    if (!bconnected_someip) {
+        mysub_someip = subscriber;
+        samples_ = samples;
+        subscriber->setOuterThread(this, treeview);
+        QObject::connect(&mysub_someip->listener_package, &SomeipPackageListener::ItemUpdate_internal_someip_package, this, &multiThread::formatRow_someip_package_thread);
+        QObject::connect(&mysub_someip->listener_calling, &SomeipCallingListener::ItemUpdate_internal_someip_calling, this, &multiThread::formatRow_someip_calling_thread);
+        QObject::connect(&mysub_someip->listener_state, &SomeipStateListener::ItemUpdate_internal_someip_state, this, &multiThread::formatRow_someip_state_thread);
+        QObject::connect(&mysub_someip->listener_eth_frame, &SomeipEthFrameListener::ItemUpdate_internal_eth_frame, this, &multiThread::formatRow_someip_eth_frame_thread);
+        QObject::connect(&mysub_someip->listener_sd, &SomeipSDListener::ItemUpdate_internal_someip_sd, this, &multiThread::formatRow_someip_sd_thread);
+        bconnected_someip = true;
+    }
+}
 
 void multiThread::formatRow_canparser_thread(canframe frame)
 {
@@ -210,7 +236,7 @@ void multiThread::formatRow_canparser_thread(canframe frame)
     std::vector<canpdu> pdus = frame.pdus();
     std::vector<canpdu> containspdus = frame.containPdus();
 
-    for (int k = 0; k < pdus.size(); k++) 
+    for (int k = 0; k < pdus.size(); k++)
     {
         canpdu current_pdu = pdus[k];
         QString pdu_name = QString::fromStdString(current_pdu.name());
@@ -257,9 +283,9 @@ void multiThread::formatRow_canparser_thread(canframe frame)
         emit popToRoot(Item);
         list_items_queue.enqueue(Item);
     }
-    else 
+    else
     {
-        for (int k = 0; k < containspdus.size(); k++) 
+        for (int k = 0; k < containspdus.size(); k++)
         {
             canpdu current_pdu = containspdus[k];
             QString pdu_name = QString::fromStdString(current_pdu.name());
@@ -549,7 +575,7 @@ void multiThread::clear_items_queue()
                         delete p;
                         p = nullptr;
                         continue;
-                    } 
+                    }
                     else if (p && p->getSource() == "can_container_pdu") {
                         qDebug() << "container_pdu ->" << p->getUUID();
                         for (int m = p->childCount() - 1; m > 0; m--)
@@ -593,3 +619,22 @@ void multiThread::clear_items_queue()
     list_items_queue.clear();
 }
 
+void multiThread::formatRow_someip_calling_thread(linMessage frame)
+{
+}
+
+void multiThread::formatRow_someip_package_thread(linMessage frame)
+{
+}
+
+void multiThread::formatRow_someip_sd_thread(linMessage frame)
+{
+}
+
+void multiThread::formatRow_someip_state_thread(linMessage frame)
+{
+}
+
+void multiThread::formatRow_someip_eth_frame_thread(linMessage frame)
+{
+}

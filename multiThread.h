@@ -13,6 +13,7 @@
 #include "topicData/ZoneMasterLinParserDataSubscriber.h"
 #include "topicData/ZoneMasterLinMessageDataListener.h"
 #include "topicData/ZoneMasterLinParserDataListener.h"
+#include "topicData/ZoneMasterSomeipDataSubscriber.h"
 
 
 #include <QtWidgets/QTreeView>
@@ -32,6 +33,7 @@ public:
     void setCanParserSubscriber(ZoneMasterCanParserSubscriber* subscriber, int samples, QTreeView* treeview);
     void setLinSubscriber(ZoneMasterLinMessageDataSubscriber* subscriber, int samples, QTreeView* treeview);
     void setLinParserSubscriber(ZoneMasterLinParserSubscriber* subscriber, int samples, QTreeView* treeview);
+    void setSomeipSubscriber(ZoneMasterSomeipSubscriber* subscriber, int samples, QTreeView* treeview);
     void setFilterOption(QString colName, QList<QList<QString>> items);
     void clear_items_queue();
 
@@ -75,6 +77,7 @@ private:
     ZoneMasterCanParserSubscriber* mysub_can_parser = nullptr;
     ZoneMasterLinMessageDataSubscriber* mysub_lin_frames = nullptr;
     ZoneMasterLinParserSubscriber* mysub_lin_parser = nullptr;
+    ZoneMasterSomeipSubscriber* mysub_someip = nullptr;
 
     QTreeView* tree_ = nullptr;
     QVector<canframe> full_canparserdata;
@@ -88,6 +91,7 @@ private:
     bool bconnected_cp = false;
     bool bconnected_lf = false;
     bool bconnected_lp = false;
+    bool bconnected_someip = false;
     UUIDv4::UUIDGenerator<std::mt19937_64> uuidGenerator;
 
     void bindDataToTraceTree();
@@ -95,6 +99,12 @@ private:
     void formatRow_canframe_thread(can_frame frame);
     void formatRow_linparser_thread(linFrames frames);
     void formatRow_linframe_thread(linMessage frame);
+
+    void formatRow_someip_calling_thread(linMessage frame);
+    void formatRow_someip_package_thread(linMessage frame);
+    void formatRow_someip_sd_thread(linMessage frame);
+    void formatRow_someip_state_thread(linMessage frame);
+    void formatRow_someip_eth_frame_thread(linMessage frame);
 
 signals:
     void popToRoot(TraceTreeWidgetItem* item);

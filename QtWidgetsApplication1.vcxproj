@@ -145,6 +145,8 @@
     <QtMoc Include="topicData\ZoneMasterSomeipDataPackageListener.h" />
     <QtMoc Include="topicData\ZoneMasterSomeipDataCallingListener.h" />
     <QtMoc Include="topicData\ZoneMasterSomeipDataStateListener.h" />
+    <QtMoc Include="topicData\ZoneMasterSomeipDataSDListener.h" />
+    <QtMoc Include="topicData\ZoneMasterSomeipDataEthFrameListener.h" />
     <ClInclude Include="topicData\ZoneMasterSomeipDataSubscriber.h" />
     <ClInclude Include="ui_usagedialog.h" />
     <QtMoc Include="usagedialog.h" />
