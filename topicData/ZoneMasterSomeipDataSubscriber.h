@@ -25,22 +25,37 @@ class ZoneMasterSomeipSubscriber
 private:
 
 	DomainParticipant* participant_;
+	DomainParticipant* participant_calling;
 	Subscriber* subscriber_;
+	Subscriber* subscriber_calling;
 	DataReader* reader_;
+	DataReader* reader_calling;
 	Topic* topic_;
+	Topic* topic_calling;
 	TypeSupport type_;
+	TypeSupport type_calling;
 	int domainid = 90;
 public:
 	ZoneMasterSomeipSubscriber(int domainid)
 		: participant_(nullptr)
+		, participant_calling(nullptr)
 		, subscriber_(nullptr)
+		, subscriber_calling(nullptr)
 		, topic_(nullptr)
+		, topic_calling(nullptr)
 		, reader_(nullptr)
+		, reader_calling(nullptr)
 		, type_(nullptr)
+		, type_calling(nullptr)
 	{
 		someipFramePubSubType* someip_framepubsubtype = new someipFramePubSubType();
 		someip_framepubsubtype->setName("SomeIpParserData");
+
+		someipFramePubSubType* someip_framepubsubtype_calling = new someipFramePubSubType();
+		someip_framepubsubtype_calling->setName("SomeIpParserData");
+
 		type_ = TypeSupport(someip_framepubsubtype);
+		type_calling = TypeSupport(someip_framepubsubtype_calling);
 		this->domainid = domainid;
 	}
 
@@ -58,7 +73,22 @@ public:
 		{
 			participant_->delete_subscriber(subscriber_);
 		}
+
+		if (reader_calling != nullptr)
+		{
+			subscriber_calling->delete_datareader(reader_calling);
+		}
+		if (topic_calling != nullptr)
+		{
+			participant_calling->delete_topic(topic_calling);
+		}
+		if (subscriber_calling != nullptr)
+		{
+			participant_calling->delete_subscriber(subscriber_calling);
+		}
+
 		DomainParticipantFactory::get_instance()->delete_participant(participant_);
+		DomainParticipantFactory::get_instance()->delete_participant(participant_calling);
 	}
 
 	bool init();

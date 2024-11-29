@@ -41,11 +41,11 @@ public:
     {
         if (info.current_count_change == 1)
             {
-                qDebug() << "Subscriber matched.";
+                qDebug() << "Calling Subscriber matched.";
             }
         else if (info.current_count_change == -1)
             {
-                qDebug() << "Subscriber unmatched.";
+                qDebug() << "Calling Subscriber unmatched.";
             }
         else
             {
@@ -56,28 +56,21 @@ public:
     void on_data_available(DataReader* reader) override
     {
         SampleInfo info;
-        if (reader->take_next_sample(&lin_messages_, &info) == ReturnCode_t::RETCODE_OK)
+        if (reader->take_next_sample(&someip_calling, &info) == ReturnCode_t::RETCODE_OK)
+        {
+            if (info.valid_data)
             {
-                if (info.valid_data)
-                    {
-                        samples_++;
-                        for (int i = 0; i < lin_messages_.len(); i++) {
-                            linMessage msg = lin_messages_.linMsgs()[i];
-                            QString repr = QString::number(msg.id());
-                            qDebug() << "LIN ID -> " << repr;
-                            lin_Frame lf;
-                            lf.ID = msg.id();
-                            emit ItemUpdate_internal_someip_calling(msg);
-                        }
-                    }
+                samples_++;
+                emit ItemUpdate_internal_someip_calling(someip_calling);
             }
+        }
     }
 
-    linMessages lin_messages_;
+    someipFrame someip_calling;
     std::atomic_int samples_;
     QThread* outerThread = nullptr;
     QTreeView* tree_ = nullptr;
 
 signals:
-    void ItemUpdate_internal_someip_calling(linMessage lm);
+    void ItemUpdate_internal_someip_calling(someipFrame sf);
 };

@@ -100,7 +100,7 @@ private:
     void formatRow_linparser_thread(linFrames frames);
     void formatRow_linframe_thread(linMessage frame);
 
-    void formatRow_someip_calling_thread(linMessage frame);
+    void formatRow_someip_calling_thread(someipFrame frame);
     void formatRow_someip_package_thread(someipFrame frame);
     void formatRow_someip_sd_thread(linMessage frame);
     void formatRow_someip_state_thread(linMessage frame);

@@ -1007,7 +1007,7 @@ void QtWidgetsApplication1::update_tracewindow()
     //m_mutex.lock();
     int queue_size = shown_queue.size() - padding;
     int queue_backup_size = full_queue_stream.size() - padding;
-    qDebug() << "FULL -> " << queue_size << "BACKUP -> " << queue_backup_size;
+    //qDebug() << "FULL -> " << queue_size << "BACKUP -> " << queue_backup_size;
 
     QTreeWidget* tree = ui.treetrace;
     QTreeWidgetItem* invisible_root_item = tree->invisibleRootItem();
