@@ -61,6 +61,7 @@ public:
                 if (info.valid_data)
                     {
                         samples_++;
+                        emit ItemUpdate_internal_someip_package(someip_frame);
                     }
             }
     }
