@@ -30,7 +30,7 @@ bool ZoneMasterSomeipSubscriber::init()
     participant_->get_default_topic_qos(tqos);
     // Create the subscriptions Topic
     topic_ = participant_->create_topic(
-        "canMessageTopic",
+        "someipPackageTopic",
         type_.get_type_name(),
         tqos);
     if (topic_ == nullptr)

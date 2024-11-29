@@ -56,29 +56,20 @@ public:
     void on_data_available(DataReader* reader) override
     {
         SampleInfo info;
-        if (reader->take_next_sample(&lin_messages_, &info) == ReturnCode_t::RETCODE_OK)
+        if (reader->take_next_sample(&someip_frame, &info) == ReturnCode_t::RETCODE_OK)
             {
                 if (info.valid_data)
                     {
                         samples_++;
-                        for (int i = 0; i < lin_messages_.len(); i++)
-                        {
-                            linMessage msg = lin_messages_.linMsgs()[i];
-                            QString repr = QString::number(msg.id());
-                            qDebug() << "LIN ID -> " << repr;
-                            lin_Frame lf;
-                            lf.ID = msg.id();
-                            emit ItemUpdate_internal_someip_package(msg);
-                        }
                     }
             }
     }
 
-    linMessages lin_messages_;
+    someipFrame someip_frame;
     std::atomic_int samples_;
     QThread* outerThread = nullptr;
     QTreeView* tree_ = nullptr;
 
 signals:
-    void ItemUpdate_internal_someip_package(linMessage lm);
+    void ItemUpdate_internal_someip_package(someipFrame sf);
 };

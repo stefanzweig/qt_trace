@@ -563,6 +563,7 @@ void QtWidgetsApplication1::resumeTrace()
     calc_thread->setCanParserSubscriber(mysub_can_parser, samples, ui.treetrace);
     calc_thread->setLinParserSubscriber(mysub_lin_parser, samples, ui.treetrace);
     calc_thread->setLinSubscriber(mysub_lin_frames, samples, ui.treetrace);
+    calc_thread->setSomeipSubscriber(mysub_someip, samples, ui.treetrace);
     //LOGGER_INFO(log_, "==== THREAD RESTARTED ====");
     calc_thread->start();
     timer->start(TIMER_HEARTBEAT);
@@ -590,6 +591,7 @@ void QtWidgetsApplication1::stopTrace()
     mysub_can_parser = nullptr;
     mysub_lin_frames = nullptr;
     mysub_lin_parser = nullptr;
+    mysub_someip = nullptr;
 
     initial_trace = true;
     last_status = "STOPPED";

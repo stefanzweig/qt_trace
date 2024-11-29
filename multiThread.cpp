@@ -195,11 +195,11 @@ void multiThread::setSomeipSubscriber(ZoneMasterSomeipSubscriber* subscriber, in
         mysub_someip = subscriber;
         samples_ = samples;
         subscriber->setOuterThread(this, treeview);
-        QObject::connect(&mysub_someip->listener_package, &SomeipPackageListener::ItemUpdate_internal_someip_package, this, &multiThread::formatRow_someip_package_thread);
-        QObject::connect(&mysub_someip->listener_calling, &SomeipCallingListener::ItemUpdate_internal_someip_calling, this, &multiThread::formatRow_someip_calling_thread);
-        QObject::connect(&mysub_someip->listener_state, &SomeipStateListener::ItemUpdate_internal_someip_state, this, &multiThread::formatRow_someip_state_thread);
-        QObject::connect(&mysub_someip->listener_eth_frame, &SomeipEthFrameListener::ItemUpdate_internal_eth_frame, this, &multiThread::formatRow_someip_eth_frame_thread);
-        QObject::connect(&mysub_someip->listener_sd, &SomeipSDListener::ItemUpdate_internal_someip_sd, this, &multiThread::formatRow_someip_sd_thread);
+        //QObject::connect(&mysub_someip->listener_package, &SomeipPackageListener::ItemUpdate_internal_someip_package, this, &multiThread::formatRow_someip_package_thread);
+        //QObject::connect(&mysub_someip->listener_calling, &SomeipCallingListener::ItemUpdate_internal_someip_calling, this, &multiThread::formatRow_someip_calling_thread);
+        //QObject::connect(&mysub_someip->listener_state, &SomeipStateListener::ItemUpdate_internal_someip_state, this, &multiThread::formatRow_someip_state_thread);
+        //QObject::connect(&mysub_someip->listener_eth_frame, &SomeipEthFrameListener::ItemUpdate_internal_eth_frame, this, &multiThread::formatRow_someip_eth_frame_thread);
+        //QObject::connect(&mysub_someip->listener_sd, &SomeipSDListener::ItemUpdate_internal_someip_sd, this, &multiThread::formatRow_someip_sd_thread);
         bconnected_someip = true;
     }
 }
@@ -623,7 +623,7 @@ void multiThread::formatRow_someip_calling_thread(linMessage frame)
 {
 }
 
-void multiThread::formatRow_someip_package_thread(linMessage frame)
+void multiThread::formatRow_someip_package_thread(someipFrame frame)
 {
 }
 
