@@ -629,14 +629,17 @@ void multiThread::formatRow_someip_package_thread(someipFrame frame)
     qDebug() << "someip package frame ->" << frame.timeStamp() << " Source -> " << QString::fromStdString(frame.src_ip());
 }
 
-void multiThread::formatRow_someip_sd_thread(linMessage frame)
+void multiThread::formatRow_someip_sd_thread(someipFrame frame)
 {
+    qDebug() << "someip sd frame ->" << frame.timeStamp() << " Source -> " << QString::fromStdString(frame.src_ip());
 }
 
-void multiThread::formatRow_someip_state_thread(linMessage frame)
+void multiThread::formatRow_someip_state_thread(someipFrame frame)
 {
+    qDebug() << "someip state frame ->" << frame.timeStamp() << " Source -> " << QString::fromStdString(frame.src_ip());
 }
 
-void multiThread::formatRow_someip_eth_frame_thread(linMessage frame)
+void multiThread::formatRow_someip_eth_frame_thread(someipFrame frame)
 {
+    qDebug() << "someip eth frame frame ->" << frame.timeStamp() << " Source -> " << QString::fromStdString(frame.src_ip());
 }

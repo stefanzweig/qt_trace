@@ -102,9 +102,9 @@ private:
 
     void formatRow_someip_calling_thread(someipFrame frame);
     void formatRow_someip_package_thread(someipFrame frame);
-    void formatRow_someip_sd_thread(linMessage frame);
-    void formatRow_someip_state_thread(linMessage frame);
-    void formatRow_someip_eth_frame_thread(linMessage frame);
+    void formatRow_someip_sd_thread(someipFrame frame);
+    void formatRow_someip_state_thread(someipFrame frame);
+    void formatRow_someip_eth_frame_thread(someipFrame frame);
 
 signals:
     void popToRoot(TraceTreeWidgetItem* item);
