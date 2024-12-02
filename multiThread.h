@@ -41,6 +41,11 @@ public:
     uint64_t full_count_canframes = 0;
     uint64_t full_count_linparser = 0;
     uint64_t full_count_linframes = 0;
+    uint64_t full_count_someip_package = 0;
+    uint64_t full_count_someip_calling = 0;
+    uint64_t full_count_someip_sd = 0;
+    uint64_t full_count_someip_state = 0;
+    uint64_t full_count_someip_eth = 0;
     
     bool isSTOPPED() { return is_stop; };
     bool isPAUSED() { return is_paused; }
@@ -105,6 +110,7 @@ private:
     void formatRow_someip_sd_thread(someipFrame frame);
     void formatRow_someip_state_thread(someipFrame frame);
     void formatRow_someip_eth_frame_thread(someipFrame frame);
+    void construct_someip_frame(someipFrame frame, QString frame_type);
 
 signals:
     void popToRoot(TraceTreeWidgetItem* item);
