@@ -15,6 +15,19 @@ multiThread::~multiThread() {
 	clear_items_queue();
 }
 
+void multiThread::reset_counters() 
+{
+	full_count_canframes = 0;
+	full_count_canparser = 0;
+	full_count_linframes = 0;
+	full_count_linparser = 0;
+	full_count_someip_package = 0;
+	full_count_someip_calling = 0;
+	full_count_someip_sd = 0;
+	full_count_someip_state = 0;
+	full_count_someip_eth = 0;
+}
+
 void multiThread::stopThread() {
 	is_stop = true;
 	is_paused = false;
@@ -695,14 +708,20 @@ void multiThread::formatRow_someip_package_thread(someipFrame frame)
 void multiThread::formatRow_someip_sd_thread(someipFrame frame)
 {
 	qDebug() << "someip sd frame ->" << frame.timeStamp() << " Source -> " << QString::fromStdString(frame.src_ip());
+	full_count_someip_sd++;
+	construct_someip_frame(frame, "someip_sd");
 }
 
 void multiThread::formatRow_someip_state_thread(someipFrame frame)
 {
 	qDebug() << "someip state frame ->" << frame.timeStamp() << " Source -> " << QString::fromStdString(frame.src_ip());
+	full_count_someip_state++;
+	construct_someip_frame(frame, "someip_state");
 }
 
 void multiThread::formatRow_someip_eth_frame_thread(someipFrame frame)
 {
 	qDebug() << "someip eth frame frame ->" << frame.timeStamp() << " Source -> " << QString::fromStdString(frame.src_ip());
+	full_count_someip_eth++;
+	construct_someip_frame(frame, "someip_eth");
 }

@@ -78,6 +78,7 @@ private:
     void compare_item();
     void traceStyleQSS();
     void init_mylogger();
+    void setDefaultHeader();
     TraceTreeWidgetItem* read_item_from_queue(int index);
     TraceTreeWidgetItem* read_item_from_dumb(int index);
     bool parser2condition(QList<Token> token_list);
@@ -129,7 +130,7 @@ private:
     QStringList headers = { "Time[ms]", "Chn", "ID", "Name", "Dir", "DLC", "EventType", "DataLength", "BusType", "Data" };
     QStringList linHeader = { "Time[ms]", "Chn", "ID", "Name", "Dir", "DataLength", "EventType", "BusType", "Data" };
     QStringList ethHeader = { "Time[ms]","Chn","Dir","Source MAC","Destination MAC","Source IP","Destination IP","Protocol","Payload Data","VLAN ID","Transport Layer","Service","Service Instance","Method","Message Type","Port(s)","VLAN Priority" };
-    QStringList someIpHeader = { "Time[ms]","Chn","Dir","Source MAC","Destination MAC","Source IP","Destination IP","Protocol","Payload Data","VLAN ID","Transport Layer","Service","Service Instance","Method","Message Type","Port(s)","VLAN Priority" };
+    QStringList someipHeader = { "Time[ms]","Chn","Dir","Source MAC","Destination MAC","Source IP","Destination IP","Protocol","Payload Data","VLAN ID","Transport Layer","Service","Service Instance","Method","Message Type","Port(s)","VLAN Priority" };
 
     QComboBox* datachoice = nullptr;
 
