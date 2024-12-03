@@ -2,6 +2,9 @@
 #include <QDebug>
 #include <QTreeWidgetItem>
 #include "TraceTreeWidgetItem.h"
+#include "json.hpp"
+
+
 
 multiThread::multiThread()
 	:is_stop(true),
@@ -662,6 +665,7 @@ void multiThread::construct_someip_frame(someipFrame frame, QString frame_type)
 	QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(frame.timeStamp() / 1000000);
 	str_parser.append(timestamp.toString("hh:mm:ss.zzz"));
 	if (frame_type == "someip_package" || frame_type == "someip_calling") {
+		// int ones
 		str_parser.append(QString::number(frame.msg_type()));
 		str_parser.append(QString::number(frame.ret_code()));
 		str_parser.append(QString::number(frame.channel()));
@@ -672,8 +676,54 @@ void multiThread::construct_someip_frame(someipFrame frame, QString frame_type)
 		str_parser.append(QString::number(frame.src_port()));
 		str_parser.append(QString::number(frame.srv_id()));
 		str_parser.append(QString::number(frame.delta_time()));
-
+		
+		// Very special one. 
 		str_parser.append(QString::fromStdString(frame.context_dict()));
+		//qDebug() << "Context ->" << QString::fromStdString(frame.context_dict());
+		// parse the frame.context_dict into json format.
+		// Context -> "{\"in\": {\"Source\": 0, \"HighVoltageCtrlReq\": {\"Application\": 0, \"OnOffReq\": 0}}
+		// , \"out\": {\"Result\": 0}}"
+		
+		nlohmann::json jsonData = nlohmann::json::parse(frame.context_dict());
+		for (auto it = jsonData.begin(); it != jsonData.end(); ++it)
+		{
+			qDebug() << "Key ->" << QString::fromStdString(it.key());
+			auto value = it.value();
+			switch (value.type()) {
+			case nlohmann::json::value_t::null:
+				qDebug() << "null";
+				break;
+			case nlohmann::json::value_t::boolean:
+				qDebug() << "boolean";
+				break;
+			case nlohmann::json::value_t::number_integer:
+				qDebug() << "integer";
+				break;
+			case nlohmann::json::value_t::number_unsigned:
+				qDebug() << "unsigned integer";
+				break;
+			case nlohmann::json::value_t::number_float:
+				qDebug() << "float";
+				break;
+			case nlohmann::json::value_t::string:
+				qDebug() << "string";
+				break;
+			case nlohmann::json::value_t::array:
+				qDebug() << "array";
+				break;
+			case nlohmann::json::value_t::object:
+				qDebug() << "object";
+				break;
+			default:
+				qDebug() << "unknown";
+				break;
+			}
+		}
+		int nSource = jsonData["in"]["Source"];
+		int nResult = jsonData["out"]["Result"];
+		qDebug() << "Source ->" << nSource << " Result ->" << nResult;
+
+		// String ones
 		str_parser.append(QString::fromStdString(frame.dest_ip()));
 		str_parser.append(QString::fromStdString(frame.dir()));
 		str_parser.append(QString::fromStdString(frame.children()));

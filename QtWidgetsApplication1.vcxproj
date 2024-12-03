@@ -147,6 +147,7 @@
     <QtMoc Include="topicData\ZoneMasterSomeipDataStateListener.h" />
     <QtMoc Include="topicData\ZoneMasterSomeipDataSDListener.h" />
     <QtMoc Include="topicData\ZoneMasterSomeipDataEthFrameListener.h" />
+    <ClInclude Include="json.hpp" />
     <ClInclude Include="topicData\ZoneMasterSomeipDataSubscriber.h" />
     <ClInclude Include="ui_usagedialog.h" />
     <QtMoc Include="usagedialog.h" />
