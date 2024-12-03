@@ -666,6 +666,8 @@ void QtWidgetsApplication1::setDefaultHeader()
 		if (mod.toLower().contains("someip"))
 		{
 			someip_mod = true;
+			datachoice = ui.comboBox;
+			datachoice->setCurrentText("Some/IP");
 		}
 	}
 	if (canlin_mod) {
@@ -734,7 +736,7 @@ void QtWidgetsApplication1::traceStyleQSS()
 void QtWidgetsApplication1::initialHeaders()
 {
 	QHeaderView* header = ui.treetrace->header();
-	int button_count = std::max(header->count() + 64, 5);
+	int button_count = std::max(header->count(), 5);
 	//if (display_mode == DISPLAY_MODE::AGGREGATION)
 	//	button_count = std::max(header->count(), 5);
 	for (int i = 0; i < button_count; i++) {

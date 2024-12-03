@@ -265,9 +265,6 @@
                   <layout class="QHBoxLayout" name="horizontalLayout_6">
                    <item>
                     <widget class="QComboBox" name="comboBox">
-                     <property name="currentText">
-                      <string>CAN/LIN</string>
-                     </property>
                      <item>
                       <property name="text">
                        <string>CAN/LIN</string>
@@ -281,6 +278,11 @@
                      <item>
                       <property name="text">
                        <string>LIN</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Some/IP</string>
                       </property>
                      </item>
                      <item>
@@ -408,49 +410,47 @@
                  </item>
                  <item>
                   <layout class="QHBoxLayout" name="horizontalLayout_99">
-					  <!--merge-->
-					  <item>
-						  <widget class="QSplitter" name="splitter">
-							  <property name="orientation">
-								  <enum>Qt::Horizontal</enum>
-							  </property>
-							  <widget class="QDockWidget" name="left_statistic_widget">
-								  <property name="sizePolicy">
-									  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-										  <horstretch>0</horstretch>
-										  <verstretch>3</verstretch>
-									  </sizepolicy>
-								  </property>
-								  <property name="minimumSize">
-									  <size>
-										  <width>40</width>
-										  <height>22</height>
-									  </size>
-								  </property>
-								  <property name="maximumSize">
-									  <size>
-										  <width>200</width>
-										  <height>524287</height>
-									  </size>
-								  </property>
-							  </widget>
-							  <widget class="QTreeWidget" name="treetrace">
-								  <property name="sizePolicy">
-									  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-										  <horstretch>0</horstretch>
-										  <verstretch>5</verstretch>
-									  </sizepolicy>
-								  </property>
-								  <column>
-									  <property name="text">
-										  <string notr="true">1</string>
-									  </property>
-								  </column>
-							  </widget>
-						  </widget>
-					  </item>
-					  <!--merge-->
-				  </layout>
+                   <item>
+                    <widget class="QSplitter" name="splitter">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <widget class="QDockWidget" name="left_statistic_widget">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>3</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>95</width>
+                        <height>26</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>200</width>
+                        <height>524287</height>
+                       </size>
+                      </property>
+                     </widget>
+                     <widget class="QTreeWidget" name="treetrace">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>5</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <column>
+                       <property name="text">
+                        <string notr="true">1</string>
+                       </property>
+                      </column>
+                     </widget>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                 </layout>
                </widget>
