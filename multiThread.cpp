@@ -635,6 +635,58 @@ void multiThread::clear_items_queue()
 	list_items_queue.clear();
 }
 
+/* this is a sample code from Poe.com to print json data
+* 2024-12-04 13:38:56
+* for my reference.
+* 
+* void printJson(const nlohmann::json& j, int indent = 0) {
+*     std::string indentStr(indent, ' ');
+*     if (j.is_object()) {
+*         for (auto& el : j.items()) {
+*             std::cout << indentStr << el.key() << ": ";
+*             printJson(el.value(), indent + 2);
+*         }
+*     } else if (j.is_array()) {
+*         for (size_t i = 0; i < j.size(); ++i) {
+*             std::cout << indentStr << "[" << i << "]: ";
+*             printJson(j[i], indent + 2);
+*         }
+*     } else {
+*         std::cout << indentStr << j << std::endl;
+*     }
+* }
+*/
+void multiThread::construct_someip_subframe(const nlohmann::json& j, TraceTreeWidgetItem* item, int nlevel)
+{
+	// Context -> "{\"in\": {\"Source\": 0, \"HighVoltageCtrlReq\": {\"Application\": 0, \"OnOffReq\": 0}}
+	// , \"out\": {\"Result\": 0}}"
+	std::string indentStr(nlevel, ' ');
+	if (j.is_object()) {
+		for (auto& el : j.items()) {
+			qDebug() << QString::fromStdString(indentStr) << QString::fromStdString(el.key()) << ": ";
+			construct_someip_subframe(el.value(), item, nlevel + 2);
+		}
+	}
+	else if (j.is_array()) {
+		for (size_t i = 0; i < j.size(); ++i) {
+			qDebug() << QString::fromStdString(indentStr) << "[" << i << "]: ";
+			construct_someip_subframe(j[i], item, nlevel + 2);
+		}
+	}
+	else {
+		QString str_value;
+		if (j.is_number()) {
+			int value = j.get<int>();
+			str_value = QString::number(value);
+		}
+		if (j.is_string()) {
+			std::string value = j.get<std::string>();
+			str_value = QString::fromStdString(value);
+		}
+		qDebug() << QString::fromStdString(indentStr) << str_value;
+	}
+}
+
 void multiThread::construct_someip_frame(someipFrame frame, QString frame_type)
 {
 	/*
@@ -679,49 +731,12 @@ void multiThread::construct_someip_frame(someipFrame frame, QString frame_type)
 		
 		// Very special one. 
 		str_parser.append(QString::fromStdString(frame.context_dict()));
-		//qDebug() << "Context ->" << QString::fromStdString(frame.context_dict());
 		// parse the frame.context_dict into json format.
 		// Context -> "{\"in\": {\"Source\": 0, \"HighVoltageCtrlReq\": {\"Application\": 0, \"OnOffReq\": 0}}
 		// , \"out\": {\"Result\": 0}}"
 		
 		nlohmann::json jsonData = nlohmann::json::parse(frame.context_dict());
-		for (auto it = jsonData.begin(); it != jsonData.end(); ++it)
-		{
-			qDebug() << "Key ->" << QString::fromStdString(it.key());
-			auto value = it.value();
-			switch (value.type()) {
-			case nlohmann::json::value_t::null:
-				qDebug() << "null";
-				break;
-			case nlohmann::json::value_t::boolean:
-				qDebug() << "boolean";
-				break;
-			case nlohmann::json::value_t::number_integer:
-				qDebug() << "integer";
-				break;
-			case nlohmann::json::value_t::number_unsigned:
-				qDebug() << "unsigned integer";
-				break;
-			case nlohmann::json::value_t::number_float:
-				qDebug() << "float";
-				break;
-			case nlohmann::json::value_t::string:
-				qDebug() << "string";
-				break;
-			case nlohmann::json::value_t::array:
-				qDebug() << "array";
-				break;
-			case nlohmann::json::value_t::object:
-				qDebug() << "object";
-				break;
-			default:
-				qDebug() << "unknown";
-				break;
-			}
-		}
-		int nSource = jsonData["in"]["Source"];
-		int nResult = jsonData["out"]["Result"];
-		qDebug() << "Source ->" << nSource << " Result ->" << nResult;
+		construct_someip_subframe(jsonData, nullptr, 0);
 
 		// String ones
 		str_parser.append(QString::fromStdString(frame.dest_ip()));
