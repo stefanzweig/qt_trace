@@ -704,36 +704,32 @@ void multiThread::construct_someip_frame(someipFrame frame, QString frame_type)
 
 	QStringList str_parser = {};
 	TraceTreeWidgetItem* item_context = nullptr;
-	QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(frame.timeStamp() / 1000000);
-	str_parser.append(timestamp.toString("hh:mm:ss.zzz"));
 	if (frame_type == "someip_package" || frame_type == "someip_calling") {
 		// int ones
-		str_parser.append(QString::number(frame.msg_type()));
-		str_parser.append(QString::number(frame.ret_code()));
+		QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(frame.timeStamp() / 1000000);
+		str_parser.append(timestamp.toString("hh:mm:ss.zzz"));
 		str_parser.append(QString::number(frame.channel()));
-		str_parser.append(QString::number(frame.dest_port()));
-		str_parser.append(QString::number(frame.if_id()));
-		str_parser.append(QString::number(frame.inst_id()));
-		str_parser.append(QString::number(frame.session_id()));
+		str_parser.append(QString::fromStdString(frame.src_ip()));
 		str_parser.append(QString::number(frame.src_port()));
-		str_parser.append(QString::number(frame.srv_id()));
-		str_parser.append(QString::number(frame.delta_time()));
-				
-		// String ones
 		str_parser.append(QString::fromStdString(frame.dest_ip()));
-		str_parser.append(QString::fromStdString(frame.dir()));
-		str_parser.append(QString::fromStdString(frame.children()));
+		str_parser.append(QString::number(frame.dest_port()));
+		str_parser.append(QString::number(frame.msg_type()));
+		str_parser.append(QString::number(frame.if_id()));
 		str_parser.append(QString::fromStdString(frame.if_name()));
 		str_parser.append(QString::fromStdString(frame.if_type()));
-		str_parser.append(QString::fromStdString(frame.proto()));
-		str_parser.append(QString::fromStdString(frame.src_ip()));
+		str_parser.append(QString::number(frame.srv_id()));
 		str_parser.append(QString::fromStdString(frame.srv_name()));
+		str_parser.append(QString::fromStdString(frame.dir()));
+		str_parser.append(QString::fromStdString(frame.proto()));
+		str_parser.append(QString::fromStdString(frame.children())); // placeholder for payload
+
+		//str_parser.append(QString::number(frame.ret_code()));
+		//str_parser.append(QString::number(frame.inst_id()));
+		//str_parser.append(QString::number(frame.session_id()));
+		//str_parser.append(QString::number(frame.delta_time()));
 	}
 
 	TraceTreeWidgetItem* Item = new TraceTreeWidgetItem(str_parser);
-	// Very special one. 
-	// Context -> "{\"in\": {\"Source\": 0, \"HighVoltageCtrlReq\": {\"Application\": 0, \"OnOffReq\": 0}}
-	// , \"out\": {\"Result\": 0}}"
 	QString jsonStr = QString::fromStdString(frame.context_dict());
 	QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonStr.toUtf8());
 	if (jsonDoc.isObject()) {

@@ -130,7 +130,7 @@ private:
     QStringList headers = { "Time[ms]", "Chn", "ID", "Name", "Dir", "DLC", "EventType", "DataLength", "BusType", "Data" };
     QStringList linHeader = { "Time[ms]", "Chn", "ID", "Name", "Dir", "DataLength", "EventType", "BusType", "Data" };
     QStringList ethHeader = { "Time[ms]","Chn","Dir","Source MAC","Destination MAC","Source IP","Destination IP","Protocol","Payload Data","VLAN ID","Transport Layer","Service","Service Instance","Method","Message Type","Port(s)","VLAN Priority" };
-    QStringList someipHeader = { "Time[ms]","Chn","Dir","Source MAC","Destination MAC","Source IP","Destination IP","Protocol","Payload Data","VLAN ID","Transport Layer","Service","Service Instance","Method","Message Type","Port(s)","VLAN Priority" };
+    QStringList someipHeader = {"Time[ms]", "Chn", "Source IP", "Source Port", "Destination IP", "Destination Port", "Message Type", "IF ID", "IF Name", "IF Type", "SRV ID", "SRV Name", "Dir", "Protocol", "Payload Data", };
 
     QComboBox* datachoice = nullptr;
 
