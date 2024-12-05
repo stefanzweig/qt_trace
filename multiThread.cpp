@@ -635,55 +635,44 @@ void multiThread::clear_items_queue()
 	list_items_queue.clear();
 }
 
-/* this is a sample code from Poe.com to print json data
-* 2024-12-04 13:38:56
-* for my reference.
-* 
-* void printJson(const nlohmann::json& j, int indent = 0) {
-*     std::string indentStr(indent, ' ');
-*     if (j.is_object()) {
-*         for (auto& el : j.items()) {
-*             std::cout << indentStr << el.key() << ": ";
-*             printJson(el.value(), indent + 2);
-*         }
-*     } else if (j.is_array()) {
-*         for (size_t i = 0; i < j.size(); ++i) {
-*             std::cout << indentStr << "[" << i << "]: ";
-*             printJson(j[i], indent + 2);
-*         }
-*     } else {
-*         std::cout << indentStr << j << std::endl;
-*     }
-* }
-*/
-void multiThread::construct_someip_subframe(const nlohmann::json& j, TraceTreeWidgetItem* item, int nlevel)
+void multiThread::parseJsonAndAddToTree(QTreeWidgetItem* parentItem, const QJsonValue& jsonValue, const QString& keyPrefix) 
 {
-	// Context -> "{\"in\": {\"Source\": 0, \"HighVoltageCtrlReq\": {\"Application\": 0, \"OnOffReq\": 0}}
-	// , \"out\": {\"Result\": 0}}"
-	std::string indentStr(nlevel, ' ');
-	if (j.is_object()) {
-		for (auto& el : j.items()) {
-			qDebug() << QString::fromStdString(indentStr) << QString::fromStdString(el.key()) << ": ";
-			construct_someip_subframe(el.value(), item, nlevel + 2);
+	if (jsonValue.isObject()) {
+		QJsonObject jsonObject = jsonValue.toObject();
+		QJsonObject::const_iterator it;
+		for (it = jsonObject.constBegin(); it != jsonObject.constEnd(); ++it) {
+			QString newKey = keyPrefix.isEmpty() ? it.key() : keyPrefix + "." + it.key();
+			QTreeWidgetItem* childItem = new QTreeWidgetItem(parentItem);
+			childItem->setText(0, it.key());
+			parseJsonAndAddToTree(childItem, it.value(), newKey);
 		}
 	}
-	else if (j.is_array()) {
-		for (size_t i = 0; i < j.size(); ++i) {
-			qDebug() << QString::fromStdString(indentStr) << "[" << i << "]: ";
-			construct_someip_subframe(j[i], item, nlevel + 2);
+	else if (jsonValue.isArray()) {
+		QJsonArray jsonArray = jsonValue.toArray();
+		for (int i = 0; i < jsonArray.size(); ++i) {
+			QString indexStr = QString::number(i);
+			QString newKey = keyPrefix.isEmpty() ? indexStr : keyPrefix + "." + indexStr;
+			QTreeWidgetItem* childItem = new QTreeWidgetItem(parentItem);
+			childItem->setText(0, indexStr);
+			parseJsonAndAddToTree(childItem, jsonArray.at(i), newKey);
 		}
 	}
 	else {
-		QString str_value;
-		if (j.is_number()) {
-			int value = j.get<int>();
-			str_value = QString::number(value);
+		QTreeWidgetItem* leafItem = new QTreeWidgetItem(parentItem);
+		QString valueStr;
+		if (jsonValue.isString()) {
+			valueStr = jsonValue.toString();
 		}
-		if (j.is_string()) {
-			std::string value = j.get<std::string>();
-			str_value = QString::fromStdString(value);
+		else if (jsonValue.isDouble()) {
+			valueStr = QString::number(jsonValue.toDouble());
 		}
-		qDebug() << QString::fromStdString(indentStr) << str_value;
+		else if (jsonValue.isBool()) {
+			valueStr = jsonValue.toBool() ? "true" : "false";
+		}
+		else if (jsonValue.isNull()) {
+			valueStr = "null";
+		}
+		leafItem->setText(1, valueStr);
 	}
 }
 
@@ -714,6 +703,7 @@ void multiThread::construct_someip_frame(someipFrame frame, QString frame_type)
 	*/
 
 	QStringList str_parser = {};
+	TraceTreeWidgetItem* item_context = nullptr;
 	QDateTime timestamp = QDateTime::fromMSecsSinceEpoch(frame.timeStamp() / 1000000);
 	str_parser.append(timestamp.toString("hh:mm:ss.zzz"));
 	if (frame_type == "someip_package" || frame_type == "someip_calling") {
@@ -728,16 +718,7 @@ void multiThread::construct_someip_frame(someipFrame frame, QString frame_type)
 		str_parser.append(QString::number(frame.src_port()));
 		str_parser.append(QString::number(frame.srv_id()));
 		str_parser.append(QString::number(frame.delta_time()));
-		
-		// Very special one. 
-		str_parser.append(QString::fromStdString(frame.context_dict()));
-		// parse the frame.context_dict into json format.
-		// Context -> "{\"in\": {\"Source\": 0, \"HighVoltageCtrlReq\": {\"Application\": 0, \"OnOffReq\": 0}}
-		// , \"out\": {\"Result\": 0}}"
-		
-		nlohmann::json jsonData = nlohmann::json::parse(frame.context_dict());
-		construct_someip_subframe(jsonData, nullptr, 0);
-
+				
 		// String ones
 		str_parser.append(QString::fromStdString(frame.dest_ip()));
 		str_parser.append(QString::fromStdString(frame.dir()));
@@ -750,6 +731,18 @@ void multiThread::construct_someip_frame(someipFrame frame, QString frame_type)
 	}
 
 	TraceTreeWidgetItem* Item = new TraceTreeWidgetItem(str_parser);
+	// Very special one. 
+	// Context -> "{\"in\": {\"Source\": 0, \"HighVoltageCtrlReq\": {\"Application\": 0, \"OnOffReq\": 0}}
+	// , \"out\": {\"Result\": 0}}"
+	QString jsonStr = QString::fromStdString(frame.context_dict());
+	QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonStr.toUtf8());
+	if (jsonDoc.isObject()) {
+		parseJsonAndAddToTree(Item, jsonDoc.object());
+	}
+	else if (jsonDoc.isArray()) {
+		parseJsonAndAddToTree(Item, jsonDoc.array());
+	}
+
 	if (Item != nullptr) {
 		emit(popToRoot(Item));
 		list_items_queue.enqueue(Item);

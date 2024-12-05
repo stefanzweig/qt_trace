@@ -17,6 +17,11 @@
 
 #include <QtWidgets/QTreeView>
 #include <QTreeWidgetItem>
+
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+
 #include "uuid_v4.h"
 #include "TraceTreeWidgetItem.h"
 #include "json.hpp"
@@ -113,7 +118,7 @@ private:
 	void formatRow_someip_eth_frame_thread(someipFrame frame);
 
 	void construct_someip_frame(someipFrame frame, QString frame_type);
-	void construct_someip_subframe(const nlohmann::json& j, TraceTreeWidgetItem* item, int nlevel=0);
+	void parseJsonAndAddToTree(QTreeWidgetItem* parentItem, const QJsonValue& jsonValue, const QString& keyPrefix = "");
 
 signals:
 	void popToRoot(TraceTreeWidgetItem* item);
