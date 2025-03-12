@@ -997,14 +997,6 @@ void QtWidgetsApplication1::switch_display_mode(DISPLAY_MODE display_mode)
 	{
 		if (CurrentHeader.last().toLower() == "data")
 		{
-			CurrentHeader.last() = "00";
-			//QStringList headers_append;
-			//for (int i = 1; i <= 63; ++i) {
-			//	QString d = QString("%1").arg(i, 2, 10, QChar('0'));
-			//	qDebug() << "DATA? -> " << d;
-			//	headers_append.append(d);
-			//}
-			//CurrentHeader.append(headers_append);
 		}
 	}
 	ui.treetrace->setHeaderLabels(CurrentHeader);

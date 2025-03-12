@@ -67,7 +67,6 @@ public:
 		}
 	}
 	~TraceTreeWidgetItem() override {
-		qDebug() << "Derived destructor called";
 		original_data.clear();
 		deleted = true;
 	}
