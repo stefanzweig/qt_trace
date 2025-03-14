@@ -13,7 +13,7 @@ target("zone-tracer")
     add_files("QtWidgetsApplication1.cpp")
     add_files("main.cpp")
     add_cflags("-fPIC")
-    add_cxflags("-Wno-inaccessible-base -fPIC")
+    add_cxflags("-mavx2 -Wno-inaccessible-base -fPIC")
     add_includedirs(".")
     add_includedirs("/usr/include")
     add_includedirs("/usr/local/include")
@@ -23,6 +23,8 @@ target("zone-tracer")
     add_includedirs("/home/stefliu/tools/Qt5.14.2/5.14.2/gcc_64/include/QtGui/")
     add_includedirs("/usr/include/libdrm")
     add_includedirs("/home/stefliu/tools/Qt5.14.2/5.14.2/gcc_64/mkspecs/linux-g++")
+    add_links("Qt5Widgets", "Qt5Gui")
+    add_linkdirs("/home/stefliu/tools/Qt5.14.2/5.14.2/gcc_64/lib/")
 --
 -- If you want to known more usage about xmake, please see https://xmake.io
 --
