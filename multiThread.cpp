@@ -179,7 +179,7 @@ void multiThread::setCanParserSubscriber(ZoneMasterCanParserSubscriber* subscrib
 		mysub_can_parser = subscriber;
 		samples_ = samples;
 		subscriber->setOuterThread(this, treeview);
-		QObject::connect(&mysub_can_parser->listener_, &CanParserListener::traceItemUpdate_internal_canparser, this, &multiThread::formatRow_canparser_thread);
+        QObject::connect(&mysub_can_parser->listener_, &CanParserListener::traceItemUpdate_internal_canparser, this, &multiThread::formatRow_canparser_thread);
 		bconnected_cp = true;
 	}
 }
@@ -190,7 +190,7 @@ void multiThread::setLinSubscriber(ZoneMasterLinMessageDataSubscriber* subscribe
 		mysub_lin_frames = subscriber;
 		samples_ = samples;
 		subscriber->setOuterThread(this, treeview);
-		QObject::connect(&mysub_lin_frames->listener_, &LinSubListener::ItemUpdate_internal_lin_frame, this, &multiThread::formatRow_linframe_thread);
+        QObject::connect(&mysub_lin_frames->listener_, &LinSubListener::ItemUpdate_internal_lin_frame, this, &multiThread::formatRow_linframe_thread);
 		bconnected_lf = true;
 	}
 }
@@ -201,7 +201,7 @@ void multiThread::setLinParserSubscriber(ZoneMasterLinParserSubscriber* subscrib
 		mysub_lin_parser = subscriber;
 		samples_ = samples;
 		subscriber->setOuterThread(this, treeview);
-		QObject::connect(&mysub_lin_parser->listener_, &LinParserListener::traceItemUpdate_internal_linparser, this, &multiThread::formatRow_linparser_thread);
+        QObject::connect(&mysub_lin_parser->listener_, &LinParserListener::traceItemUpdate_internal_linparser, this, &multiThread::formatRow_linparser_thread);
 		bconnected_lp = true;
 	}
 }
@@ -211,8 +211,8 @@ void multiThread::setSomeipSubscriber(ZoneMasterSomeipSubscriber* subscriber, in
 		mysub_someip = subscriber;
 		samples_ = samples;
 		subscriber->setOuterThread(this, treeview);
-		QObject::connect(&mysub_someip->listener_package, &SomeipPackageListener::ItemUpdate_internal_someip_package, this, &multiThread::formatRow_someip_package_thread);
-		QObject::connect(&mysub_someip->listener_calling, &SomeipCallingListener::ItemUpdate_internal_someip_calling, this, &multiThread::formatRow_someip_calling_thread);
+        QObject::connect(&mysub_someip->listener_package, &SomeipPackageListener::ItemUpdate_internal_someip_package, this, &multiThread::formatRow_someip_package_thread);
+        QObject::connect(&mysub_someip->listener_calling, &SomeipCallingListener::ItemUpdate_internal_someip_calling, this, &multiThread::formatRow_someip_calling_thread);
 		//QObject::connect(&mysub_someip->listener_state, &SomeipStateListener::ItemUpdate_internal_someip_state, this, &multiThread::formatRow_someip_state_thread);
 		//QObject::connect(&mysub_someip->listener_eth_frame, &SomeipEthFrameListener::ItemUpdate_internal_eth_frame, this, &multiThread::formatRow_someip_eth_frame_thread);
 		//QObject::connect(&mysub_someip->listener_sd, &SomeipSDListener::ItemUpdate_internal_someip_sd, this, &multiThread::formatRow_someip_sd_thread);

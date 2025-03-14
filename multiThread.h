@@ -27,7 +27,9 @@
 #include "json.hpp"
 
 class multiThread :
-	public QThread, public QObject, public SubListener
+	public QThread
+    // , public QObject
+    // , public SubListener
 {
 	Q_OBJECT
 

@@ -20,11 +20,11 @@
 #include <QDateTime>
 #include <QVector>
 #include <QByteArray>
-#include "..\zm_struct.h"
+#include "../zm_struct.h"
 
 using namespace eprosima::fastdds::dds;
 
-class LinSubListener : public QObject, public DataReaderListener
+class LinSubListener : public virtual QObject, public DataReaderListener
 {
     Q_OBJECT
 public:
