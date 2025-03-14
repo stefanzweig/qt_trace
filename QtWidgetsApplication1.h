@@ -19,7 +19,7 @@
 #include <QReadWriteLock>
 #include "TraceTreeWidgetItem.h"
 #include "StateManager.h"
-#include "lexer.h"
+//#include "lexer.h"
 #include "usagedialog.h"
 #include "dialog/configdialog.h"
 #include "uizone/zcomponents.h"
@@ -66,7 +66,7 @@ protected:
         this->adjust_filter_buttons();
     }
     void form_conditions_simple(QString findstr);
-    void form_conditions_compiler(QString findstr);
+    // void form_conditions_compiler(QString findstr);
 
 private:
     Ui::QtWidgetsApplication1Class ui;
@@ -81,7 +81,7 @@ private:
     void setDefaultHeader();
     TraceTreeWidgetItem* read_item_from_queue(int index);
     TraceTreeWidgetItem* read_item_from_dumb(int index);
-    bool parser2condition(QList<Token> token_list);
+    // bool parser2condition(QList<Token> token_list);
     const QString treewidget_header_style = \
         "QHeaderView::section {"
         "   font-weight: bold;"

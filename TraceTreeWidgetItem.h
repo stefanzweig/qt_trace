@@ -19,23 +19,23 @@ enum MyItemType {
 	lin_container_pdu_signal_
 };
 
-const QString& MyTypeToString(MyItemType type) {
-	static const QString typeNames[] = {
-		"canframe",
-		"can_parser",
-		"can_pdu",
-		"can_pdu_signal",
-		"can_container_pdu",
-		"can_container_pdu_signal",
-		"linframe",
-		"lin_parser",
-		"lin_pdu",
-		"lin_pdu_signal",
-		"lin_container_pdu",
-		"lin_container_pdu_signal"
-	};
-	return typeNames[type];
-}
+// const QString& MyTypeToString(MyItemType type) {
+// 	static const QString typeNames[] = {
+// 		"canframe",
+// 		"can_parser",
+// 		"can_pdu",
+// 		"can_pdu_signal",
+// 		"can_container_pdu",
+// 		"can_container_pdu_signal",
+// 		"linframe",
+// 		"lin_parser",
+// 		"lin_pdu",
+// 		"lin_pdu_signal",
+// 		"lin_container_pdu",
+// 		"lin_container_pdu_signal"
+// 	};
+// 	return typeNames[type];
+// }
 
 //QTreeWidgetItem* deepCopyTreeWidgetItem(QTreeWidgetItem* originalItem) {
 //	QTreeWidgetItem* copiedItem = new QTreeWidgetItem(*originalItem);

@@ -23,7 +23,7 @@ target("zone-tracer")
     add_includedirs("/home/stefliu/tools/Qt5.14.2/5.14.2/gcc_64/include/QtGui/")
     add_includedirs("/usr/include/libdrm")
     add_includedirs("/home/stefliu/tools/Qt5.14.2/5.14.2/gcc_64/mkspecs/linux-g++")
-    add_links("Qt5Widgets", "Qt5Gui")
+    add_links("Qt5Widgets", "Qt5Core", "Qt5Gui")
     add_linkdirs("/home/stefliu/tools/Qt5.14.2/5.14.2/gcc_64/lib/")
 --
 -- If you want to known more usage about xmake, please see https://xmake.io

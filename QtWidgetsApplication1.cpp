@@ -1941,36 +1941,34 @@ void QtWidgetsApplication1::form_conditions_simple(QString findstr)
 	}
 }
 
-#include "lexer.h"
 
-bool QtWidgetsApplication1::parser2condition(QList<Token> token_list)
-{
-	bool bok = false;
-	return bok;
-}
+// bool QtWidgetsApplication1::parser2condition(QList<Token> token_list)
+// {
+// 	bool bok = false;
+// 	return bok;
+// }
 
-void QtWidgetsApplication1::form_conditions_compiler(QString findstr)
-{
-	QByteArray byteArray = findstr.toUtf8();
-	const char* cStr = byteArray.constData();
-	Lexer lex(cStr);
-	QList<Token> token_list;
-	for (auto token = lex.next();
-		!token.is_one_of(Token::Kind::End, Token::Kind::Unexpected);
-		token = lex.next())
-	{
-		token_list.append(token);
-	}
-	for (int i = 0; i < token_list.size(); i++)
-	{
-		QString s;
-		Token token = token_list.at(i);
-		s += QString::fromStdString(token.lexeme()) + "|";
-		s += QString::fromStdString(token.kind_name()) + "|\n";
-		qDebug() << "Lexer OUTPUT -> " << s;
-	}
-	parser2condition(token_list);
-}
+// void QtWidgetsApplication1::form_conditions_compiler(QString findstr)
+// {
+// 	QByteArray byteArray = findstr.toUtf8();
+// 	const char* cStr = byteArray.constData();
+// 	Lexer lex(cStr);
+// 	QList<Token> token_list;
+// 	for (auto token = lex.next();
+// 		!token.is_one_of(Token::Kind::End, Token::Kind::Unexpected);
+// 		token = lex.next())
+// 	{
+// 		token_list.append(token);
+// 	}
+// 	for (int i = 0; i < token_list.size(); i++)
+// 	{
+// 		QString s;
+// 		Token token = token_list.at(i);
+// 		s += QString::fromStdString(token.lexeme()) + "|";
+// 		s += QString::fromStdString(token.kind_name()) + "|\n";
+// 		qDebug() << "Lexer OUTPUT -> " << s;
+// 	}
+// }
 
 void QtWidgetsApplication1::searchTree_bfs(QTreeWidgetItem* root, const QStringList& targets,
 	QQueue<Found_Item*>& queue,
