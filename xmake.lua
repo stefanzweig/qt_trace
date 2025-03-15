@@ -2,8 +2,16 @@ add_rules("mode.debug", "mode.release")
 
 target("zone-tracer")
     set_kind("binary")
-    add_files("topData/*.cpp")
-    add_files("topData/*.cxx")
+
+    add_files("topicData/ZoneMasterCanMessageDataSubscriber.cpp")
+    add_files("topicData/ZoneMasterCanMessageDataSubscriber.cpp")
+    add_files("topicData/ZoneMasterCanParserSubscriber.cpp")
+    add_files("topicData/ZoneMasterData.cxx")
+    add_files("topicData/ZoneMasterDataPubSubTypes.cxx")
+    add_files("topicData/ZoneMasterLinMessageDataSubscriber.cpp")
+    add_files("topicData/ZoneMasterLinParserDataSubscriber.cpp")
+    add_files("topicData/ZoneMasterSomeipDataSubscriber.cpp")
+
     add_files("columnfilter.cpp")
     add_files("multiThread.cpp")
     add_files("TraceTreeWidgetItem.cpp")
@@ -24,7 +32,10 @@ target("zone-tracer")
     add_includedirs("/usr/include/libdrm")
     add_includedirs("/home/stefliu/tools/Qt5.14.2/5.14.2/gcc_64/mkspecs/linux-g++")
     add_links("Qt5Widgets", "Qt5Core", "Qt5Gui")
+    add_links("fastrtps", "fastcdr")
     add_linkdirs("/home/stefliu/tools/Qt5.14.2/5.14.2/gcc_64/lib/")
+    add_ldflags("-L/usr/local/lib", "-lpthread", {force = true})
+
 --
 -- If you want to known more usage about xmake, please see https://xmake.io
 --
