@@ -31,6 +31,7 @@ target("zone-tracer")
     add_files("usagedialog.h")
 
     add_files("columnfilter.cpp")
+    add_files("dialog/configdialog.cpp")
     add_files("multiThread.cpp")
     add_files("TraceTreeWidgetItem.cpp")
     add_files("treeitem.cpp")
@@ -38,8 +39,10 @@ target("zone-tracer")
     add_files("usagedialog.cpp")
     add_files("QtWidgetsApplication1.cpp")
     add_files("main.cpp")
+
     add_cflags("-fPIC")
     add_cxflags("-mavx2 -Wno-inaccessible-base -fPIC")
+
     add_includedirs(".")
     add_includedirs("/usr/include")
     add_includedirs("/usr/local/include")
