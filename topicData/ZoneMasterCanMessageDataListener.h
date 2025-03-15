@@ -25,7 +25,7 @@
 using namespace eprosima::fastdds::dds;
 
 
-class SubListener : public virtual QObject, public DataReaderListener
+class SubListener : public QObject, public DataReaderListener
 {
     Q_OBJECT
 public:
