@@ -1,7 +1,7 @@
 add_rules("mode.debug", "mode.release")
 add_rules("qt.widgetapp")
 
-target("zone-tracer")
+target("ZoneTracer")
     set_kind("binary")
 
     add_files("topicData/ZoneMasterCanMessageDataSubscriber.cpp")
