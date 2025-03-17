@@ -14,3 +14,10 @@ Trace Tool
 
 - ¾ÛºÏ
 - Linux °æ±¾
+
+## Pack command
+
+```sh
+linuxdeployqt zone-tracer -appimage -unsupported-allow-new-glibc
+```
+
