@@ -15,7 +15,7 @@
 #include "multiThread.h"
 #include "zm_struct.h"
 #include "columnfilter.h"
-#include "spdlog/spdlog.h"
+// #include "spdlog/spdlog.h"
 #include <QReadWriteLock>
 #include "TraceTreeWidgetItem.h"
 #include "StateManager.h"
@@ -77,7 +77,7 @@ private:
     void get_default_configurations();
     void compare_item();
     void traceStyleQSS();
-    void init_mylogger();
+    // void init_mylogger();
     void setDefaultHeader();
     TraceTreeWidgetItem* read_item_from_queue(int index);
     TraceTreeWidgetItem* read_item_from_dumb(int index);
@@ -299,7 +299,7 @@ protected:
     // the following functions should be moved to other section.
     // todo. 2024-11-01 14:28:53
     void showEvent(QShowEvent* event) override {
-        // Á¬½Ó×Ô¶¨ÒåÐÅºÅµ½²Û
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ÅºÅµï¿½ï¿½ï¿½
         connect(this, &QtWidgetsApplication1::buttonClicked, this, &QtWidgetsApplication1::ButtonSearchClicked);
         QWidget::showEvent(event);
     }
