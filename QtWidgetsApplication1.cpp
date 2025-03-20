@@ -194,6 +194,10 @@ void QtWidgetsApplication1::get_default_configurations()
 	for (QVariant m : modules) {
 		monitor_modules.append(m.toString());
 	}
+  if (!monitor_modules.count()) {
+    qDebug() << "Default CAN module";
+    monitor_modules.append("can");
+  }
 }
 
 void QtWidgetsApplication1::updateProgressRunStatus()
@@ -480,6 +484,7 @@ void QtWidgetsApplication1::initialize_new_session()
 
 bool QtWidgetsApplication1::new_session()
 {
+  qDebug() << "new_session";
 	int ncount = ui.treetrace->topLevelItemCount();
 	if (!ncount) return true;
 
@@ -495,13 +500,16 @@ void QtWidgetsApplication1::startTrace()
 {
 	// auto log_ = GETLOG("WORKFLOW");
 	//LOGGER_INFO(log_, "==== START TRACE CLICKED ====");
+  qDebug() << "function startTrace";
 	state_manager.changeState(State::START);
+  qDebug() << "changing state";
 
 	if (!new_session())
 		return;
 	start_time = QDateTime::currentDateTime();
 	//LOGGER_INFO(log_, "==== BEFORE RESUME TRACE ====");
 	resumeTrace();
+  qDebug() << "resumed trace";
 	last_status = "STARTED";
 	traceStyleQSS();
 	//LOGGER_INFO(log_, "==== AFTER RESUME TRACE ====");
@@ -514,34 +522,42 @@ void QtWidgetsApplication1::resumeTrace()
 	//LOGGER_INFO(log_, "==== RESUME TRACE PROCESS ====");
 
 	uint32_t samples = 1000;
+  qDebug() << "resuming trace";
 	invisibles.clear();
 	reset_find_status();
+  qDebug() << "resetting find status";
 	if (mysub_can_frames == nullptr) {
 		mysub_can_frames = new ZoneMasterCanMessageDataSubscriber(dds_domainid);
 		qRegisterMetaType <can_frame>("can_frame");
+    qDebug() << "can frame registered";
 	}
 
 	if (mysub_can_parser == nullptr) {
 		mysub_can_parser = new ZoneMasterCanParserSubscriber(dds_domainid);
 		qRegisterMetaType <canframe>("canframe");
+    qDebug() << "can_frame registered";
 	}
 
 	if (mysub_lin_frames == nullptr) {
 		mysub_lin_frames = new ZoneMasterLinMessageDataSubscriber(dds_domainid);
 		qRegisterMetaType <linMessage>("linMessage");
+    qDebug() << "lin message registered";
 	}
 
 	if (mysub_lin_parser == nullptr) {
 		mysub_lin_parser = new ZoneMasterLinParserSubscriber(dds_domainid);
 		qRegisterMetaType <linFrames>("linFrames");
+    qDebug() << "lin frame registered";
 	}
 
 	if (mysub_someip == nullptr) {
 		mysub_someip = new ZoneMasterSomeipSubscriber(dds_domainid);
 		qRegisterMetaType <someipFrame>("someipFrame");
+    qDebug() << "someip frame registered";
 	}
 
 	calc_thread->restartThread();
+  qDebug() << "calc thread restarted.";
 	//LOGGER_INFO(log_, "==== CAN SUB SET ====");
 	// note: the order here matters. it decides the order in the treewidget.
 	// note: 2024-11-15 08:45:32
