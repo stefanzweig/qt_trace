@@ -41,7 +41,6 @@ add_files("usagedialog.cpp")
 add_files("QtWidgetsApplication1.cpp")
 add_files("main.cpp")
 
--- add_cflags("-fPIC")
 add_cxflags("-mavx2 -fPIC")
 
 add_includedirs(".")
@@ -65,3 +64,18 @@ add_links("fastrtps", "fastcdr")
 add_linkdirs("/opt/Qt5.14.2/5.14.2/gcc_64/lib/")
 add_ldflags("-L/usr/local/lib", "-lpthread", { force = true })
 add_ldflags("-L/usr/lib", "-lfoonathan_memory-0.7.3", { force = true })
+
+after_build(function (target)
+    import("core.project.config")
+    local targetfile = target:targetfile()
+    local src_dir = "."
+    local dest_dir = "app"
+    os.tryrm("app/*")
+    os.cp(targetfile, path.join(dest_dir, path.filename(targetfile)))
+    os.cp(path.join(src_dir, "settings.ini"), path.join(dest_dir, "settings.ini"))
+    os.cp(path.join(src_dir, "Zone.desktop"), path.join(dest_dir, "Zone.desktop"))
+    os.cp(path.join(src_dir, "ZoneTracer.png"), path.join(dest_dir, "ZoneTracer.png"))
+    os.cd(dest_dir)                -- 切换目录
+    os.exec("bash -c 'linuxdeployqt ZoneTracer -appimage'")  -- 执行 Bash 命令
+end)
+

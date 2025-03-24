@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Zone Tracer
+Comment=Comment of Zone Tracer
+Exec=ZoneTracer
+Icon=ZoneTracer
+Categories=Development;
+X-AppImage-Version=ff10ee1
