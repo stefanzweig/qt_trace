@@ -1,81 +1,97 @@
 add_rules("mode.debug", "mode.release")
-add_rules("qt.widgetapp")
 
 target("ZoneTracer")
-set_kind("binary")
+    add_rules("qt.widgetapp")
+    set_kind("binary")
+    add_cxflags("-mavx2 -fPIC")
+    add_files("QtWidgetsApplication1.qrc")
+    add_files("columnfilter.h")
+    add_files("dialog/configdialog.h")
+    add_files("LineEditFilter.h")
+    add_files("multiThread.h")
+    add_files("QtWidgetsApplication1.h")
+    add_files("topicData/ZoneMasterSomeipDataCallingListener.h")
+    add_files("topicData/ZoneMasterCanMessageDataListener.h")
+    add_files("topicData/ZoneMasterSomeipDataEthFrameListener.h")
+    add_files("topicData/ZoneMasterSomeipDataSDListener.h")
+    add_files("topicData/ZoneMasterCanParserListener.h")
+    add_files("topicData/ZoneMasterLinParserDataListener.h")
+    add_files("topicData/ZoneMasterLinMessageDataListener.h")
+    add_files("topicData/ZoneMasterSomeipDataPackageListener.h")
+    add_files("topicData/ZoneMasterSomeipDataStateListener.h")
+    add_files("treemodel.h")
+    add_files("usagedialog.h")
+    add_files("topicData/ZoneMasterCanMessageDataSubscriber.cpp")
+    add_files("topicData/ZoneMasterCanMessageDataSubscriber.cpp")
+    add_files("topicData/ZoneMasterCanParserSubscriber.cpp")
+    add_files("topicData/ZoneMasterData.cxx")
+    add_files("topicData/ZoneMasterDataPubSubTypes.cxx")
+    add_files("topicData/ZoneMasterLinMessageDataSubscriber.cpp")
+    add_files("topicData/ZoneMasterLinParserDataSubscriber.cpp")
+    add_files("topicData/ZoneMasterSomeipDataSubscriber.cpp")
+    add_files("columnfilter.cpp")
+    add_files("dialog/configdialog.cpp")
+    add_files("multiThread.cpp")
+    add_files("TraceTreeWidgetItem.cpp")
+    add_files("treeitem.cpp")
+    add_files("treemodel.cpp")
+    add_files("usagedialog.cpp")
+    add_files("QtWidgetsApplication1.cpp")
+    add_files("main.cpp")
+    add_includedirs(".")
+    add_includedirs("/usr/include")
+    add_includedirs("/usr/local/include")
+    add_includedirs("/usr/local/include/fastrtps/")
+    add_includedirs("/usr/local/include/fastrtps/common/")
+    add_includedirs("/usr/local/include/fastrtps/utils/")
+    add_includedirs("/usr/local/include/fastcdr/")
+    add_includedirs("/usr/local/include/fastcdr/cdr/")
+    add_includedirs("/usr/local/include/fastcdr/exceptions/")
+    -- add_includedirs("/usr/include/libdrm")
 
-add_files("topicData/ZoneMasterCanMessageDataSubscriber.cpp")
-add_files("topicData/ZoneMasterCanMessageDataSubscriber.cpp")
-add_files("topicData/ZoneMasterCanParserSubscriber.cpp")
-add_files("topicData/ZoneMasterData.cxx")
-add_files("topicData/ZoneMasterDataPubSubTypes.cxx")
-add_files("topicData/ZoneMasterLinMessageDataSubscriber.cpp")
-add_files("topicData/ZoneMasterLinParserDataSubscriber.cpp")
-add_files("topicData/ZoneMasterSomeipDataSubscriber.cpp")
+    local qt_path = "/opt/Qt5.14.2/5.14.2/gcc_64"
+    add_includedirs(
+	path.join(qt_path, "include"),
+	path.join(qt_path, "include/QtCore"),
+	path.join(qt_path, "include/QtWidgets"),
+	path.join(qt_path, "include/QtGui"),
+	path.join(qt_path, "mkspecs/linux-g++")
+    )
 
-add_files("QtWidgetsApplication1.qrc")
-add_files("columnfilter.h")
-add_files("dialog/configdialog.h")
-add_files("LineEditFilter.h")
-add_files("multiThread.h")
-add_files("QtWidgetsApplication1.h")
-add_files("topicData/ZoneMasterSomeipDataCallingListener.h")
-add_files("topicData/ZoneMasterCanMessageDataListener.h")
-add_files("topicData/ZoneMasterSomeipDataEthFrameListener.h")
-add_files("topicData/ZoneMasterSomeipDataSDListener.h")
-add_files("topicData/ZoneMasterCanParserListener.h")
-add_files("topicData/ZoneMasterLinParserDataListener.h")
-add_files("topicData/ZoneMasterLinMessageDataListener.h")
-add_files("topicData/ZoneMasterSomeipDataPackageListener.h")
-add_files("topicData/ZoneMasterSomeipDataStateListener.h")
-add_files("treemodel.h")
-add_files("usagedialog.h")
+    add_links("Qt5Widgets",
+	 "Qt5Core",
+	 "Qt5Gui",
+	 "fastrtps",
+	 "fastcdr",
+	 "pthread",
+	 "foonathan_memory-0.7.3")
 
-add_files("columnfilter.cpp")
-add_files("dialog/configdialog.cpp")
-add_files("multiThread.cpp")
-add_files("TraceTreeWidgetItem.cpp")
-add_files("treeitem.cpp")
-add_files("treemodel.cpp")
-add_files("usagedialog.cpp")
-add_files("QtWidgetsApplication1.cpp")
-add_files("main.cpp")
+    add_linkdirs(
+	path.join(qt_path, "lib"),
+	"/usr/local/lib",
+	"/usr/lib"
+    )
 
-add_cxflags("-mavx2 -fPIC")
+    after_build(function (target)
+	import("core.project.config")
+	local targetfile = target:targetfile()
+	local src_dir = "."
+	local dest_dir = "app"
 
-add_includedirs(".")
-add_includedirs("/usr/include")
-add_includedirs("/usr/local/include")
-add_includedirs("/usr/local/include/fastrtps/")
-add_includedirs("/usr/local/include/fastrtps/common/")
-add_includedirs("/usr/local/include/fastrtps/utils/")
-add_includedirs("/usr/local/include/fastcdr/")
-add_includedirs("/usr/local/include/fastcdr/cdr/")
-add_includedirs("/usr/local/include/fastcdr/exceptions/")
-add_includedirs("/opt/Qt5.14.2/5.14.2/gcc_64/include/")
-add_includedirs("/opt/Qt5.14.2/5.14.2/gcc_64/include/QtCore/")
-add_includedirs("/opt/Qt5.14.2/5.14.2/gcc_64/include/QtWidgets/")
-add_includedirs("/opt/Qt5.14.2/5.14.2/gcc_64/include/QtGui/")
-add_includedirs("/opt/Qt5.14.2/5.14.2/gcc_64/mkspecs/linux-g++")
-add_includedirs("/usr/include/libdrm")
+	os.tryrm(dest_dir)
+	os.mkdir(dest_dir)
 
-add_links("Qt5Widgets", "Qt5Core", "Qt5Gui")
-add_links("fastrtps", "fastcdr")
-add_linkdirs("/opt/Qt5.14.2/5.14.2/gcc_64/lib/")
-add_ldflags("-L/usr/local/lib", "-lpthread", { force = true })
-add_ldflags("-L/usr/lib", "-lfoonathan_memory-0.7.3", { force = true })
+	local files_to_copy = {
+	    targetfile,
+	    path.join(src_dir, "settings.ini"),
+	    path.join(src_dir, "Zone.desktop"),
+	    path.join(src_dir, "ZoneTracer.png")
+	}
 
-after_build(function (target)
-    import("core.project.config")
-    local targetfile = target:targetfile()
-    local src_dir = "."
-    local dest_dir = "app"
-    os.tryrm("app/*")
-    os.cp(targetfile, path.join(dest_dir, path.filename(targetfile)))
-    os.cp(path.join(src_dir, "settings.ini"), path.join(dest_dir, "settings.ini"))
-    os.cp(path.join(src_dir, "Zone.desktop"), path.join(dest_dir, "Zone.desktop"))
-    os.cp(path.join(src_dir, "ZoneTracer.png"), path.join(dest_dir, "ZoneTracer.png"))
-    os.cd(dest_dir)                -- 切换目录
-    os.exec("bash -c 'linuxdeployqt ZoneTracer -appimage'")  -- 执行 Bash 命令
-end)
+	for _, file in ipairs(files_to_copy) do
+	    os.cp(file, path.join(dest_dir, path.filename(file)))
+	end
 
+	os.cd(dest_dir)
+	os.exec("linuxdeployqt ZoneTracer -appimage")
+    end)
