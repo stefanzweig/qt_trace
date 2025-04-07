@@ -1153,7 +1153,6 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 	if (changes > 0) {
 		int queue_original_size = shown_queue.size();
 		qDebug() << "ORIGINAL QUEUE SIZE -> " << queue_original_size;
-		QList<QTreeWidgetItem*> item_list;
 		for (int i = 0; i < changes; i++) {
 			int idx = queue_size - changes + i;
 			if (idx >= 0) {
@@ -1167,7 +1166,6 @@ void QtWidgetsApplication1::fill_partial_tree(int capacity)
 			}
 		}
 	}
-	//m_mutex.unlock();
 }
 
 void QtWidgetsApplication1::fill_empty_tree(int capacity)
