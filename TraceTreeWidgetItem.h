@@ -63,7 +63,7 @@ public:
 	{
 		for (QString s : strings)
 		{
-			original_data.append(s);
+			// original_data.append(s);
 		}
 	}
 	~TraceTreeWidgetItem() override {
@@ -134,7 +134,8 @@ public:
 
 	void setUUID(QString uuid)
 	{
-		this->uuid_ = uuid;
+		return;
+		// this->uuid_ = uuid;
 	}
 
 	bool handled = false;
