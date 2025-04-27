@@ -136,6 +136,8 @@ void QtWidgetsApplication1::init()
 	calc_thread->monitor_modules = monitor_modules;
 	calc_thread->queue_ = &shown_queue;
 	connect(calc_thread, &multiThread::popToRoot, this, &QtWidgetsApplication1::on_pop_to_root);
+	//TraceTreeWidgetItem* myTree;
+	//connect(calc_thread, &multiThread::popToRoot, [this, myTree]() {on_pop_to_root(myTree); });
 	connect(this, &QtWidgetsApplication1::record_latest_index, this, &QtWidgetsApplication1::update_latest_index);
 
 	filter = new columnFilterDialog(this);
@@ -386,6 +388,7 @@ void QtWidgetsApplication1::resetLayout()
 	connect(ui.treetrace, &QTreeWidget::customContextMenuRequested, this, &QtWidgetsApplication1::prepareMenu);
 
 	//connect(ui.treetrace->header(), &QHeaderView::sectionResized, this, &QtWidgetsApplication1::on_header_section_resized);
+	connect(ui.treetrace->header(), &QHeaderView::sectionResized, this, [this](int, int, int) { adjust_filter_buttons();});
 	//connect(ui.treetrace->horizontalScrollBar(), &QScrollBar::valueChanged, this, &QtWidgetsApplication1::on_horizontal_scroll);
 	//connect(ui.treetrace, &QTreeWidget::currentItemChanged, this, &QtWidgetsApplication1::updateHeaderStyle);
 
@@ -1259,10 +1262,10 @@ void QtWidgetsApplication1::adjust_filter_buttons()
 	}
 }
 
-void QtWidgetsApplication1::on_header_section_resized(int logicalIndex, int oldSize, int newSize)
-{
-	adjust_filter_buttons();
-}
+//void QtWidgetsApplication1::on_header_section_resized(int logicalIndex, int oldSize, int newSize)
+//{
+//	adjust_filter_buttons();
+//}
 
 void QtWidgetsApplication1::on_horizontal_scroll()
 {

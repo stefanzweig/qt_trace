@@ -24,6 +24,7 @@ public:
     QHash<QString, QList<QVariant>> new_checks;
     int header_count = 0;
     //dgm
+    void on_confirmFilterButton_clicked();
     
     int resetbuttonflag = 0;
     int confirmbuttonflag = 0;
@@ -39,7 +40,6 @@ private:
 
 private slots:
     void on_resetFilterButton_clicked();
-    void on_confirmFilterButton_clicked();
 
 
 signals:

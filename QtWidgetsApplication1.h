@@ -107,6 +107,8 @@ private:
 
     QQueue<TraceTreeWidgetItem*> filtered_queue;
     int filtered_size() { return filtered_queue.size(); }
+    void on_pop_to_root(TraceTreeWidgetItem* item);
+    void on_horizontal_scroll();
 
     QQueue<TraceTreeWidgetItem*> aggregation_queue;   // the queue for the aggregation data. 2024-11-22 16:07:38
 
@@ -191,7 +193,6 @@ private slots:
     void updateState();
     void onActionTriggered();
     void applyFilter(QList<QList<QString>> items, int count);
-    void on_pop_to_root(TraceTreeWidgetItem* item);
     void headerButtonClicked();
     void prepareMenu(const QPoint& pos);
     void newDev();
@@ -204,8 +205,7 @@ private slots:
     bool new_session();
     void freeze_treetrace_items(int ncount);
     void adjust_filter_buttons();
-    void on_header_section_resized(int logicalIndex, int oldSize, int newSize);
-    void on_horizontal_scroll();
+    //void on_header_section_resized(int logicalIndex, int oldSize, int newSize);
     void about();
     void reset_all_filters();
     void refresh_full_tree(int capacity);
