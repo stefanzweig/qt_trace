@@ -204,7 +204,7 @@ private slots:
     bool new_session();
     void freeze_treetrace_items(int ncount);
     void adjust_filter_buttons();
-    void on_header_section_resized();
+    void on_header_section_resized(int logicalIndex, int oldSize, int newSize);
     void on_horizontal_scroll();
     void about();
     void reset_all_filters();
@@ -296,10 +296,7 @@ protected:
     QTreeWidgetItem* next_find = nullptr;
     // the above are the ones related to find.
 
-    // the following functions should be moved to other section.
-    // todo. 2024-11-01 14:28:53
     void showEvent(QShowEvent* event) override {
-        // �����Զ����źŵ���
         connect(this, &QtWidgetsApplication1::buttonClicked, this, &QtWidgetsApplication1::ButtonSearchClicked);
         QWidget::showEvent(event);
     }

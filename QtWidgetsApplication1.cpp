@@ -1261,7 +1261,7 @@ void QtWidgetsApplication1::adjust_filter_buttons()
 	}
 }
 
-void QtWidgetsApplication1::on_header_section_resized()
+void QtWidgetsApplication1::on_header_section_resized(int logicalIndex, int oldSize, int newSize)
 {
 	adjust_filter_buttons();
 }
