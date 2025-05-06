@@ -1650,7 +1650,7 @@ bool QtWidgetsApplication1::eventFilter(QObject* obj, QEvent* event) {
 
 int getVisibleIndex(QTreeWidget* treeWidget, QTreeWidgetItem* item) {
 	if (!item || !treeWidget) {
-		return -1; // ���� -1 ��ʾ��Ч��
+		return -1;
 	}
 
 	int visibleIndex = 0;
@@ -1659,7 +1659,7 @@ int getVisibleIndex(QTreeWidget* treeWidget, QTreeWidgetItem* item) {
 		if (topLevelItem->isHidden()) continue;
 
 		if (topLevelItem == item) {
-			return visibleIndex; // ���ص�ǰ��Ŀɼ�����
+			return visibleIndex; 
 		}
 		visibleIndex++;
 
@@ -1668,12 +1668,12 @@ int getVisibleIndex(QTreeWidget* treeWidget, QTreeWidgetItem* item) {
 			if (childItem->isHidden()) continue;
 
 			if (childItem == item) {
-				return visibleIndex; // ���ص�ǰ��Ŀɼ�����
+				return visibleIndex;
 			}
 			visibleIndex++;
 		}
 	}
-	return -1; // ���δ�ҵ������� -1
+	return -1;
 }
 
 void scrollToCenter(QTreeWidget* treeWidget, QTreeWidgetItem* item) {
