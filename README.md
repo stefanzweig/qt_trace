@@ -15,9 +15,9 @@ Trace Tool
 - ¾ÛºÏ
 - Linux °æ±¾
 
-## Pack command
+## build command
 
 ```sh
-linuxdeployqt zone-tracer -appimage -unsupported-allow-new-glibc
+xmake f -m (debug|release) --qt=/opt/Qt5.14.2 -o build --post_build=y
 ```
 
