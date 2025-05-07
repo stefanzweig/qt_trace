@@ -268,7 +268,10 @@ void QtWidgetsApplication1::updateContinuousProgress()
 			page_index = filtered_size() / count_per_page + 1;
 		}
 		else {
-			page_index = paused_instant_index / count_per_page + 1;
+			if (paused_instant_index>=0)
+				page_index = paused_instant_index / count_per_page + 1;
+			else 
+				page_index = 1;
 		}
 
 		QString strLeft_idle = QString("Count: %1/%2")
