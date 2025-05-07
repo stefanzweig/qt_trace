@@ -1,6 +1,10 @@
 add_rules("mode.debug", "mode.release")
 
 target("ZoneTracer")
+    option("post_build")
+        set_default(false)
+        set_showmenu(true)
+        set_description("Enable post-build actions")
     add_rules("qt.widgetapp")
     set_kind("binary")
     add_cxflags("-mavx2 -fPIC")
@@ -71,37 +75,40 @@ target("ZoneTracer")
 	"/usr/lib"
     )
 
-    after_build(function (target)
-	    import("core.project.config")
-	    local targetfile = target:targetfile()
-	    local src_dir = "."
-	    local dest_dir = "app"
-	    local inst_dir = "installer"
+    if has_config("post_build") then
+        after_build(function (target)
+	        import("core.project.config")
+	        local targetfile = target:targetfile()
+	        local src_dir = "."
+	        local dest_dir = "app"
+	        local inst_dir = "installer"
 
-	    os.tryrm(dest_dir)
-	    os.mkdir(dest_dir)
-	    os.tryrm(inst_dir)
-	    os.mkdir(inst_dir)
+	        os.tryrm(dest_dir)
+	        os.mkdir(dest_dir)
+	        os.tryrm(inst_dir)
+	        os.mkdir(inst_dir)
 
-	    local files_to_copy = {
-	        targetfile,
-	        path.join(src_dir, "Zone.desktop"),
-	        path.join(src_dir, "ZoneTracer.png")
-	    }
+	        local files_to_copy = {
+	            targetfile,
+	            path.join(src_dir, "Zone.desktop"),
+	            path.join(src_dir, "ZoneTracer.png")
+	        }
 
-	    for _, file in ipairs(files_to_copy) do
-	        os.cp(file, path.join(dest_dir, path.filename(file)))
-	    end
+	        for _, file in ipairs(files_to_copy) do
+	            os.cp(file, path.join(dest_dir, path.filename(file)))
+	        end
 
-	    os.cd(dest_dir)
-	    os.exec("linuxdeployqt ZoneTracer -appimage")
+	        os.cd(dest_dir)
+	        os.exec("linuxdeployqt ZoneTracer -appimage")
 
-	    os.exec("cp ../settings.ini ../installer/")
-	    local files = os.match("*.AppImage")
-	    for _, source_file in ipairs(files) do
-	        print(source_file)
-                local file_name = path.filename(source_file)
-                local dest_file = path.join("..", inst_dir, "ZoneTracer.AppImage")
-                os.cp(source_file, dest_file)
-            end
-        end)
+	        os.exec("cp ../settings.ini ../installer/")
+	        local files = os.match("*.AppImage")
+	        for _, source_file in ipairs(files) do
+	            print(source_file)
+                    local file_name = path.filename(source_file)
+                    local dest_file = path.join("..", inst_dir, "ZoneTracer.AppImage")
+                    os.cp(source_file, dest_file)
+                end
+            end)
+        end
+    end
