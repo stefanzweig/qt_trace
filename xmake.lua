@@ -1,11 +1,11 @@
 add_rules("mode.debug", "mode.release")
 
 target("ZoneTracer")
+    add_rules("qt.widgetapp")
     option("post_build")
         set_default(false)
         set_showmenu(true)
         set_description("Enable post-build actions")
-    add_rules("qt.widgetapp")
     set_kind("binary")
     add_cxflags("-mavx2 -fPIC")
     add_files("QtWidgetsApplication1.qrc")
@@ -111,4 +111,4 @@ target("ZoneTracer")
                 end
             end)
         end
-    end
+
