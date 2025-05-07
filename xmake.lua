@@ -1,4 +1,8 @@
 add_rules("mode.debug", "mode.release")
+option("post_build")
+    set_default(false)
+    set_showmenu(true)
+    set_description("Enable post-build actions")
 
 target("ZoneTracer")
     add_rules("qt.widgetapp")
