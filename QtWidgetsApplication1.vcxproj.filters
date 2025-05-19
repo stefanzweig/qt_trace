@@ -82,6 +82,15 @@
     <ClCompile Include="topicData\ZoneMasterSomeipDataSubscriber.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="heartbeat\HelloHikauto.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="heartbeat\HelloHikautoPubSubTypes.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="heartbeat\HelloHikautoSubscriber.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gui_global.h">
@@ -470,6 +479,19 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="json.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="heartbeat\HelloHikauto.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="heartbeat\HelloHikautoCdrAux.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="heartbeat\HelloHikautoCdrAux.ipp" />
+    <ClInclude Include="heartbeat\HelloHikautoPubSubTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="heartbeat\HelloHikautoSubscriber.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

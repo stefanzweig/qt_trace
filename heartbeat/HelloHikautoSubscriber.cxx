@@ -28,6 +28,8 @@
 #include "HelloHikautoSubscriber.h"
 #include "HelloHikautoPubSubTypes.h"
 
+#include <QDebug>
+
 using namespace eprosima::fastdds::dds;
 
 HelloHikautoSubscriber::HelloHikautoSubscriber()
@@ -133,14 +135,15 @@ void HelloHikautoSubscriber::SubListener::on_data_available(
         {
             // Print your structure data here.
             ++samples;
-            std::cout << "Sample received, count=" << samples << std::endl;
+            //std::cout << "Sample received, count=" << samples << std::endl;
+            qDebug() << "Sample received, count=" << samples;
         }
     }
 }
 
 void HelloHikautoSubscriber::run()
 {
-    std::cout << "Waiting for Data, press Enter to stop the DataReader. " << std::endl;
-    std::cin.ignore();
-    std::cout << "Shutting down the Subscriber." << std::endl;
+    //std::cout << "Waiting for Data, press Enter to stop the DataReader. " << std::endl;
+    //std::cin.ignore();
+    //std::cout << "Shutting down the Subscriber." << std::endl;
 }

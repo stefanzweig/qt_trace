@@ -23,6 +23,8 @@
 #include "usagedialog.h"
 #include "dialog/configdialog.h"
 #include "uizone/zcomponents.h"
+#include "heartbeat/HelloHikautoSubscriber.h"
+
 
 #define TIMER_HEARTBEAT 100
 #define MAX_ITEM_COUNT 5000
@@ -69,6 +71,7 @@ protected:
     // void form_conditions_compiler(QString findstr);
 
 private:
+    HelloHikautoSubscriber *heartbeatsub = nullptr;
     Ui::QtWidgetsApplication1Class ui;
     void init();
     void shortcuts();

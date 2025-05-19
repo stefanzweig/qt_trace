@@ -117,6 +117,9 @@
   <ItemGroup>
     <ClCompile Include="columnfilter.cpp" />
     <ClCompile Include="dialog\configdialog.cpp" />
+    <ClCompile Include="heartbeat\HelloHikauto.cxx" />
+    <ClCompile Include="heartbeat\HelloHikautoPubSubTypes.cxx" />
+    <ClCompile Include="heartbeat\HelloHikautoSubscriber.cxx" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="multiThread.cpp" />
     <ClCompile Include="topicData\ZoneMasterCanParserSubscriber.cpp" />
@@ -147,6 +150,11 @@
     <QtMoc Include="topicData\ZoneMasterSomeipDataStateListener.h" />
     <QtMoc Include="topicData\ZoneMasterSomeipDataSDListener.h" />
     <QtMoc Include="topicData\ZoneMasterSomeipDataEthFrameListener.h" />
+    <ClInclude Include="heartbeat\HelloHikauto.h" />
+    <ClInclude Include="heartbeat\HelloHikautoCdrAux.hpp" />
+    <ClInclude Include="heartbeat\HelloHikautoCdrAux.ipp" />
+    <ClInclude Include="heartbeat\HelloHikautoPubSubTypes.h" />
+    <ClInclude Include="heartbeat\HelloHikautoSubscriber.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="topicData\ZoneMasterSomeipDataSubscriber.h" />
     <ClInclude Include="ui_usagedialog.h" />

@@ -20,6 +20,7 @@
 #include "columnfilter.h"
 //#include "LineEditFilter.h"
 
+
 QSize getItemSize(QTreeWidgetItem* item, int column, const QFont& font) {
 	QFontMetrics fontMetrics(font);
 	QString text = item->text(column);
@@ -504,6 +505,13 @@ bool QtWidgetsApplication1::new_session()
 
 void QtWidgetsApplication1::startTrace()
 {
+	if (heartbeatsub == nullptr)
+		heartbeatsub = new HelloHikautoSubscriber();
+	if (heartbeatsub->init())
+	{
+		heartbeatsub->run();
+	}
+	return;
 	// auto log_ = GETLOG("WORKFLOW");
 	//LOGGER_INFO(log_, "==== START TRACE CLICKED ====");
   qDebug() << "function startTrace";
