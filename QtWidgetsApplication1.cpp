@@ -37,6 +37,10 @@ QtWidgetsApplication1::QtWidgetsApplication1(QWidget* parent)
 
 QtWidgetsApplication1::~QtWidgetsApplication1()
 {
+	if (this->heartbeatsub) {
+		delete heartbeatsub;
+		heartbeatsub = nullptr;
+	}
 	if (this->timer) {
 		if (timer->isActive())
 			timer->stop();
