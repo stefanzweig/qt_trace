@@ -1,0 +1,5 @@
+struct HelloHikauto
+{
+    unsigned long index;
+    string message;
+};
