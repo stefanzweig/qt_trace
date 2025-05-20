@@ -24,6 +24,7 @@
 #include "dialog/configdialog.h"
 #include "uizone/zcomponents.h"
 #include "heartbeat/HelloHikautoSubscriber.h"
+#include "DataEmitter.h"
 
 
 #define TIMER_HEARTBEAT 100
@@ -72,6 +73,7 @@ protected:
 
 private:
     HelloHikautoSubscriber *heartbeatsub = nullptr;
+    DataEmitter emitter;
     Ui::QtWidgetsApplication1Class ui;
     void init();
     void shortcuts();
@@ -111,6 +113,7 @@ private:
     QQueue<TraceTreeWidgetItem*> filtered_queue;
     int filtered_size() { return filtered_queue.size(); }
     void on_pop_to_root(TraceTreeWidgetItem* item);
+    
     void on_horizontal_scroll();
 
     QQueue<TraceTreeWidgetItem*> aggregation_queue;   // the queue for the aggregation data. 2024-11-22 16:07:38
@@ -257,6 +260,7 @@ private slots:
     void current2center();
     void collapse_all();
     void clearlog();
+    void on_heartbeat(const int& n);
 
 
 signals:

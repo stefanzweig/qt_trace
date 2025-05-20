@@ -144,7 +144,13 @@ void QtWidgetsApplication1::init()
 	//TraceTreeWidgetItem* myTree;
 	//connect(calc_thread, &multiThread::popToRoot, [this, myTree]() {on_pop_to_root(myTree); });
 	connect(this, &QtWidgetsApplication1::record_latest_index, this, &QtWidgetsApplication1::update_latest_index);
-
+	
+	//QObject::connect(&emitter, &DataEmitter::dataReceived, [](const int& data) {
+	//	qDebug() << "Received data in main thread:" << data;
+	//	});
+	
+	QObject::connect(&emitter, &DataEmitter::dataReceived, this, &QtWidgetsApplication1::on_heartbeat);
+	
 	filter = new columnFilterDialog(this);
 	resetLayout();
 	resetStatusBar();
@@ -510,7 +516,10 @@ bool QtWidgetsApplication1::new_session()
 void QtWidgetsApplication1::startTrace()
 {
 	if (heartbeatsub == nullptr)
+	{
 		heartbeatsub = new HelloHikautoSubscriber();
+		heartbeatsub->listener_.setEmmiter(&emitter);
+	}
 	if (heartbeatsub->init())
 	{
 		heartbeatsub->run();
@@ -894,6 +903,10 @@ void QtWidgetsApplication1::construct_filtered_queue(int full_count)
 	}
 }
 
+void QtWidgetsApplication1::on_heartbeat(const int& n)
+{
+	ui.statusBar->showMessage(QString::number(n));
+}
 void QtWidgetsApplication1::on_pop_to_root(TraceTreeWidgetItem* item)
 {
 	// auto log_ = GETLOG("WORKFLOW");

@@ -541,6 +541,9 @@
     <QtMoc Include="topicData\ZoneMasterSomeipDataEthFrameListener.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="DataEmitter.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="columnfilterdialog.ui">

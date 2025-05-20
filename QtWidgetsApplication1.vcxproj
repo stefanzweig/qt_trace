@@ -143,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="dialog\configdialog.h" />
+    <QtMoc Include="DataEmitter.h" />
     <ClInclude Include="dialog\ui_configdialog.h" />
     <ClInclude Include="endianness.h" />
     <QtMoc Include="topicData\ZoneMasterSomeipDataPackageListener.h" />

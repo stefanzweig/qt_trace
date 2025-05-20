@@ -27,6 +27,7 @@
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include "../DataEmitter.h"
 
 class HelloHikautoSubscriber
 {
@@ -40,6 +41,32 @@ public:
 
     void run();
 
+    class SubListener : public eprosima::fastdds::dds::DataReaderListener
+    {
+    public:
+
+        //SubListener() { this->emitter_ = new DataEmitter(); }
+        SubListener() = default;
+
+        ~SubListener() override = default;
+
+        void setEmmiter(DataEmitter* emmitter) { emitter_ = emmitter; }
+
+        void on_data_available(
+            eprosima::fastdds::dds::DataReader* reader) override;
+
+        void on_subscription_matched(
+            eprosima::fastdds::dds::DataReader* reader,
+            const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
+
+        int matched = 0;
+        uint32_t samples = 0;
+    private:
+        DataEmitter* emitter_;
+    }
+    listener_;
+
+
 private:
 
     eprosima::fastdds::dds::DomainParticipant* participant_;
@@ -47,26 +74,6 @@ private:
     eprosima::fastdds::dds::Topic* topic_;
     eprosima::fastdds::dds::DataReader* reader_;
     eprosima::fastdds::dds::TypeSupport type_;
-
-    class SubListener : public eprosima::fastdds::dds::DataReaderListener
-    {
-    public:
-
-        SubListener() = default;
-
-        ~SubListener() override = default;
-
-        void on_data_available(
-                eprosima::fastdds::dds::DataReader* reader) override;
-
-        void on_subscription_matched(
-                eprosima::fastdds::dds::DataReader* reader,
-                const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
-
-        int matched = 0;
-        uint32_t samples = 0;
-    }
-    listener_;
 };
 
 #endif // _FAST_DDS_GENERATED_HELLOHIKAUTO_SUBSCRIBER_H_
